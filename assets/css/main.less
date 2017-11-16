@@ -1,0 +1,357 @@
+// LESS code (compatible with CSS but better)
+[ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak {
+  display: none !important;
+}
+
+
+.angular-ui-tree-empty {
+    border: 1px dashed #bbb;
+    min-height: 100px;
+    background-color: #eee;
+    background-image: -webkit-linear-gradient(45deg,#fff 25%,transparent 25%,transparent 75%,#fff 75%,#fff),-webkit-linear-gradient(45deg,#fff 25%,transparent 25%,transparent 75%,#fff 75%,#fff);
+    background-image: -moz-linear-gradient(45deg,#fff 25%,transparent 25%,transparent 75%,#fff 75%,#fff),-moz-linear-gradient(45deg,#fff 25%,transparent 25%,transparent 75%,#fff 75%,#fff);
+    background-image: linear-gradient(45deg,#fff 25%,transparent 25%,transparent 75%,#fff 75%,#fff),linear-gradient(45deg,#fff 25%,transparent 25%,transparent 75%,#fff 75%,#fff);
+    background-size: 20px 20px;
+    background-position: 0 0,30px 30px;
+}
+
+.accept-drop {
+    border: 0.2rem solid #008CBA;
+    min-height: 100px;
+    // background-color: #dde;
+    // background-image: -webkit-linear-gradient(45deg,#fff 25%,transparent 25%,transparent 75%,#fff 75%,#fff),-webkit-linear-gradient(45deg,#fff 25%,transparent 25%,transparent 75%,#fff 75%,#fff);
+    // background-image: -moz-linear-gradient(45deg,#fff 25%,transparent 25%,transparent 75%,#fff 75%,#fff),-moz-linear-gradient(45deg,#fff 25%,transparent 25%,transparent 75%,#fff 75%,#fff);
+    // background-image: linear-gradient(45deg,#fff 25%,transparent 25%,transparent 75%,#fff 75%,#fff),linear-gradient(45deg,#fff 25%,transparent 25%,transparent 75%,#fff 75%,#fff);
+    // background-size: 20px 20px;
+    // background-position: 0 0,30px 30px;
+}
+
+.row {
+  max-width: 85rem;
+}
+
+.page-title {
+  font-size: 2.3125rem;
+}
+
+.glyphicon {
+  color: #9b9b9b;
+  &:hover {
+    color: #333;
+  }
+}
+
+#page-view {
+  padding: 0;
+}
+
+.app-logo-img {
+  width: 90%;
+}
+
+.lang-flag {
+  @sz: 1rem;
+  width: @sz * 3 / 2;
+  height: @sz;
+}
+
+widget-holder {
+  display: block;
+}
+
+.left-column {
+  padding-right: 0.3rem;
+}
+.right-column {
+  padding-left: 0.3rem;
+}
+
+.design-mode-only {
+  display: none;
+}
+
+.design-mode-enabled .design-mode-only {
+  display: block;
+}
+
+.design-mode-enabled .view-mode-only {
+  display: none;
+}
+
+widget {
+  @widget-design-bg: #F7F5DF;
+  @widget-design-border: #ddd;
+  @widget-design-border-radius: 0.3rem;
+
+//  padding: 3px;
+//  margin-bottom: 5px;
+  display: block;
+  height: 100%;
+  &:last-of-type {
+    margin-bottom: 0;
+  }
+
+  .widget-design-panel {
+    border: 0.1rem solid @widget-design-border;
+    .widget-type, .widget-name {
+      margin-left: 0.4rem;
+      font-weight: bold;
+      color: #9B9B9B;
+    }
+    .widget-type {
+      font-weight: bold;
+      margin-top: 0.2rem;
+    }
+    .widget-config-btn, .widget-delete-btn, .widget-clone-btn, .widget-help-btn {
+      margin: 0.2rem;
+    }
+    background-color: @widget-design-bg;
+    border-top-left-radius: @widget-design-border-radius;
+    border-top-right-radius: @widget-design-border-radius;
+    padding: 0.3rem;
+    font-style: italic;
+  }
+
+  .widget-title {
+    font-weight: bold;
+  }
+
+  .widget-contents {
+    @pad-right: 0.3rem;
+    height: 100%;
+    clear: both;
+    padding-right: @pad-right;
+
+    &.widget-design-mode {
+      @pad-design-other: 0.4rem;
+      // padding: @pad-design-other @pad-right @pad-design-other @pad-design-other;
+      border-left: 0.1rem solid @widget-design-border;
+      border-right: 0.1rem solid @widget-design-border;
+      border-bottom: 0.1rem solid @widget-design-border;
+      border-bottom-left-radius: @widget-design-border-radius;
+      border-bottom-right-radius: @widget-design-border-radius;
+    }
+  }
+}
+
+.sceditor-container {
+  font-weight: normal;
+}
+.sceditor-button {
+  box-sizing: content-box;
+  -webkit-box-sizing: content-box;
+  -moz-box-sizing: content-box;
+}
+
+.error-message {
+  color: red;
+  max-width: 30rem;
+}
+
+.seq {
+  margin:0.5em 0 0.5em 0.2em;
+  padding:0.2em 0.5em;
+}
+
+.dialog-modal {
+  max-width: 40rem;
+  padding:1em 3em;
+}
+
+.debug-enabled {
+  .widget {
+    border: 2px dashed red;
+  }
+
+  .widget-holder {
+    border: 2px dashed green;
+  }
+
+  #page-view {
+    border: 2px dashed blue;
+  }
+}
+
+.addWidget, .addPage {
+  li {
+    width: 7em;
+    height: 7em;
+  }
+
+  .has-tip {
+    border-bottom: none;
+  }
+
+  input {
+    margin-bottom: 20px;
+    margin-left: 10px;
+  }
+
+  .selected {
+    border:4px solid red;
+    box-shadow:rgba(0, 140, 255, 0.498039) 0 0 6px 1px;
+  }
+
+  img {
+    width: 100%;
+    height: 100%;
+  }
+}
+
+.addWidget {
+  margin-top: 1em;
+}
+
+.red {
+  color: red;
+}
+
+.widget-config-tabset .tabs-content {
+  margin-bottom: 0px;
+  .content {
+    padding-bottom: 0px;
+  }
+}
+
+.side-nav li {
+  /* margin: 0 0 0.4375rem 0; */
+  /* font-size: 0.875rem; */
+  /* font-weight: normal; */
+  font: normal small Arial;
+  line-height: 1.5rem;
+}
+
+.side-nav li a:not(.button) {
+  display: inline;
+  color: #008cba;
+  margin: 0;
+  padding: 0.4375rem 0.875rem 0 0.2rem;
+}
+
+.share-settings-modal {
+  max-width: 60rem;
+  padding:1em 3em;
+  fieldset {
+    padding-bottom: 0;
+  }
+}
+
+.app-settings-modal {
+  max-width: 60rem;
+  padding:1em 3em;
+  fieldset {
+    padding-bottom: 0;
+  }
+}
+.splash-modal {
+  max-width: 30rem;
+  padding:1em 3em;
+}
+
+.info-modal {
+  max-width: 30rem;
+  padding:1em 3em;
+}
+
+.info-modal .alert {
+  color:#F04124;
+}
+
+.info-modal .warning {
+  font-size:small;
+  color: #F04124;
+}
+
+span.alert {
+    font-size: xx-small;
+    background: #F04124;
+    color: #fff;
+    padding: 0 0.5rem;
+    margin: 0.1rem;
+    border-radius: 5px;
+   font-stretch: extra-expanded;
+}
+
+.row-no-left-padding > *:first-child {
+  padding-left: 0;
+}
+
+[ui-view].ng-enter, [ui-view].ng-leave {
+  transition: all .5s ease-in-out;
+  -webkit-transition: all .5s ease-in-out;
+}
+
+[ui-view].ng-enter {
+  opacity: 0;
+  transform: scale3d(0.95, 0.95, 0.95);
+  -webkit-transform: scale3d(0.95, 0.95, 0.95);
+}
+
+[ui-view].ng-enter-active {
+  opacity: 1;
+  transform: scale3d(1, 1, 1);
+  -webkit-transform: scale3d(1, 1, 1);
+}
+
+[ui-view].ng-leave {
+  display: none;
+}
+
+.selected {
+  background-color: #008CBA;
+  color: #FFFFFF;
+}
+
+.language-nav {
+  li:hover {
+    text-decoration: underline;
+    cursor:pointer;
+  }
+
+.border {
+  border: 1px solid #dfdfdf;
+  padding: 0.5rem;
+  margin: 0.5rem;
+}
+
+.widget.border {
+  border: 1px solid #dfdfdf;
+  padding: 0.5rem;
+  margin: 0 0 0.5rem;
+  box-shadow: 1px 2px 10px rgba(0, 0, 0, 0.2);
+  border-radius: 10px;
+}
+
+
+
+
+
+
+}
+
+
+@media only screen and (min-width: 40.0625em){
+  .contain-to-grid .top-bar {
+      margin-bottom: 0;
+      margin: 0 1em 0 5em;
+      max-width: 100%;
+  }
+}
+
+
+
+.top-bar .name h1 a, .top-bar .name h2 a, .top-bar .name h3 a, .top-bar .name h4 a, .top-bar .name p a, .top-bar .name span a {
+    color: #FFFFFF;
+    display: block;
+    font-weight: normal;
+    padding: 0 0.9375rem;
+    font-size: x-large;
+    font-stretch: extra-condensed;
+    
+}
+
+
+p {
+    line-height: 1.2;
+    font-stretch: condensed;
+  }

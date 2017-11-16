@@ -1,0 +1,29 @@
+{
+  "keywords":["data","management","interactive", "description"],
+  "schema": {
+    "type": "object",
+    "title": "Dataset Info",
+    "properties": {
+      "title": {
+        "type": "string",
+        "title": "Title"
+      },
+
+      "l_listeners": {
+        "type": "string",
+        "title": "Lookup Listeners"
+      },
+
+      "s_listeners": {
+        "type": "string",
+        "title": "Search Listeners"
+      },
+
+      "d_listeners": {
+        "type": "string",
+        "title": "Preview Listeners"
+      }
+
+    }
+  }
+}

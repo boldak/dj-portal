@@ -1,0 +1,44 @@
+# Local Configuration
+config/local.js
+
+# Dependencies
+node_modules/
+jspm_packages/
+bower_components/
+
+# Sails.js / Waterline / Grunt
+.tmp
+dump.rdb
+
+# Node.js / NPM
+lib-cov
+*.seed
+*.log
+*.out
+*.pid
+npm-debug.log
+
+# Intellij IDEA - ignore everything except
+# not-too-often changed files with basic IDE config
+.idea/*
+!.idea/.name
+!.idea/runConfigurations
+!.idea/libraries
+!.idea/modules.xml
+!.idea/vcs.xml
+
+# Documentation
+/docs
+
+# Testing xlsx files
+xlsx
+
+# Other
+*.swp
+
+# Visual studio
+bin
+obj
+*.dat
+*.suo
+*.tmp

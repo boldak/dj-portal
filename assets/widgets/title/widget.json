@@ -1,0 +1,20 @@
+{
+  "keywords":["html","title"],
+  "schema": {
+    "type": "object",
+    "title": "Title widget",
+    "properties": {
+      "title": {
+        "title": "Set title",
+        "type": "string"
+      },
+      
+      "level": {
+        "title": "Level",
+        "type": "integer",
+        "default": 2,
+        "enum": [1,2,3,4,5]
+      }
+    }
+  }
+}

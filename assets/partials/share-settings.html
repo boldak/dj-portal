@@ -1,0 +1,59 @@
+<div>
+  <h3 translate>SHARE_WITH_OTHERS</h3>
+  <h5 translate>PEOPLE</h5>
+  <fieldset>
+    <div ng-if="author.exists" class="row row-no-left-padding">
+      <div class="column medium-7">
+        <b>{{author.name}}</b>
+        <i>({{author.email}})</i>
+      </div>
+      <div class="column medium-3 end">
+        <select disabled>
+          <option selected translate>OWNER</option>
+        </select>
+      </div>
+    </div>
+
+    <div ng-repeat="collaboration in collaborations" class="row row-no-left-padding">
+      <div class="column medium-7">
+        {{collaboration.user.name}}
+        <i>({{collaboration.user.email}})</i>
+      </div>
+      <div class="column medium-3">
+        <select>
+          <option selected translate>CAN_EDIT</option>
+        </select>
+      </div>
+      <input type="button" class="button alert tiny"
+             ng-click="deleteCollaboration(collaboration.user.id)"
+             translate translate-attr-value="DELETE">
+    </div>
+    <div ng-if="collaborations.length === 0 && !author.exists">
+      <translate>NO_COLLABORATORS_YET</translate>
+      <br><br>
+    </div>
+  </fieldset>
+
+  <hr>
+  <h5>Invite people</h5>
+  <fieldset class="row invite-people row-no-left-padding">
+    <div class="column medium-7">
+      <input type="text" ng-model="selectedUser"
+             translate translate-attr-placeholder="ENTER_NAME_DOTS"
+             typeahead="user as user.name + ' ' + user.email for user in getUsers($viewValue)"
+             typeahead-editable="false"
+             typeahead-on-select="addCollaboration()"
+             typeahead-loading="loadingUsers" class="form-control">
+      <i ng-show="loadingUsers" class="glyphicon glyphicon-refresh"></i>
+    </div>
+    <div class="column medium-3 end">
+      <select>
+        <option selected translate>CAN_EDIT</option>
+      </select>
+    </div>
+  </fieldset>
+</div>
+<br>
+<button class="button alert tiny seq right" ng-click="cancel()" translate>CANCEL</button>
+<button class="button tiny seq right" ng-click="ok()" translate>SAVE</button>
+<a class="close-reveal-modal" ng-click="cancel()">&#215;</a>

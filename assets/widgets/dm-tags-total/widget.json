@@ -1,0 +1,37 @@
+{
+  "keywords":["data","metadata","search","tags"],
+  "schema": {
+    "type": "object",
+    "title": "Tags Total",
+    "properties": {
+      "title": {
+        "type": "string",
+        "title": "Title"
+      },
+
+      "icon_class":{
+        "type": "string",
+        "title": "Icon fondation class"
+      },
+
+      "tags":{
+        "type": "array",
+        "format":"table",
+        "items": {
+            "type": "object",
+            "properties": {
+              "title": {
+                "type": "string",
+                "title": "Title"
+              },
+
+              "path": {
+                "type": "string",
+                "title": "Path"
+              }
+            }  
+        }
+      }    
+    }
+  }
+}

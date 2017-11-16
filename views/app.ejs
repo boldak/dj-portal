@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head ng-controller="MetaInfoController">
+  <base href="/">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="/components/foundation/css/normalize.css">
+  <link rel="stylesheet" href="/components/foundation/css/foundation.css">
+  <link rel="stylesheet" href="/components/SCEditor/minified/themes/default.min.css">
+  <link rel="stylesheet" href="/components/foundation-icon-fonts/foundation-icons.css">
+  <link rel="stylesheet" href="/components/angular-ui-tree/dist/angular-ui-tree.min.css">
+  <link rel="stylesheet" href="/css/main.css">
+  <title ng-bind="title"><%= app.name %></title>
+  <meta name="description" content="<%= app.description %>">
+  <meta name="keywords" content="<%= app.keywords ? app.keywords.join(', ') : "" %>">
+  <meta name="author" content="<%= ownerInfo.name %>">
+  <% /* The following should be inside <head> tag! */ %>
+  <% include ga.ejs %>
+</head>
+<body ng-controller="MainController"
+      ng-class="{'debug-enabled': globalConfig.debugMode,
+                 'design-mode-enabled': globalConfig.designMode}">
+             
+<ng-include src="skin.url"></ng-include>
+
+<script src="js/lib/ace-builds/src/ace.js"></script>
+
+<script src="js/lib/ace-builds/src/ext-static_highlight.js"></script>
+
+<script src="js/lib/ace-builds/src/mode-dps.js"></script>
+<script src="js/lib/ace-builds/src/mode-csv.js"></script>
+<script src="js/lib/ace-builds/src/mode-html.js"></script>
+<script src="js/lib/ace-builds/src/mode-xml.js"></script>
+<script src="js/lib/ace-builds/src/mode-text.js"></script>
+<script src="js/lib/ace-builds/src/mode-javascript.js"></script>
+<script src="js/lib/ace-builds/src/mode-json.js"></script>
+
+<script src="js/lib/ace-builds/src/theme-tomorrow.js"></script>
+
+
+
+
+
+<!-- ES6 polyfill. Load before every other JS file -->
+<script src="/js/es6-polyfill.js"></script>
+
+<script src="/components/es6-module-loader/dist/es6-module-loader.src.js"></script>
+<script src="/components/system.js/dist/system.src.js"></script>
+<script>
+  window.define = System.amdDefine.bind(System);
+  window.require = window.requirejs = System.amdRequire.bind(System);
+</script>
+<script src="/js/config.js"></script>
+<script>
+  define('user', ['angular'], function (angular) {
+    angular.module('app.user', [])
+      .constant('user', <%- JSON.stringify(userInfo) %>);
+  });
+
+  define('author', ['angular'], function (angular) {
+    angular.module('app.author', [])
+      .constant('author', <%- JSON.stringify(ownerInfo) %>);
+  });
+
+  define('app-config', ['angular'], function (angular) {
+    angular.module('app.config', [])
+      .constant('defaultApp', "<%= app.defaultApp %>")
+      .constant('appId', "<%= app.id %>")
+      .constant('appName', "<%= app.name %>")
+      .constant('initialConfig', <%- JSON.stringify(publicAppConfig) %>);
+  });
+
+  System.import('app'); // Kick-start the app!
+</script>
+</body>
+</html>

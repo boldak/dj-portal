@@ -1,0 +1,68 @@
+{
+ "keywords":["application","management","portal","list","search"],		
+ "schema": {
+    "type": "object",
+    "title": "Event Viewer",
+    "properties": {
+      "emitters":{
+        "type":"string",
+        "title":"Timelines"
+      },
+
+      "timeFormat":{
+        "type":"object",
+        "title":"Time Formats",
+        "properties": {
+        	"flow":{
+        		"type":"string",
+        		"title":"Flow",
+        		"default":"YYYY"
+        	},
+        	"process":{
+        		"type":"string",
+        		"title":"Process",
+        		"default":"MM YYYY"
+        	},
+        	"instant":{
+        		"type":"string",
+        		"title":"Instant",
+        		"defaut":"DD.MM.YYYY"
+        	}
+        }
+      },
+
+      "showDetails":{
+        "type":"object",
+        "title":"Show Details",
+        "properties": {
+            "category":{
+                "type":"boolean",
+                "title":"Category",
+                "default":true
+            },
+        	"timestamp":{
+        		"type":"boolean",
+        		"title":"Timestamp",
+        		"default":true
+        	},
+        	"headline":{
+        		"type":"boolean",
+        		"title":"Headline",
+        		"default":true
+        	},
+        	"text":{
+        		"type":"boolean",
+        		"title":"Text",
+        		"default":true
+        	},
+            "html":{
+                "type":"boolean",
+                "title":"Html",
+                "default":true
+            }
+        }
+      }
+
+    }
+  }  
+}

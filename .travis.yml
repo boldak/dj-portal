@@ -1,0 +1,22 @@
+language: node_js
+# use container-based environment
+# which results in faster start-ups and allows caching
+sudo: false
+cache:
+  directories:
+  - node_modules
+  - jspm_packages
+  - .tmp/bower_components
+before_install:
+- npm install jspm
+- jspm config endpoints.github.auth $GH_TOKEN
+after_success:
+- test $SEND_COVERAGE && gulp coverage
+matrix:
+  include:
+  - node_js: '0.12'
+    env: PRODUCTION=true
+  - node_js: '0.12'
+    env: SEND_COVERAGE=true
+  - node_js: iojs
+

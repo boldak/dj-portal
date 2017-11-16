@@ -1,0 +1,31 @@
+<div   style="border: 0.1rem solid #ddd; margin:0.2rem 0;"
+  ng-controller="DataManagerTagsTotalController">
+    <h4 style="color: rgba(0, 0, 0, 0.6);background-color: #efefef; padding: 0 0.5em; margin:0;"> 
+      <i class="{{icon_class}}" style="color: rgb(77, 174, 207);"></i> 
+      {{title | translate}}
+    </h4>
+
+    <div style=" padding: 0 0.5em 1em;">
+      <!-- <center>
+      <table colspan="0" rowspan="0" border="0" width="75%">
+      <th>
+        <td colspan="2">
+          <h4 style="color: rgba(0, 0, 0, 0.6);background-color: #efefef; padding: 0 0.5em;"> 
+          <i class="{{icon_class}}" style="color: rgb(77, 174, 207);"></i> 
+            {{title | translate}}
+          </h4>
+        </td>
+      </th>
+      <tr ng-repeat="item in tags" >
+        <td><b style="font-size: initial;color: #999;"> {{item.title | translate}}:</b></td>
+        <td><b style="font-size: initial;color: #999;">{{item.count}}</b></td>
+      </tr>
+      </table>
+      </center> -->
+      <div ng-repeat="item in tags" style="font-size:small; margin:0 0 0 1.5rem;">
+         <b style="font-size: initial;color: #999;">{{item.title | translate}}:&nbsp;{{item.count}}</b>
+      </div>
+    </div>
+
+</div>
+ 

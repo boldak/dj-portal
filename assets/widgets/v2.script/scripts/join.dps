@@ -1,0 +1,68 @@
+/***************************************************************
+* Copyright (c) 2014-2017 Andrey Boldak                        *
+* MIT License - http://opensource.org/licenses/mit-license.php *
+*                                                              *
+*              DJ Data Processing Script Example               *
+*                                                              *
+****************************************************************
+* File: join.dps                  		                       *
+*                                                              *
+* Description: Join tables                                     *
+*                                                              *
+****************************************************************/
+
+    <?javascript
+    
+        $scope.eqFirstMeta = function(a,b){
+          return a.metadata[0].id == b.metadata[0].id
+        };
+    
+    ?>
+    
+    load(
+        ds:'47611d63-b230-11e6-8a1a-0f91ca29d77e_2016_02',
+        as:'dataset'
+    )
+    
+    proj([
+        { dim:'time', as:'row'},
+        { dim:'indicator', as:'col'}
+    ])
+    order(for:'row', by:-1, as:'az')
+    set('t1')
+    
+    norm(for:'col', method:'0,1')
+    set('t2')
+    
+    get(var:'t1', as:'table')
+    norm(for:'col', method:'std')
+    set('t3')
+    
+    get(var:'t1', as:'table')
+    norm(dir:'col', method:'log')
+    set('t4')
+    
+    get(var:'t1', as:'table')
+    
+    join( 
+        with:{{t2}}, 
+        on:{{eqFirstMeta}}, 
+        method:'left', 
+        pref:'Ranged '
+    )
+    
+    join( 
+        with:{{t3}}, 
+        on:{{eqFirstMeta}},
+        method:'left', 
+        pref:'Standartized '
+    )
+    
+    join( 
+        with:{{t4}}, 
+        on:{{eqFirstMeta}},
+        method:'left', 
+        pref:'Logistic '
+    )
+    
+    format(3)

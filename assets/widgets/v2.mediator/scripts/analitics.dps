@@ -1,0 +1,44 @@
+/***************************************************************
+* Copyright (c) 2014-2017 Andrey Boldak                        *
+* MIT License - http://opensource.org/licenses/mit-license.php *
+*                                                              *
+*              DJ Data Processing Script Example               *
+*                                                              *
+****************************************************************
+* File: analitics.dps                                          *
+*                                                              *
+* Description: Table analitics                                 *
+*                                                              *
+****************************************************************/
+    <?javascript
+        
+        $context.meanEstimation = function(values){
+          return (values[values.length-2]+values[values.length-1])/2
+        };
+        
+        $context.diff = function(values){
+          return (values[values.length-4]-values[values.length-1])/values[values.length-4]
+        };
+        
+    ?>
+    
+    
+    load(
+        ds:'47611d63-b230-11e6-8a1a-0f91ca29d77e_2016_02',
+        as:'dataset'
+    )
+    
+    query([
+      { dim:'time', role:'row'},
+      { dim:'indicator', role:'col'} 
+    ])
+    
+    aggregate(dir:'col', data:[ 'mean', 'min', 'max'])
+    transpose()
+    
+    aggregate(dir:'row', data:[{{meanEstimation}}])
+    aggregate(dir:'row', data:[{{diff}}])
+    transpose()
+    
+    limit(start:30, length:5)
+    format(3)

@@ -1,0 +1,19 @@
+/***************************************************************
+* Copyright (c) 2014-2017 Andrey Boldak                        *
+* MIT License - http://opensource.org/licenses/mit-license.php *
+*                                                              *
+*              DJ Data Processing Script Example               *
+*                                                              *
+****************************************************************
+* File: translate.dps                                          *
+*                                                              *
+* Description: Get unique dataset sources, extends and         *
+* translate it  at your localization                           *
+*                                                              *
+****************************************************************/
+
+meta()
+select(path:'$..dataset.source')
+unique()
+extend()
+translate()
