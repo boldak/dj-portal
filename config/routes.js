@@ -70,8 +70,8 @@ module.exports.routes = {
   'get /api/data/dataSources/' : 'DataSourceController.list',
 
   // DataProcessing manipulation URLs
-  'post /api/data/process' : 'DataProcController.process',
-  'get /api/data/process/:dataId' : 'DataProcController.getById',
+//  'post /api/data/process' : 'DataProcController.process',
+//  'get /api/data/process/:dataId' : 'DataProcController.getById',
 
 // Dictionary manipulation URLs
   'post /api/dictionary' : 'DictionaryController.getAllDictionaries',
