@@ -45,7 +45,7 @@ var addDefaultPortalConfig = function(){
       if(config.length>0){
         sails.log.debug("Portal Config: "+JSON.stringify(config[0].value))  
       }else{
-          PortalConfig.create({value:{"defaultApp":"app-list"}})
+          PortalConfig.create({value:{"defaultApp":"DJAppsExplorer"}})
             .then(function(conf){
               sails.log.debug("Create default portal config:"+JSON.stringify(conf.value))
           })

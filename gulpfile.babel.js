@@ -192,7 +192,7 @@ gulp.task('build-components', ['bower-install'], () => {
     .pipe(gulp.dest(`${buildPublicDir}/components`));
 });
 
-gulp.task('build-css', ['build-less', 'build-sass', 'build-components'], () => {
+gulp.task('build-css', ['build-less', 'build-components'], () => {
   if (!minifyCode) {
     return;
   }
@@ -213,15 +213,7 @@ gulp.task('build-less', () =>
     .pipe(gulp.dest(`${buildPublicDir}/css`))
 );
 
-var sass = require("gulp-sass");
-gulp.task('build-sass', () =>
-  gulp.src('assets/css/**/*.scss')
-    .pipe(sass())
-    .pipe(gulp.dest(`${buildPublicDir}/css`))
-    .on('error', handleError)
-    .pipe(plugins.if(showFilesLog, plugins.size({showFiles: true, title: 'SASS -> CSS'})))
-    .pipe(gulp.dest(`${buildPublicDir}/css`))
-);
+
 
 gulp.task('build-template-cache', () =>
   gulp.src('assets/**/*.html')

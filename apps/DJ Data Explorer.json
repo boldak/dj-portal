@@ -1,0 +1,446 @@
+{
+  "skinName": "dj",
+  "title": "DJ Data Explorer",
+  "description": "Explore and download datasets on https://dj-dps.herokuapp.com. You can select datasets by data sources, indicators and keywords.",
+  "keywords": ["Data Management System", "BI", "Data Processing", "Data Minning", "CORS"],
+  "isPublished": true,
+  "appWidgets": [
+  {
+    "type": "language-selector",
+    "instanceName": "language-selector",
+    "showFlags": true
+  },
+  {
+    "type": "page-list",
+    "instanceName": "page-list-nav"
+  },
+  {
+    "instanceName": "AppTopbar",
+    "type": "v2.topbar",
+    "icon": "/widgets/v2.topbar/icon.png",
+    "decoration":
+    {
+      "languageSelector":
+      {
+        "enable": true,
+        "showFlag": true,
+        "showTitle": true
+      },
+      "loginButton": true,
+      "gotoApps": true
+    },
+    "content": []
+  }],
+  "pages": [
+  {
+    "shortTitle": "Dataset Manager",
+    "href": "dsm",
+    "template": "1-col",
+    "holders":
+    {
+      "column":
+      {
+        "widgets": [
+        {
+          "rlisteners": "",
+          "type": "dm-dataset-manager",
+          "instanceName": "Dataset Manager",
+          "icon": "/widgets/dm-dataset-manager/icon.png"
+        }],
+        "width": 1318
+      }
+    },
+    "subscriptions": []
+  },
+  {
+    "shortTitle": "Home",
+    "href": "",
+    "template": "2(3x9)-cols",
+    "holders":
+    {
+      "banner":
+      {
+        "widgets": [
+        {
+          "enabled": true,
+          "bgImage": "./img/data-explorer.png",
+          "height": 150,
+          "type": "v2.banner",
+          "instanceName": "home",
+          "icon": "/widgets/v2.banner/icon.png"
+        },
+        {
+          "text": "<hr id=\"null\">",
+          "type": "htmlwidget",
+          "instanceName": "5awdmpjuyr54f6ouk97h3q5mi",
+          "icon": "/widgets/htmlwidget/icon.png"
+        }],
+        "width": 1358
+      },
+      "column":
+      {
+        "widgets": [],
+        "width": 1200
+      },
+      "topleft":
+      {
+        "widgets": [
+        {
+          "title": "#sources",
+          "collapsed": true,
+          "category": "#source",
+          "property": "$..metadata.dataset.source",
+          "query": "$[?(@.dataset.source=='{{}}')]",
+          "lookupListeners": "info,meta",
+          "searchListeners": "datasets",
+          "icon_class": "fi-database",
+          "type": "dm-tag-list",
+          "instanceName": "sources",
+          "icon": "/widgets/dm-tag-list/icon.png"
+        },
+        {
+          "title": "#Indicators",
+          "collapsed": true,
+          "category": "#Indicator",
+          "property": "$..metadata.dimension.concept.values..label",
+          "query": "$[?(@.dimension.concept.values.contains(function(item){return item.label.startWith('{{}}')}))]",
+          "lookupListeners": "info,meta",
+          "searchListeners": "datasets",
+          "icon_class": "fi-graph-trend",
+          "type": "dm-tag-list",
+          "instanceName": "bp9udf4a15270tu0dt86t7qfr",
+          "icon": "/widgets/dm-tag-list/icon.png"
+        },
+        {
+          "title": "#IAMS_Indicators",
+          "collapsed": true,
+          "category": "#Indicator",
+          "property": "$..metadata.dimension.indicator.values..label",
+          "query": "$[?(@.dimension.indicator.values.contains(function(item){return item.label.startWith('{{}}')}))]",
+          "lookupListeners": "info,meta",
+          "searchListeners": "datasets",
+          "icon_class": "fi-graph-trend",
+          "type": "dm-tag-list",
+          "instanceName": "indicators",
+          "icon": "/widgets/dm-tag-list/icon.png"
+        },
+        {
+          "title": "#keywords",
+          "collapsed": true,
+          "category": "#Topic",
+          "property": "$..metadata.dataset.topics",
+          "query": "$[?(@.dataset.topics.contains(function(d){return d.startWith('{{}}')}))]",
+          "lookupListeners": "info,meta",
+          "searchListeners": "datasets",
+          "icon_class": "fi-key",
+          "type": "dm-tag-list",
+          "instanceName": "topics",
+          "icon": "/widgets/dm-tag-list/icon.png"
+        }],
+        "width": 320
+      },
+      "topright":
+      {
+        "widgets": [
+        {
+          "lookupListeners": "meta, info",
+          "searchListeners": "datasets",
+          "masterWidget": "datasets",
+          "type": "dm-word-cloud",
+          "instanceName": "e48wl89bxia01zg8tf8sbrzfr",
+          "icon": "/widgets/dm-word-cloud/icon.png"
+        },
+        {
+          "title": "",
+          "icon_class": "",
+          "type": "v2.dm-lookup",
+          "instanceName": "info",
+          "icon": "/widgets/v2.dm-lookup/icon.png"
+        },
+        {
+          "title": "",
+          "l_listeners": "info",
+          "s_listeners": "datasets",
+          "d_listeners": "line,table",
+          "type": "v2.dm-ds-description",
+          "instanceName": "dsinfo",
+          "icon": "/widgets/v2.dm-ds-description/icon.png"
+        }],
+        "width": 999
+      },
+      "detail1":
+      {
+        "widgets": [
+        {
+          "type": "v2.table",
+          "instanceName": "table",
+          "icon": "/widgets/v2.table/icon.png",
+          "decoration":
+          {
+            "colorize": false,
+            "height": 250,
+            "opacity": 0.5,
+            "direction": "Rows",
+            "width": 493,
+            "title": "Preview"
+          },
+          "queryID": "eventSource"
+        }],
+        "width": 493
+      },
+      "detail2":
+      {
+        "widgets": [
+        {
+          "type": "v2.nvd3-line",
+          "instanceName": "line",
+          "icon": "/widgets/v2.nvd3-line/icon.png",
+          "decoration":
+          {
+            "height": 250,
+            "title": "",
+            "subtitle": "",
+            "caption": "",
+            "xAxisName": "",
+            "yAxisName": "",
+            "staggerLabels": false,
+            "isArea": false,
+            "color": ["#1b9e77", "#d95f02", "#7570b3", "#e7298a", "#66a61e", "#e6ab02", "#a6761d", "#666666"],
+            "interpolation": "cardinal",
+            "showPoints": false,
+            "showLabels": false,
+            "width": 493
+          },
+          "queryID": "eventSource",
+          "axisX": -1,
+          "index": []
+        }],
+        "width": 493
+      },
+      "bottomright":
+      {
+        "widgets": [
+        {
+          "title": "Last Updates",
+          "l_listeners": "",
+          "s_listeners": "",
+          "type": "v2.dm-ds-history",
+          "instanceName": "history",
+          "icon": "/widgets/v2.dm-ds-history/icon.png"
+        },
+        {
+          "title": "Available Datasets",
+          "query": "",
+          "layout": "panel",
+          "listeners": "",
+          "rlisteners": "",
+          "dslisteners": "dsinfo,history",
+          "type": "v2.dm-ds-panel",
+          "instanceName": "datasets",
+          "icon": "/widgets/v2.dm-ds-panel/icon.png"
+        }],
+        "width": 999
+      },
+      "bottom":
+      {
+        "widgets": [],
+        "width": 1328
+      }
+    },
+    "subscriptions": [
+    {
+      "emitter": "sources",
+      "receiver": "info",
+      "signal": "setLookupKey",
+      "slot": "setLookupKey"
+    },
+    {
+      "emitter": "bp9udf4a15270tu0dt86t7qfr",
+      "receiver": "info",
+      "signal": "setLookupKey",
+      "slot": "setLookupKey"
+    },
+    {
+      "emitter": "indicators",
+      "receiver": "meta",
+      "signal": "setLookupKey",
+      "slot": "setLookupKey"
+    },
+    {
+      "emitter": "topics",
+      "receiver": "info",
+      "signal": "setLookupKey",
+      "slot": "setLookupKey"
+    },
+    {
+      "emitter": "e48wl89bxia01zg8tf8sbrzfr",
+      "receiver": "meta",
+      "signal": "setLookupKey",
+      "slot": "setLookupKey"
+    },
+    {
+      "emitter": "dsinfo",
+      "receiver": "table",
+      "signal": "setData",
+      "slot": "setData"
+    },
+    {
+      "emitter": "datasets",
+      "receiver": "dsinfo",
+      "signal": "setDataSet",
+      "slot": "setDataSet"
+    },
+    {
+      "emitter": "sources",
+      "receiver": "meta",
+      "signal": "setLookupKey",
+      "slot": "setLookupKey"
+    },
+    {
+      "emitter": "sources",
+      "receiver": "datasets",
+      "signal": "searchQuery",
+      "slot": "searchQuery"
+    },
+    {
+      "emitter": "bp9udf4a15270tu0dt86t7qfr",
+      "receiver": "meta",
+      "signal": "setLookupKey",
+      "slot": "setLookupKey"
+    },
+    {
+      "emitter": "bp9udf4a15270tu0dt86t7qfr",
+      "receiver": "datasets",
+      "signal": "searchQuery",
+      "slot": "searchQuery"
+    },
+    {
+      "emitter": "indicators",
+      "receiver": "info",
+      "signal": "setLookupKey",
+      "slot": "setLookupKey"
+    },
+    {
+      "emitter": "indicators",
+      "receiver": "datasets",
+      "signal": "searchQuery",
+      "slot": "searchQuery"
+    },
+    {
+      "emitter": "topics",
+      "receiver": "meta",
+      "signal": "setLookupKey",
+      "slot": "setLookupKey"
+    },
+    {
+      "emitter": "topics",
+      "receiver": "datasets",
+      "signal": "searchQuery",
+      "slot": "searchQuery"
+    },
+    {
+      "emitter": "e48wl89bxia01zg8tf8sbrzfr",
+      "receiver": "info",
+      "signal": "setLookupKey",
+      "slot": "setLookupKey"
+    },
+    {
+      "emitter": "e48wl89bxia01zg8tf8sbrzfr",
+      "receiver": "datasets",
+      "signal": "searchQuery",
+      "slot": "searchQuery"
+    },
+    {
+      "emitter": "datasets",
+      "receiver": "e48wl89bxia01zg8tf8sbrzfr",
+      "signal": "slaveVisibility",
+      "slot": "slaveVisibility"
+    },
+    {
+      "emitter": "dsinfo",
+      "receiver": "datasets",
+      "signal": "searchQuery",
+      "slot": "searchQuery"
+    },
+    {
+      "emitter": "dsinfo",
+      "receiver": "info",
+      "signal": "setLookupKey",
+      "slot": "setLookupKey"
+    },
+    {
+      "emitter": "dsinfo",
+      "receiver": "line",
+      "signal": "setData",
+      "slot": "setData"
+    },
+    {
+      "emitter": "datasets",
+      "receiver": "history",
+      "signal": "setDataSet",
+      "slot": "setDataSet"
+    }]
+  }],
+  "name": "DJ Data Explorer",
+  "i18n":
+  {
+    "uk":
+    {
+      "#AvDS": "Доступні набори даних:",
+      "#topics": "Теми",
+      "#sources": "Джерела",
+      "#countries": "Країни",
+      "#ukraine": "Регіони України",
+      "#keywords": "Ключові слова",
+      "#about": "Про  DJ Data",
+      "#title": "Досліди наші дані",
+      "#description": "Портал \"Doggy Jam\" надає дружній  WEB интерфейс для дослідження даних",
+      "#source": "Джерело даних",
+      "#Indicators": "Показники СЦД",
+      "#IAMS_Indicators": "ІАСК об'єкту \"Укриття\" (Чорнобильська АЕС)",
+      "#Datasource": "Джерело даних",
+      "#Topic": "Тема",
+      "#Indicator": "Показник"
+    },
+    "en":
+    {
+      "#AvDS": "Available Datasets:",
+      "#topics": "Topics",
+      "#sources": "Sources",
+      "#countries": "Countries",
+      "#ukraine": "Ukraine",
+      "#keywords": "Keywords",
+      "#about": "About DJ Data",
+      "#title": "Explore our data",
+      "#description": "\"Doggy Jam\" portal provide user frendly WEB interface for data exploration",
+      "#source": "Data source",
+      "#Indicators": "WDC indicators",
+      "#IAMS_Indicators": "IAMS for Shilter object (Chernobyl NPP)",
+      "#Datasource": "Data source",
+      "#Topic": "Topic",
+      "#Indicator": "Indicator"
+    },
+    "ru":
+    {
+      "#AvDS": "Доступные наборы данных:",
+      "#topics": "Темы",
+      "#sources": "Источники",
+      "#countries": "Страны",
+      "#ukraine": "Регионы Украины",
+      "#keywords": "Ключевые слова",
+      "#about": "Про  DJ Data",
+      "#title": "Исследуй наши данные",
+      "#description": "Портал \"Doggy Jam\" предоставляет дружественный  WEB интерфейс для исследования данных",
+      "#source": "Source",
+      "#Indicators": "Indicators",
+      "#IAMS_Indicators": "IAMS for Shilter object (Chernobyl NPP)",
+      "#Datasource": "Datasource",
+      "#Topic": "Topic",
+      "#Indicator": "Indicator"
+    }
+  },
+  "icon": "./img/default-ds-icon.png",
+  "importedFromURL": "http://dj-app.herokuapp.com/app/DJ Data Explorer",
+  "dps": "https://dj-dps.herokuapp.com",
+  "importedFromAuthor": "Andrey Boldak"
+}
