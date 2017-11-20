@@ -1,0 +1,23 @@
+{ "keywords":["data","manager","commits","datasets"],
+  "grant":["administrator"],
+  "schema": {
+    "type": "object",
+    "title": "Datasets Management",
+    "properties": {
+      "rlisteners": {
+        "type": "string",
+        "title": "Refresh Listeners"
+      },
+      "readOnly":{
+        "type":"boolean",
+        "title": "Read only",
+        "default": true
+      },
+      "presentationMode":{
+        "type":"boolean",
+        "title": "Presentation Mode",
+        "default": false
+      }
+    }
+  }
+}

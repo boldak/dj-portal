@@ -1,0 +1,12 @@
+{
+	"keywords":["application","info","about","author","description"],
+	 "schema": {
+	    "type": "object",
+	    "title": "Application Info",
+	    "properties": {
+	      "masterWidget":{
+	        "type":"string"
+	      }  
+	    }
+	  }  
+}

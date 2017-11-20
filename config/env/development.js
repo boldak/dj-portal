@@ -10,6 +10,8 @@
  *
  */
 
+var express = require('express');
+
 module.exports = {
 
   /***************************************************************************
@@ -17,6 +19,15 @@ module.exports = {
    * environment (see config/connections.js and config/models.js )           *
    ***************************************************************************/
   port: process.env.PORT || 8080,
+  http: {
+    middleware: {
+      www: express.static('public', {
+        maxAge: 20 * 60 * 1000 // 20 min and only in production
+      })
+    }
+  },
+  
+  
 
   hookTimeout: 40000,
 

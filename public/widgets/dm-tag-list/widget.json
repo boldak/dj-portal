@@ -1,0 +1,48 @@
+{
+  "keywords":["data","metadata","search","tags"],
+  "schema": {
+    "type": "object",
+    "title": "Tag List",
+    "properties": {
+      "title": {
+        "type": "string",
+        "title": "Title"
+      },
+      "collapsed":{
+        "type": "boolean",
+        "title": "Collapsed",
+        "default":false
+      },
+
+      "category": {
+        "type": "string",
+        "title": "Category"
+      },
+
+      "property": {
+        "type": "string",
+        "title": "Tag property"
+      },
+
+      "query": {
+        "type": "string",
+        "title": "Query"
+      },
+
+       "lookupListeners": {
+        "type": "string",
+        "title": "Lookup Listeners"
+      },   
+
+      "searchListeners": {
+        "type": "string",
+        "title": "Search Listeners"
+      },
+
+      "icon_class":{
+        "type": "string",
+        "title": "Icon fondation class"
+      }
+    }
+  }
+}

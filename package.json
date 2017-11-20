@@ -12,9 +12,7 @@
     "type": "git",
     "url": "git://github.com/boldak/dj-portal"
   },
-  "devDependencies": {
-    
-  },
+  "devDependencies": {},
   "dependencies": {
     "babel": "4.7.16",
     "bcryptjs": "2.1.0",
@@ -29,7 +27,6 @@
     "express": "3.20.1",
     "fast-stats": "0.0.2",
     "gravatar": "1.1.1",
-   
     "htm-to-json": "^0.1.4",
     "jspm": "0.15.4",
     "lodash-node": "^3.10.2",

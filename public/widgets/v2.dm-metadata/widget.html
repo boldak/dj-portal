@@ -1,0 +1,48 @@
+<style>
+
+  .metadataKey {
+    font-size:smaller; 
+   /* color:#154163;*/
+    padding: 0.2rem 0.625rem;
+  }
+  
+  .metadataValue {
+    font-size:smaller; 
+    /*color:#154163;*/
+    padding: 0.2rem 0.625rem;
+  }
+
+</style>
+
+<div ng-controller="V2DataManagerMetadataController"  style="    margin: 0 1.5em;
+    line-height: 1;">
+  
+  <div ng-if="object && (object !== key) && visibility && meta.length > 0" class="row" style="        margin: 1.5em 0 0 0;
+    padding: 0 1em;">
+   
+    <div class="row" style="margin:0;">
+      <h5>
+      {{title | translate}}
+      </h5>
+    </div>      
+      <div class="row" style="font-size:small;margin:0;">
+        <table width="100%">
+          <thead>
+            <tr>
+              <th class = "metadataKey" widget-translate>Key</th>
+              <th class = "metadataKey" widget-translate>Value</th>
+            </tr>
+          </thead>
+          <tbody>  
+            <tr ng-repeat="item in meta">
+              <th class = "metadataKey">{{item.key | translate}}</th>
+              <td class = "metadataValue">{{item.value | translate}}</td>
+            </tr>
+          </tbody>   
+        </table>
+      </div>
+    
+  </div>
+</div>    
+
+    

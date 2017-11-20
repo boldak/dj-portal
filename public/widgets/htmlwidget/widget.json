@@ -1,0 +1,17 @@
+{
+  "keywords":["html","fragment","static"],
+  "schema": {
+    "type": "object",
+    "title": "Visual editor",
+    "properties": {
+      "text": {
+        "title": "Edit html code",
+        "format": "html",
+        "type": "string",
+        "options": {
+          "wysiwyg": true
+        }
+      }
+    }
+  }
+}

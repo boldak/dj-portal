@@ -1,0 +1,24 @@
+{ 
+  "keywords":["data","metadata","search","tags"],
+  "schema": {
+    "type": "object",
+    "title": "Tag Cloud",
+    "properties": {
+      
+       "lookupListeners": {
+        "type": "string",
+        "title": "Lookup Listeners"
+      },   
+
+      "searchListeners": {
+        "type": "string",
+        "title": "Search Listeners"
+      },
+
+       "masterWidget":{
+        "type":"string"
+      }  
+
+    }
+  }
+}

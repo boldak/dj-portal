@@ -1,0 +1,18 @@
+{
+  "keywords":["data","management","interactive","master", "description", "lookup"],
+  "schema": {
+    "type": "object",
+    "title": "Key Lookup",
+    "properties": {
+      "title": {
+        "type": "string",
+        "title": "Title"
+      },
+  
+      "icon_class":{
+        "type": "string",
+        "title": "Icon fondation class"
+      }
+    }
+  }
+}

@@ -1,0 +1,113 @@
+<style>
+  .scriptInput{
+        font-family: monospace, monospace;
+        font-size: medium;
+        /*font-weight: bold;*/
+        color: #007095;
+        line-height: 0.9;
+  }
+
+  .prettify-dps {
+    font-size:medium;
+    line-height:1;
+    background: #efefef;
+  }
+
+  .prettify-dps .comment{
+    color:#777;
+  }
+
+  .prettify-dps .command{
+    color:#a0a;
+  }
+
+  .prettify-dps .property{
+    color:#00a;
+  }
+
+  .prettify-dps .textValue{
+    color:#0a0;
+  }
+
+  .prettify-dps .injection{
+    color:#a00;
+  }
+  
+  .editor {
+        width: 100%;
+        height: 100%;
+        margin: 0;
+        font-size: 1em;
+        line-height: 0.9;
+  }
+
+  .highlighter {
+    line-height: 1;
+  }
+  
+</style>
+<div ng-controller="ScriptController"
+     ng-show = "(!widget.hidden && !globalConfig.designMode) || globalConfig.designMode"  
+  style=" 
+          padding: 0.5rem;
+          margin-top: 0.5rem;
+         ">
+    
+    <h5>{{widget.title | translate}}</h5>
+    <div ng-show = "widget.examples" class="row" style="margin: 0.5em 0 0 0; height:auto;">
+       <label style="    float: left;
+                          margin: 0.5rem;">
+        Script
+      </label>
+
+      <select ng-model="selectedExample"   
+              style="width: 70%;margin: 0 0 0.5rem 1rem;" >
+            <option ng-repeat="option in examples" value="{{option.title}}">
+              {{option.title}}
+            </option>
+      </select>
+    </div>
+    <div class="row" style="margin:0" ng-if="globalConfig.designMode && widget.hidden">
+      <span class="right alert">HIDDEN IN PRESENTATION MODE</span>
+    </div>  
+    <div class="row" style="margin:0" ng-if="globalConfig.designMode && !widget.editor">
+      <span class="right alert">READ ONLY IN PRESENTATION MODE</span>
+    </div>
+    <div  class="row" 
+          ng-if="!widget.editor && !globalConfig.designMode"
+          style="margin: 0; padding: 0.1em; border: 1px solid #aaa;">
+      <highlight settings = "settings"></highlight>
+    </div>
+    
+    <div  class="row"
+          ng-if="widget.editor || globalConfig.designMode"
+          style="padding: 0.1rem; border: 1px solid #aaa; margin:0; height:{{(widget.height || 20)+'em'}}">
+      
+      <div  class= "editor"
+            ng-ace
+            data="script" 
+            options = "options">
+      </div>
+   
+    </div>
+    
+   
+    <div ng-if="widget.runnable" class="row" style="margin: 0.5em 0 0 0;">
+      <img  ng-show="!response" 
+        src="./img/ajax-loader.gif" 
+        class="right" 
+        style="margin:0.5rem 1rem;"/>
+       <button
+          ng-show="response"
+          ng-click = "runScript()"  
+          class="button right small radius success" 
+          style="     padding: 0.5em;
+                      font-stretch: ultra-condensed;
+                      margin: 0.3rem 0.5em 0.1rem;">
+          Run <i class="fi-play" style="margin: 0 0.5rem;"></i>
+       </button>
+    </div>  
+    
+   
+</div>
+

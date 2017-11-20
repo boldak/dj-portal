@@ -1,0 +1,33 @@
+/***************************************************************
+* Copyright (c) 2014-2017 Andrey Boldak                        *
+* MIT License - http://opensource.org/licenses/mit-license.php *
+*                                                              *
+*              DJ Data Processing Script Example               *
+*                                                              *
+****************************************************************
+* File: bar.dps                                                *
+*                                                              *
+* Description: Data Visualization. Build Vertical Bar chart    *
+*                                                              *
+****************************************************************/
+
+    load(
+        ds:'47611d63-b230-11e6-8a1a-0f91ca29d77e_2016_02',
+        as:'dataset'
+    )
+    
+    query([
+      { dim:'time', role:'row', items:[] },
+      { 
+        dim:'indicator', 
+        role:'col', 
+        items:['NSMS_DAU001_NFD004'] 
+      } 
+    ])
+    
+    // create histogramm
+    
+    hist(dir:'col', beans:10)
+    format(p:2)
+    
+    bar()

@@ -1,0 +1,136 @@
+{
+  "1-col": {
+    "description": "One-column layout",
+    "holders" : [
+      "banner",
+      "column"
+    ]
+  },
+  
+  
+  "f-layout-home": {
+    "description": "Foundation 5.0 Homepage layout",
+    "holders" : [
+      "banner",
+      "header",
+      "callout0",
+      "callout1",
+      "callout2",
+      "main",
+      "feature0",
+      "feature1",
+      "feature2",
+      "feature3",
+      "footer"
+    ]
+  },
+
+  "tutorial-layout": {
+    "description": "Tutorial layout",
+    "holders" : [
+      "banner",
+      "header",
+      "callout0",
+      "callout1",
+      "main"
+    ]
+  },
+  
+  "2-cols": {
+    "description": "Two-column layout",
+    "holders" : [
+      "banner",
+      "column",
+      "left",
+      "right"
+    ]
+  },
+
+  "2(3x9)-cols": {
+    "description": "Two-column 3:9 layout",
+    "holders" : [
+      "banner",
+      "column",
+      "topleft",
+      "topright",
+      "detail1",
+      "detail2",
+      "bottomright",
+      "bottom"
+    ]
+  },
+
+  "2(3x9)details": {
+    "description": "Two-column 3:9 layout",
+    "holders" : [
+      "banner",
+      "column",
+      "topleft",
+      "topright",
+      "detail1",
+      "detail2",
+      "detail3",
+      "bottomright",
+      "bottom"
+    ]
+  },
+
+  "2(9x3)-cols": {
+    "description": "Two-column 9:3 layout",
+    "holders" : [
+      "banner",
+      "column",
+      "topleft",
+      "topright",
+      "bottom"
+    ]
+  },
+
+  "3x6x3": {
+    "description": "Three-column 3:6:3 layout",
+    "holders" : [
+      "banner",
+      "column",
+      "left",
+      "middle",
+      "right",
+      "bottom"
+    ]
+  },
+  
+  
+  "4x4x4": {
+    "description": "Three-column 4:4:4 layout",
+    "holders" : [
+      "banner",
+      "column",
+      "left",
+      "middle",
+      "right",
+      "bottom"
+    ]
+  },
+
+  "2x2": {
+    "description": "2-column 2-rows layout",
+    "holders" : [
+      "banner",
+      "column",
+      "topleft",
+      "topright",
+      "bottomleft",
+      "bottomright"
+    ]
+  },
+
+  "left-right-bottom": {
+    "description": "Layout with two columns in first row and one column in second row",
+    "holders" : [
+      "banner",
+      "column",
+      "topleft",
+      "topright",
+      "bottom"
+    ]
+  }
+}

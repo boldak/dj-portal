@@ -12,7 +12,9 @@
 
 var path = require('path');
 var express = require('express');
-var staticPath = path.join('.tmp', 'public');
+//var staticPath = path.join('.tmp', 'public');
+
+var staticPath =  'public';
 
 module.exports = {
 

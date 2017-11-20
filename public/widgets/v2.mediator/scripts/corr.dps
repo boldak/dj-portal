@@ -1,0 +1,25 @@
+/***************************************************************
+* Copyright (c) 2014-2017 Andrey Boldak                        *
+* MIT License - http://opensource.org/licenses/mit-license.php *
+*                                                              *
+*              DJ Data Processing Script Example               *
+*                                                              *
+****************************************************************
+* File: corr.dps        		                               *
+*                                                              *
+* Description: Correlation matrix                              *
+*                                                              *
+****************************************************************/
+
+load(
+    ds:'47611d63-b230-11e6-8a1a-0f91ca29d77e_2016_02',
+    as:'dataset'
+)
+
+proj([
+  { dim:'time', as:'row'},
+  { dim:'indicator', as:'col'}
+])
+
+corr(for:'col')
+format(3)
