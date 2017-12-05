@@ -416,6 +416,7 @@ define(["angular",
                     item.disabled = index != 0
                   })    
               }
+              // console.log($scope.data)
             // console.log("q.all()")
               $scope.settings = {
                   options : angular.copy($scope.expandOptions($scope.options)), 
@@ -593,6 +594,9 @@ define(["angular",
 
 
         .provide("selectSerie", (e,selection) =>{
+
+          // console.log("select serie listener ", $scope.widget);
+          // console.log("selection",selection);
           if($scope.decorationAdapter.onSelectSerie){
               let s = $scope.decorationAdapter.onSelectSerie(
                 selection,

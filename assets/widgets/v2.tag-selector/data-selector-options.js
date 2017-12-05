@@ -37,7 +37,8 @@ m.factory("DataSelectorOptions",[
 	    			queryID : wizard.conf.queryID,
 	    			serieDataId : wizard.conf.serieDataId,
 	    			optionsUrl : "./widgets/v2.nvd3-bar/options.json",
-	    			dataUrl : $dps.getUrl()+"/api/data/process/"
+	    			dataUrl : $dps.getUrl()+"/api/data/process/",
+	    			script: wizard.conf.script
 	    		}	
 
 	    		this.conf.decoration.direction = this.conf.decoration.direction || "Rows";
@@ -108,7 +109,8 @@ m.factory("DataSelectorOptions",[
 					: table.header[0].metadata;
 				this.metadataList = list.map((d,i) => {return {key:d.dimensionLabel, index:i}})	
 			},
-	    	
+
+			
 			loadData: function(){
 				let thos = this;
 				if(!this.wizard.context.postprocessedTable){
@@ -121,6 +123,7 @@ m.factory("DataSelectorOptions",[
 			              thos.apply()
 			          })
 				}
+				
 			},
 
 			activate : function(wizard){

@@ -6,6 +6,7 @@ const m = angular.module('app.widgets.v2.line-chart-adapter', []);
 m.service('LineChartAdapter', function () {
 
     this.onSelectSerie = (selection,settings,api) => {
+      // console.log("Select serie",selection, settings);
       let data = d3.select(api.getSVG()).data();
       settings.data.forEach((s) => {
         let f = selection.filter(l => l.key == s.key)[0]
@@ -55,7 +56,7 @@ m.service('LineChartAdapter', function () {
 
   this.getDecoration = function (options) {
     if (angular.isDefined(options)) {
-      console.log(options);
+      // console.log(options);
       var decoration = {}
       decoration.height = options.chart.height;
       decoration.title = options.title.text;

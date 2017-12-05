@@ -7,7 +7,7 @@ const m = angular.module('app.widgets.v2.data-selector', ["app.dps",
 ]);
 
 
-m.controller('DataSelectorCtrlV2', function ($scope, $http, $dps, DataSelectorWizard, APIProvider, EventEmitter) {
+m.controller('DataSelectorCtrlV2', function ($scope, $http, $dps, DataSelectorWizard, APIProvider, EventEmitter, i18n) {
   
   $scope.emitter = new EventEmitter($scope);
 
@@ -107,22 +107,51 @@ m.controller('DataSelectorCtrlV2', function ($scope, $http, $dps, DataSelectorWi
     $scope.load = function(){
       // $http
       //   .get("./api/data/process/"+$scope.widget.dataID)
-      $dps
-        .get("/api/data/process/"+$scope.widget.dataID)  
-        .then((resp) => {
-          let table = resp.data.value;
-          let list = ($scope.widget.decoration.direction == "Rows")
-          ? table.body
-          : table.header;
-          list = list.map((item) => {
-            return { 
-              id:item.metadata[$scope.widget.decoration.meta.index].id,
-              key:item.metadata[$scope.widget.decoration.meta.index].label, 
-              disabled: true
-            }
-          }) 
-          $scope.$parent.getSelectorData(list)
-        })
+
+      if($scope.widget.script){
+          $dps.post("/api/script",{
+                                "script": $scope.widget.script,
+                                "locale": i18n.locale()
+                            })
+          .then((resp) => {
+            let d = resp.data;
+            if (d.data.type == "error") {
+                $error(d.data)
+                return
+            };
+
+            let table = d.data;
+            let list = ($scope.widget.decoration.direction == "Rows")
+            ? table.body
+            : table.header;
+            list = list.map((item) => {
+              return { 
+                id:item.metadata[$scope.widget.decoration.meta.index].id,
+                key:item.metadata[$scope.widget.decoration.meta.index].label, 
+                disabled: true
+              }
+            }) 
+            $scope.$parent.getSelectorData(list)
+          })          
+        } else if ($scope.widget.dataID) {
+          $dps
+            .get("/api/data/process/"+$scope.widget.dataID)  
+            .then((resp) => {
+              let table = resp.data.value;
+              let list = ($scope.widget.decoration.direction == "Rows")
+              ? table.body
+              : table.header;
+              list = list.map((item) => {
+                return { 
+                  id:item.metadata[$scope.widget.decoration.meta.index].id,
+                  key:item.metadata[$scope.widget.decoration.meta.index].label, 
+                  disabled: true
+                }
+              }) 
+              $scope.$parent.getSelectorData(list)
+            })
+        }
+      
     }  
 
 
@@ -141,9 +170,13 @@ m.controller('DataSelectorCtrlV2', function ($scope, $http, $dps, DataSelectorWi
     })
 
     .translate(function(){
-      $scope.selector.clear();
-      $scope.selected.forEach((item) => {
-        $scope.selector.selectObject(item.key)
-      })
+      if($scope.selector) {
+        $scope.selector.clear();
+        $scope.selected.forEach((item) => {
+          $scope.selector.selectObject(item.key)
+        })
+      }
+        
+      
     })
 });

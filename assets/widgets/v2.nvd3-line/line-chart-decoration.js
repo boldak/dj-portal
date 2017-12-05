@@ -41,6 +41,8 @@ m.factory("LineChartDecoration",[
 	    		// console.log("DECORATION START Wizard CONF", wizard.conf);
 	    		// console.log("DECORATION START axisX", wizard.conf.axisX);
 	    		this.inputQuery = undefined;
+
+	    		
 	    		
 	    		this.wizard = wizard;
 	    		this.conf = {

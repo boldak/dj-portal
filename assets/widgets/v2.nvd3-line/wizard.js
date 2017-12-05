@@ -43,7 +43,7 @@ m.factory("LineChartWizard",["$http",
 	          .onStart(function(wizard){
 	          	wizard.conf = {};
 	            angular.copy(wizard.parentScope.widget, wizard.conf);
-	            console.log("Start conf", wizard.conf)
+	            // console.log("Start conf", wizard.conf)
 	          })
 
 
