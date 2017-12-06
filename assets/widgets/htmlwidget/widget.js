@@ -165,6 +165,7 @@ angular.module('app.widgets.htmlwidget', [])
 
         apiProvider
             .config(() => {
+                console.log("update widget",$scope.widget )
                 $scope.update($scope.widget.text)
                 // $scope.test = "TEST";
                 // $scope.API = $scope.API;

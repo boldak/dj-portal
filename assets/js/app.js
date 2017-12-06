@@ -384,22 +384,43 @@ app.service('app', function ($http, $state, $stateParams, $log, config, $rootSco
       }
     },
 
-    submitToServer(callback) {
+    submitToServer(errorCallback, successCallback) {
       this.sendingToServer = true;
       return $http.put(appUrls.appConfig, config)
         .then(() => {
           this.wasSavedEver = true;
           this.sendingToServer = false;
           this.wasModified = false;
-
+          if(successCallback){
+            successCallback()
+          }
           if (config.name !== appName) {
             fullReload(appUrls.app(config.name, $stateParams.href));
           }
         }, (data) => {
           this.sendingToServer = false;
-          if (callback) {
-            callback(data);
+          if (errorCallback) {
+            errorCallback(data);
           }
+        });
+    },
+
+     save(cb) {
+      this.sendingToServer = true;
+      return $http.put(appUrls.appConfig, config)
+        .then(() => {
+          this.wasSavedEver = true;
+          this.sendingToServer = false;
+          this.wasModified = false;
+          if(cb){
+            cb()
+          }
+          if (config.name !== appName) {
+            fullReload(appUrls.app(config.name, $stateParams.href));
+          }
+        }, (data) => {
+          this.sendingToServer = false;
+          alertAppConfigSubmissionFailed(data)
         });
     },
 

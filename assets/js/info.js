@@ -172,18 +172,22 @@ info.factory('splash', function($modal) {
 });
 
 info.factory('progress', function($modal) {
-    return (title) => {
+    return (title,min,max,status) => {
         var instance = {};
-        $modal.open({
+        return $modal.open({
             templateUrl: '/partials/progress.html',
             windowClass: "splash-modal",
             controller:"ProgressController",
             resolve: {
                 instance: () => instance,
-                title: () => title
+                title: () => title  || "Progress",
+                min: () => min || 0,
+                max: () => max || 100,
+                status: () => status || "Operation progress"
             }
-        })
-        return instance;
+        }).opened.then(() => instance);
+        
+        
   }
 
     // return {
@@ -361,7 +365,7 @@ info.controller('DialogController', function($scope, $modalInstance, form) {
 
 
     $scope.form.dismiss = function() {
-        console.log($scope.form)
+        // console.log($scope.form)
         $scope.form.dismissed = true;
         $modalInstance.dismiss();
     };
@@ -377,10 +381,20 @@ info.controller('SplashController', function($scope, $modalInstance, form, wait)
     }
 });
 
-info.controller('ProgressController', function($scope, $modalInstance, instance, title) {
+info.controller('ProgressController', function($scope, $modalInstance, instance, title, min, max, status) {
     $scope.title = title;
+    $scope.min = min;
+    $scope.max = max;
+    $scope.now = min;
+    $scope.status = status;
+    $scope.p = Math.round(($scope.now-$scope.min)/($scope.max-$scope.min)*100)+"%";
     instance.close = function(){
       $modalInstance.dismiss()
+    }
+    instance.set = (value, status) => {
+        $scope.now = value || $scope.min;
+        $scope.status = status || $scope.status;
+        $scope.p = Math.round(($scope.now-$scope.min)/($scope.max-$scope.min)*100)+"%";
     }
 });
 

@@ -1,6 +1,13 @@
   <div>
-	 <center>
-	 	<span style="font-size:small">{{title}}</span> <img src="./img/ajax-loader.gif" style="margin:"1px 0 0 0.5em;">
-	 </center>
+	 <!-- <center> -->
+	 	<span style="font-size:small; font-weight:bold">{{title}}</span> 
+	 	
+	 	<div class="progress" role="progressbar" tabindex="0" aria-valuenow="{{now}}" aria-valuemin="{{min}}" aria-valuetext="25 percent" aria-valuemax="{{max}}">
+		  <span class="progress-meter" style="width: {{p}}">
+		    <p class="progress-meter-text">{{p}}</p>
+		  </span>
+		</div>
+	<!-- </center> -->
+	<span style="font-size:small">{{status}}</span> 
   </div>
   

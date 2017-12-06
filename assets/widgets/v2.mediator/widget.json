@@ -3,6 +3,12 @@
   "schema": {
     "type": "object",
     "title": "Event Mediator Script",
-    "properties": {}
+    "properties": {
+    	"runOnDesignMode":{
+	    	"type": "boolean",
+	        "title": "Autorun on design mode",
+	        "default": true
+		}    
+    }
   }
 }

@@ -1,5 +1,6 @@
 import angular from 'angular';
 import 'ng-ace';
+import 'lodash';
 
 
 let m = angular.module('app.widgets.v2.mediator', [
@@ -30,7 +31,9 @@ m.controller('MediatorController', function(
     $info,
     app,
     logIn,
-    splash) {
+    splash,
+    globalConfig,
+    progress) {
 
     const eventEmitter = new EventEmitter($scope);
     const apiProvider = new APIProvider($scope);
@@ -63,10 +66,17 @@ m.controller('MediatorController', function(
             return instanceNameToScope.get(widgetName)
         },
 
+        updateWidgets: () => {
+           eventEmitter.emit(APIProvider.RECONFIG_SLOT)
+        },
+
         config: () => config,
+        globalConfig: () => globalConfig,
         user: () => user,
         app: () => app,
         logIn: logIn,
+
+        _ : _,
 
         provide: function(params) {
             let event = params.event;
@@ -145,6 +155,10 @@ m.controller('MediatorController', function(
             splash(message)
         },
 
+        progress: function(title, min, max, status){
+            return progress(title, min, max, status)
+        },
+
         dialog: function(form){
             return dialog(form)
         },
@@ -205,7 +219,7 @@ m.controller('MediatorController', function(
 
     apiProvider
         .config(() => {
-            if(!$scope.globalConfig.designMode)
+            if(!$scope.globalConfig.designMode || $scope.widget.runOnDesignMode)
                 $scope.run()
         })
         // .openCustomSettings(function() {

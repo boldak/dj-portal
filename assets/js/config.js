@@ -58,6 +58,7 @@ System.config({
     "nv.d3": "components/nvd3/nv.d3.js",
     "wizard-directives": "widgets/v2.steps/wizard-directives.js",
     "md5": "components/md5/js/md5.js",
+    "lodash": "components/lodash/lodash.js",
     "pretty-data": "js/lib/pretty-data/pretty-data.js",
     "*": "*.js",
     "github:*": "../../jspm_packages/github/*.js"
@@ -230,6 +231,9 @@ System.config({
     },
     "d3": {
       "exports": "d3"
+    },
+    "lodash": {
+      "exports": "_"
     },
     "jsinq": {
       "exports": "jsinq"
