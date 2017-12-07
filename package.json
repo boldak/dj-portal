@@ -123,7 +123,7 @@
   },
   "main": "app.js",
   "engines": {
-    "node": "0.12.x",
-    "npm": "2.x.x"
+    "node": "8.9.x",
+    "npm": "5.x.x"
   }
 }
