@@ -74,7 +74,6 @@
     "gulp-react": "^3.1.0",
     "gulp-rename": "1.2.2",
     "gulp-run": "1.6.7",
-    "gulp-sass": "^2.2.0",
     "gulp-shell": "0.4.1",
     "gulp-size": "1.2.1",
     "gulp-sourcemaps": "1.5.2",
