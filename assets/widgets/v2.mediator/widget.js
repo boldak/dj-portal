@@ -66,6 +66,8 @@ m.controller('MediatorController', function(
             return instanceNameToScope.get(widgetName)
         },
 
+        caller: () => $scope.caller,
+
         updateWidgets: () => {
            eventEmitter.emit(APIProvider.RECONFIG_SLOT)
         },
@@ -218,7 +220,12 @@ m.controller('MediatorController', function(
     }
 
     apiProvider
-        .config(() => {
+        .config((...args) => {
+            
+            if(args && args[1]){
+                $scope.caller = args[1].source;
+            }
+            
             if(!$scope.globalConfig.designMode || $scope.widget.runOnDesignMode)
                 $scope.run()
         })

@@ -94,7 +94,7 @@ widgetApi.factory('APIProvider', function ($rootScope, $log,
      */
     config(slotFn, enableReconfiguring) {
       enableReconfiguring = enableReconfiguring === undefined ? true : enableReconfiguring;
-      slotFn();
+      slotFn({event:APIProvider.RECONFIG_SLOT}, {source:"$application"});
       if (enableReconfiguring) {
         this.provide(APIProvider.RECONFIG_SLOT, slotFn);
       }
@@ -223,6 +223,8 @@ widgetApi.factory('APIUser', function (widgetSlots, instanceNameToScope, getWidg
   class APIUser {
     constructor(controllerScope) {
       this.scope = getWidgetDirectiveScopeFromControllerScope(controllerScope);
+      // console.log("APIUser ", this.scope, this.userName())
+
     }
 
     /**
@@ -246,6 +248,7 @@ widgetApi.factory('APIUser', function (widgetSlots, instanceNameToScope, getWidg
      * @returns {*}
      */
     invoke(providerName, slotName, ...args) {
+      // console.log("Invoke ", providerName, slotName, args)
       const providerScope = APIUser.getScopeByInstanceName(providerName);
       if (!widgetSlots.has(providerScope)) {
         throw `Provider ${providerName} doesn't exist`;
@@ -292,12 +295,14 @@ widgetApi.factory('APIUser', function (widgetSlots, instanceNameToScope, getWidg
      * @param slotName Name of the slot
      */
     invokeAll(slotName, ...args) {
+      // console.log("Start invokeAll with ", slotName, args)
       for (let slots of widgetSlots.values()) {
         for (let slot of slots) {
           if (slot.slotName === slotName) {
+            // console.log("invokeAll ", this.userName())
             slot.fn.apply(undefined, [{
               emitterName: this.userName(),
-              signalName: undefined
+              signalName: slotName//undefined
             }].concat(args));
           }
         }

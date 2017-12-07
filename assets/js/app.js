@@ -179,14 +179,14 @@ app.config(function ($stateProvider, $urlRouterProvider, $urlMatcherFactoryProvi
   $urlMatcherFactoryProvider.strictMode(false);
 
   $urlRouterProvider.when(`/app/${appName}`, ($state) => {
-    console.log("WHEN state", $state)
+    // console.log("WHEN state", $state)
     $state.go('page', {href: ''});
   });
 
   // If url is not in this app URL scope - reload the whole page.
   $urlRouterProvider
     .otherwise(($injector, $location) => {
-      console.log("otherwise location", $location)
+      // console.log("otherwise location", $location)
       $injector.get('$window').location.href = $location.url();
     });
 
@@ -348,7 +348,7 @@ app.service('app', function ($http, $state, $stateParams, $log, config, $rootSco
     pageIndexByHref(href) {
       
       var user = new APIUser();
-      user.invokeAll('BEFORE_CHANGE_PAGE_SLOT');
+      user.invokeAll('BEFORE_CHANGE_PAGE_SLOT',{source:"$application"});
       
       let result = config.pages.findIndex(p => p.href === href);
       if (result !== -1) {
@@ -743,27 +743,29 @@ app.service('widgetLoader', function ($q, $ocLazyLoad, widgetTypesPromise, appUr
 });
 
 app.service('widgetManager', function ($modal, $timeout, APIUser, APIProvider,
-                                       appUrls, app, randomWidgetName) {
+                                       appUrls, app, randomWidgetName, instanceNameToScope) {
   angular.extend(this, {
     deleteIthWidgetFromHolder(holder, index) {
       const removedWidget = holder.widgets.splice(index, 1)[0];
       const user = new APIUser();
-      user.tryInvoke(removedWidget.instanceName, APIProvider.REMOVAL_SLOT);
+      user.tryInvoke(removedWidget.instanceName, APIProvider.REMOVAL_SLOT,{source:"$applicattion"});
       app.markModified(true);
     },
 
     openWidgetConfigurationDialog(widget) {
-      const invocation = (new APIUser()).tryInvoke(widget.instanceName, APIProvider.OPEN_CUSTOM_SETTINGS_SLOT);
+      // console.log("Open config", widget, instanceNameToScope.get(widget.instanceName))
+      const invocation = (new APIUser()).tryInvoke(widget.instanceName, APIProvider.OPEN_CUSTOM_SETTINGS_SLOT,{source:"$applicattion"});
       if (!invocation.success) {
         this.openDefaultWidgetConfigurationDialog(widget);
       }else{
         // console.log("Returns from config dialog", invocation)
         if(invocation.result){
           invocation.result.then(() => {
-            const user = new APIUser();
-            user.invokeAll(APIProvider.RECONFIG_SLOT);
+            // console.log("before invoke", instanceNameToScope.get(widget.instanceName))
+            const user = new APIUser());
+            user.invokeAll(APIProvider.RECONFIG_SLOT,{source:widget.instanceName});
             app.markModified(true);
-            user.invokeAll(APIProvider.PAGE_COMPLETE_SLOT)    
+            user.invokeAll(APIProvider.PAGE_COMPLETE_SLOT,{source:widget.instanceName})    
           })
         }
       }
@@ -792,9 +794,9 @@ app.service('widgetManager', function ($modal, $timeout, APIUser, APIProvider,
       }).result.then((newWidgetConfig) => {
           angular.copy(newWidgetConfig, widget);
           const user = new APIUser();
-          user.invokeAll(APIProvider.RECONFIG_SLOT);
+          user.invokeAll(APIProvider.RECONFIG_SLOT,{source:widget.instanceName});
           app.markModified(true);
-          user.invokeAll(APIProvider.PAGE_COMPLETE_SLOT)
+          user.invokeAll(APIProvider.PAGE_COMPLETE_SLOT,{source:widget.instanceName})
         });
     },
 
@@ -828,8 +830,8 @@ app.service('widgetManager', function ($modal, $timeout, APIUser, APIProvider,
     cloneWidget(holder, widget){
       const newWidget = angular.copy(widget);
       newWidget.instanceName = randomWidgetName();
-      console.log("Cloned", widget)
-      console.log("Holder", holder)
+      // console.log("Cloned", widget)
+      // console.log("Holder", holder)
       var pos = holder.widgets.map(function(item){return item.instanceName}).indexOf(widget.instanceName)
       holder.widgets.splice(pos,0,newWidget)
       // holder.widgets.push(newWidget);
@@ -966,9 +968,9 @@ app.controller('MainController', function ($scope, $location, $cookies, $window,
     cnf.debugMode = cnf.debugMode && !cnf.designMode;
     var user = new APIUser();
     if(globalConfig.designMode) {
-      user.invokeAll(APIProvider.BEFORE_DESIGN_MODE_SLOT);
+      user.invokeAll(APIProvider.BEFORE_DESIGN_MODE_SLOT,{source:"$application"});
     }else{
-      user.invokeAll(APIProvider.BEFORE_PRESENTATION_MODE_SLOT);
+      user.invokeAll(APIProvider.BEFORE_PRESENTATION_MODE_SLOT,{source:"$application"});
     }  
    
   });

@@ -176,14 +176,14 @@ info.factory('progress', function($modal) {
         var instance = {};
         return $modal.open({
             templateUrl: '/partials/progress.html',
-            windowClass: "splash-modal",
+            windowClass: "info-modal",
             controller:"ProgressController",
             resolve: {
                 instance: () => instance,
                 title: () => title  || "Progress",
                 min: () => min || 0,
                 max: () => max || 100,
-                status: () => status || "Operation progress"
+                status: () => status || "\r\n"
             }
         }).opened.then(() => instance);
         
@@ -393,7 +393,7 @@ info.controller('ProgressController', function($scope, $modalInstance, instance,
     }
     instance.set = (value, status) => {
         $scope.now = value || $scope.min;
-        $scope.status = status || $scope.status;
+        $scope.status = (status) ? "\r\n "+status+$scope.status : $scope.status;
         $scope.p = Math.round(($scope.now-$scope.min)/($scope.max-$scope.min)*100)+"%";
     }
 });

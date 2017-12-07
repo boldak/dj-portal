@@ -1,6 +1,6 @@
   <div>
 	 <!-- <center> -->
-	 	<span style="font-size:small; font-weight:bold">{{title}}</span> 
+	 	<span style="font-size:large;">{{title}}</span> 
 	 	
 	 	<div class="progress" role="progressbar" tabindex="0" aria-valuenow="{{now}}" aria-valuemin="{{min}}" aria-valuetext="25 percent" aria-valuemax="{{max}}">
 		  <span class="progress-meter" style="width: {{p}}">
@@ -8,6 +8,10 @@
 		  </span>
 		</div>
 	<!-- </center> -->
-	<span style="font-size:small">{{status}}</span> 
+	<span style="font-size:x-small">
+		<pre  style="line-height: 1em; overflow: hidden; height: 7rem;">
+			{{status}}
+		</pre>	
+	</span> 
   </div>
   
