@@ -13,7 +13,6 @@ import 'angular-hotkeys';
 import 'angular-scroll';
 import 'ngReact';
 
-
 import 'file-upload';
 import 'ngstorage';
 import 'sceditor';
@@ -30,9 +29,6 @@ import 'modal-controllers';
 import 'skin-directives'
 import 'user';
 import 'widget-api';
-
-
-
 
 const app = angular.module('app', ['ui.router', 'ngStorage', 'ngAnimate', 'oc.lazyLoad', 'mm.foundation',
   'ngCookies', 'angular-json-editor', 'ui.tree','angular-clipboard','cfp.hotkeys',
@@ -762,7 +758,7 @@ app.service('widgetManager', function ($modal, $timeout, APIUser, APIProvider,
         if(invocation.result){
           invocation.result.then(() => {
             // console.log("before invoke", instanceNameToScope.get(widget.instanceName))
-            const user = new APIUser());
+            const user = new APIUser();
             user.invokeAll(APIProvider.RECONFIG_SLOT,{source:widget.instanceName});
             app.markModified(true);
             user.invokeAll(APIProvider.PAGE_COMPLETE_SLOT,{source:widget.instanceName})    
