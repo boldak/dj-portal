@@ -24,7 +24,7 @@ function generatePath(points){
 } 
 
 
-
+d3.layout.timeline = (d3.layout.timeline) ? d3.layout.timeline : d3.timeline;
 
 var layout = function(){
   this._layout = d3.layout.timeline();
