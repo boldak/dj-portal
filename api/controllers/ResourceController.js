@@ -33,8 +33,12 @@ module.exports = {
       if(!obj){
         return res.notFound();
       }
+      // console.log("get resource: ", obj.path);
+      // console.log("content-type: ", mime.lookup(path.basename(obj.path)));
+      // console.log("buffer", obj.data.buffer);
       res.setHeader('Content-type', mime.lookup(path.basename(obj.path)));
-      return res.send(obj.data.buffer);
+      return res.send(obj.data);
+      // return res.send(obj.data.buffer);
     })
   },
 
