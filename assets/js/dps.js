@@ -11,11 +11,11 @@ dps.run (function(config, $location){
 
 dps.service('$dps',
 
-   	function($http, config, $location, FileSaver, Blob){
+   	function($http, config, $location, FileSaver, Blob, user,appName,i18n){
    	    var dpsURL = config.dps || $location.protocol()+'://'+$location.host()+":"+$location.port();
 		angular.extend(this,
 			{
-				get : function(url,config){
+				get : function(url,config, timeout, dpsHost){
 					// $http.jsonp(dpsURL+url+"?callback=JSON_CALLBACK",config)
 					// .then(function(data,status){
 					// 	console.log(dpsURL+url+"?callback=JSON_CALLBACK");
@@ -23,11 +23,23 @@ dps.service('$dps',
 					// 	console.log(status)
 					// })
 					// return $http.jsonp(dpsURL+url+"?callback=JSON_CALLBACK",config)
-					return $http.get(dpsURL+url,config)
+					dpsHost = dpsHost || dpsURL; 
+					config = config || {};
+					config.client = {user: user, app: appName};
+					config.locale = config.locale || i18n.locale(); 
+					return $http.get(dpsHost+url,config)
 				},
 				
-				post : function (url,config){
-					return $http.post(dpsURL+url, config)
+				post : function (url, config, tiomeout, dpsHost){
+					console.log("dpsHost1", dpsHost)
+					dpsHost = dpsHost || dpsURL; 
+					console.log("dpsHost2", dpsHost)
+										
+					config = config || {};
+					config.client = {user: user, app: appName};
+					config.locale = config.locale || i18n.locale();
+					console.log(dpsHost+url, config)
+					return $http.post(dpsHost+url, config)
 				},
 
 				downloadJSON: function(data,file){
