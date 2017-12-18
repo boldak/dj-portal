@@ -169,11 +169,11 @@ passport.connect = function (req, query, profile, next) {
         }
 
         // Save any updates to the Passport before moving on
-        passport.save(function (err, passport) {
+        passport.save(function (err){//, passport) {
           if (err) {
             return next(err);
           }
-
+          // console.log("passport", passport)
           // Fetch the user associated with the Passport
           User.findOne(passport.user.id, next);
         });
