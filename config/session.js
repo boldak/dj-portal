@@ -12,6 +12,18 @@
  * http://sailsjs.org/#/documentation/reference/sails.config/sails.config.session.html
  */
 
+
+console.log("Production mode:")
+console.log({
+  adapter: 'mongo',
+  host: process.env.DB_PORT_27017_TCP_ADDR || '127.0.0.1',
+  port: process.env.DB_PORT_27017_TCP_PORT || 27017,
+  db: 'dj-session',
+  collection: 'sessions',
+  url: process.env.MONGOLAB_URI || process.env.MONGODB_URL
+})
+
+
 module.exports.session = {
 
   /***************************************************************************
