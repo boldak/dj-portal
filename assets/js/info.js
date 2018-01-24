@@ -3,6 +3,8 @@ import 'angular-foundation';
 import 'file-upload';
 import 'i18n';
 import 'ng-ace';
+import 'lodash';
+
 
 const info = angular.module('app.info', ['mm.foundation', 'ngFileUpload', 'app.i18n',"ng.ace"]);
 
@@ -143,6 +145,22 @@ info.factory('dialog', function($modal) {
         }).result;
     };
 });
+
+
+info.factory('metadataDialog', function($modal) {
+    return (metadata) => {
+        return $modal.open({
+            templateUrl: '/partials/metadata.html',
+            controller: 'MetadataDialogController',
+            windowClass: "dialog-modal",
+            resolve: {
+                metadata: () => metadata
+            }
+        }).result;
+    };
+});
+
+
 
 info.factory('$error', function($modal) {
     return (msg) => {
@@ -371,6 +389,105 @@ info.controller('DialogController', function($scope, $modalInstance, form) {
     };
 
 });
+
+
+info.controller('MetadataDialogController', function($scope, $modalInstance, dialog, metadata) {
+
+    let toObj = () => {
+        let res = {};
+        for(let [key,value] of $scope.metamap) res[key] = value;
+        return res;
+    }
+
+    let toArray = () => {
+        let res = [];
+        for(let [key,value] of $scope.metamap) res.push({key:key, value: value});
+        return res;   
+    }
+
+    let set = (pair) => {
+        $scope.metamap.set(pair.key,pair.value);
+        $scope.metadata = toArray();
+    }
+    
+    $scope.metamap = new Map(_.toPairs(metadata.object));
+    $scope.metadata = toArray();
+    
+    $scope.title = metadata.title;
+    $scope.note = metadata.note;
+
+
+    $scope.add = () => {
+        dialog({
+            title:"Add metadata",
+            fields:{
+                metadataKey:{
+                    title: "Key",
+                    type: "text",
+                    value: "",
+                    required: true
+                },
+                metadataValue:{
+                  title: "Key",
+                    type: "text",
+                    value: "",
+                    required: true  
+                }
+            }
+        })
+        .then((form) => {
+            set({key: form.fields.metadataKey.value, value:form.fields.metadataValue.value})    
+        })
+    }
+
+    $scope.edit = (pair) => {
+        dialog({
+            title:"Edit metadata",
+            fields:{
+                metadataKey:{
+                    title: "Key",
+                    type: "text",
+                    value: pair.key,
+                    required: true,
+                    editable:false
+                },
+                metadataValue:{
+                  title: "Key",
+                    type: "text",
+                    value: pair.value,
+                    required: true  
+                }
+            }
+        })
+        .then((form) => {
+            set({key: form.fields.metadataKey.value, value:form.fields.metadataValue.value})    
+        })    
+    }
+
+
+
+    $scope.remove = (pair) => {
+        $scope.metamap.delete(pair.key);
+        $scope.metadata = toArray();
+    }
+
+
+    
+    $scope.close = function() {
+        if (!$scope.dismissed) {
+            $modalInstance.close(toObj());
+        }
+    };
+
+
+    $scope.dismiss = function() {
+        // console.log($scope.form)
+        $scope.dismissed = true;
+        $modalInstance.dismiss();
+    };
+
+});
+
 
 
 info.controller('SplashController', function($scope, $modalInstance, form, wait) {

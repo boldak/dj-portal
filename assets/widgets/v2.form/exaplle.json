@@ -1,0 +1,383 @@
+{
+	
+	"project":"5a662b48614d76b82fe206b3",
+	"owner": {},
+	"collaborators": [],
+
+	"metadata":{
+		"title":"Form title",
+		"note":"Form note",
+		"anykey":"any value"
+	},
+
+	"history":[
+		{"date":"2018.01.19", "message":"Create new form", "state":"created", "user":"boldak.andrey@gmail.com"},
+		{"date":"2018.01.19", "message":"Add questions", "state":"updated", "user":"boldak.andrey@gmail.com"},
+		{"date":"2018.01.19", "message":"Activate form", "state":"started", "user":"boldak.andrey@gmail.com"},
+		{"date":"2018.01.19", "message":"Stop form", "state":"stopped", "user":"boldak.andrey@gmail.com"},
+		{"date":"2018.01.19", "message":"Activate form", "state":"started", "user":"boldak.andrey@gmail.com"},
+		{"date":"2018.01.19", "message":"Stop form", "state":"stopped", "user":"boldak.andrey@gmail.com"}
+	],
+
+
+	"config":{
+		
+		
+		"experts":[
+			{
+		        "email": "boldak.andrey@gmail.com"
+		    },
+		    {
+		        "email": "boldak.andrey@gmail.com",
+		        "id": "5a37c84a4dd564c00875a351"        
+		    },
+		    {
+		        "email": "boldak.andrey@gmail.com",
+		        "id": "5a37c84a4dd564c00875a351"        
+		    }
+		],
+
+		"questions":[
+				{
+					"id":"d7603d83-2946-46f5-9986-6a167775c568",
+					"index":0,
+					"text":"<i>Якi проблеми на рiвнi унiверситету, на Вашу думку, є найгострiшими?</i>",
+					"decoration":{},
+
+					"behavior":[
+						{
+							"match":{
+								"selector":"$.key",
+								"values": ["d7603d83-2946-46f5-9986-6a167775c568"] 
+							},	
+							"action":[
+								{ 
+									"question":"d7603d83-2946-46f5-9986-6a167775c568", 
+									"value":"value",
+									"state":"disable"
+								}
+							]	
+						}
+					],
+
+					"scale":{
+						"type":"nominal",
+						"rules":{
+							"value":"string"
+							"closure":"open",
+							"multiplisity":{
+								"min":1
+							}
+						},
+						"values":[
+							{
+								"key":"d7603d83-2946-46f5-9986-6a167775c568",
+								"value":"Проблеми безпеки пiд час перебування на територiї унiверситету"
+							},
+							{
+								"key":"d7603d83-2946-46f5-9986-6a167775c568",
+								"value":"Проблеми банкiвського обслуговування"
+							},
+							{
+								"key":"d7603d83-2946-46f5-9986-6a167775c568",
+								"value":"Проблема благоустрою територiї унiверситету"
+							},
+							{
+								"key":"d7603d83-2946-46f5-9986-6a167775c568",
+								"value":"Проблеми забезпечення якостi освiти"
+							},
+							{
+								"key":"d7603d83-2946-46f5-9986-6a167775c568",
+								"value":"Проблеми органiзацiї харчування на територiї НТУУ 'КПI'"
+							},
+							{
+								"key":"d7603d83-2946-46f5-9986-6a167775c568",
+								"value":"Проблеми хабарництва з боку викладачiв"
+							},
+							{
+								"key":"d7603d83-2946-46f5-9986-6a167775c568",
+								"value":"Проблеми технiчного стану гуртожиткiв"
+							},
+							{
+								"key":"d7603d83-2946-46f5-9986-6a167775c568",
+								"value":"Проблеми технiчного стану навчальних аудиторiй"
+							},
+							{
+								"key":"d7603d83-2946-46f5-9986-6a167775c568",
+								"value":"Проблеми органiзацiї вiдпочинку студентiв"
+							},
+							{
+								"key":"d7603d83-2946-46f5-9986-6a167775c568",
+								"value":"Проблеми у взаєминах українських студентiв та студентiв-iноземцiв"
+							},
+							{
+								"key":"d7603d83-2946-46f5-9986-6a167775c568",
+								"value":"Проблеми у роботi органiв студентського самоврядування, студентських органiзацiй"
+							}
+						]
+					}
+
+				},
+				{
+					"id":"d7603d83-2946-46f5-9986-6a167775c568",
+					"index":1,
+					"text":"<i>Як, у цiлому, Ви оцiнюєте свою стараннiсть у навчаннi?</i>"
+					"decoration":{},
+
+					"scale":{
+						"type":"nominal",
+						"rules":{
+							"value":"string",
+							"closure":"closed",
+							"multiplisity":{
+								"min":1,
+								"max":1
+							}
+						},
+						
+						"values":[
+							{
+								"key":"d7603d83-2946-46f5-9986-6a167775c568",
+								"value":"Навчаюся з повною вiддачею сил"
+							},
+							{
+								"key":"d7603d83-2946-46f5-9986-6a167775c568",
+								"value":"Навчаюся старанно лише час вiд часу"
+							},
+							{
+								"key":"d7603d83-2946-46f5-9986-6a167775c568",
+								"value":"Навчаюся зовсiм нестаранно"
+							},
+							{
+								"key":"d7603d83-2946-46f5-9986-6a167775c568",
+								"value":"Важко вiдповiсти"
+							}
+						]
+					}
+				},
+				{
+					"id":"d7603d83-2946-46f5-9986-6a167775c568",
+					"index":2,
+					"text":"<i>Якiсть навчальної програми на Вашому курсi</i>"
+					"decoration":{},
+					"behavior":[
+						{
+							"match":{
+							"selector": "$.index"
+							"values": [0,3]
+							},
+							
+							"action":[
+								{ 
+									"question":"d7603d83-2946-46f5-9986-6a167775c568", 
+									"value":"value"
+								}
+							]	
+						},
+						{
+							"match":[
+								"selector":"$.value",
+								{
+									"ranges":[{"min_exclude":2}]
+								}
+							],
+							
+							"action":[
+								{ 
+									"question":"d7603d83-2946-46f5-9986-6a167775c568", 
+									"value":"value",
+									"state":"disable"
+								}
+							]	
+						}
+					],
+
+					"scale":{
+						"type":"ordinal",
+						"rules":{
+							"value":"integer",
+							"multiplisity":{
+								"min":1,
+								"max":1
+							}
+						},
+						"values":[
+							{
+								"index":0,
+								"value":1
+							},
+							{
+								"index":1,
+								"value":2
+							},
+							{
+								"index":2,
+								"value":3
+							},
+							{
+								"index":3,
+								"value":4
+							},
+							{
+								"index":4,
+								"value":5
+							},
+							{
+								"index":5,
+								"value":6
+							},
+							{
+								"index":6,
+								"value":7
+							}
+						]
+					}
+				},
+				{
+					"id":"d7603d83-2946-46f5-9986-6a167775c568",
+					"index":3,
+					"text":"<i>Загальна якiсть викладання</i>"
+					"decoration":{},
+					"scale":{
+						"type":"ordinal",
+						"rules":{
+							"value":"string",
+							"multiplisity":{
+								"min":1,
+								"max":1
+							}
+						},
+						"values":[
+							{
+								"index":0,
+								"value":"1"
+							},
+							{
+								"index":1,
+								"value":"2"
+							},
+							{
+								"index":2,
+								"value":"3"
+							},
+							{
+								"index":3,
+								"value":"4"
+							},
+							{
+								"index":4,
+								"value":"5"
+							},
+							{
+								"index":5,
+								"value":"6"
+							},
+							{
+								"index":6,
+								"value":"7"
+							}
+						]
+					}
+				},
+				{
+					"id":"d7603d83-2946-46f5-9986-6a167775c568",
+					"index":4,
+					"text":"<i>Текстове значення</i>",
+					"decoration":{},
+
+					"scale":{
+						"type":"value",
+						"rules":{
+							"value":"string"
+						}
+					}
+				},
+				{
+					"id":"d7603d83-2946-46f5-9986-6a167775c568",
+					"index":5,
+					"text":"<i>Текстове значення</i>",
+					"decoration":{},
+					
+					"scale":{
+						"type":"value",
+						"rules":{
+							"value":"integer",
+							"ranges":[{"min_include":1, "max_include":10}]
+						}
+					}
+				},
+				{
+					"id":"d7603d83-2946-46f5-9986-6a167775c568",
+					"index":6,
+					"text":"<i>Текстове значення</i>",
+					"decoration":{},
+
+					"scale":{
+						"type":"value",
+						"rules":{
+							"value":"float",
+							"ranges":[{"min_include":0}]
+						}
+					}
+				},
+				,
+				{
+					"id":"d7603d83-2946-46f5-9986-6a167775c568",
+					"index":6,
+					"text":"<i>Текстове значення</i>",
+					"decoration":{},
+
+					"scale":{
+						"type":"value",
+						"rules":{
+							"value":"float"
+							"ranges":[{"max_exclude":0},{"min_include":1}]
+						}
+					}
+				},
+				{
+					"id":"d7603d83-2946-46f5-9986-6a167775c568",
+					"index":7,
+					"text":"<i>Текстове значення</i>",
+					"decoration":{},
+
+					"scale":{
+						"type":"value",
+						"rules":{
+							"value":"date",
+							"format":"YYYY",
+							"ranges":[{"min_include":"2000", "max_exclude":"2018"}]
+						}
+					}
+				},
+				{
+					"id":"d7603d83-2946-46f5-9986-6a167775c568",
+					"index":8,
+					"text":"<i>Текстове значення</i>",
+					"decoration":{},
+
+					"scale":{
+						"type":"value",
+						"rules":{
+							"value":"time",
+							"format":"MI:SS"
+						}
+					}
+				},
+				{
+					"id":"d7603d83-2946-46f5-9986-6a167775c568",
+					"index":9,
+					"text":"<i>Текстове значення</i>",
+					"decoration":{},
+
+					"scale":{
+						"type":"value",
+						"rules":{
+							"value":"datetime"
+						}
+					}
+				}
+
+		]
+	}		
+}

@@ -1,0 +1,41 @@
+<div>
+  	<h5 color="#ddd">{{title}}</h5>
+  	<div style="    margin: 1em;
+				    padding: 0.5em;
+				    font-size: small;
+				    font-style: italic;
+				    border-bottom: 1px solid #ddd;">
+  		{{note}}
+  	</div>
+  
+  		<div class="row" style="margin: 0.5em 0 0 0; height:auto;">
+  			<table width="100%" style="border:0px;">
+  				<tr>
+  					<th style="width:25%"> Key </th>
+  					<th> Value </th>
+  				</tr>
+  				<tr ng-repeat="pair in metadata | orderBy: 'key': reverse">
+  					{{pair}}
+  					<th><a ng-click="edit(pair)">{{pair.key}}</a></th>
+  					<td><a ng-click="edit(pair)">{{pair.value}}</a></td>
+  					<td style="width: 2rem; border:0px;">
+  						<a class="fi-x" ng-click="remove(pair)" style="color: #f04124;">&nbsp;</a>
+  					</td>
+  				</tr>
+  				
+  				<tr>
+  					<th style="text-align: right; border:0px;" colspan=2> <a ng-click="add()"> Add metadata ...</a> </th>
+  				</tr>
+
+  			</table>	
+		</div>
+	  
+	 	
+  		<div class="row">
+		  <button class="button alert tiny right seq" ng-click="dismiss()"
+		          translate>CANCEL</button>
+		  <button type="submit" class="button tiny right seq" translate ng-click="close()">OK</button>
+	  	</div>
+	
+</div>        
+
