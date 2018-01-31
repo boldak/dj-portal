@@ -1,10 +1,98 @@
+<style>
 
+	.action {
+    	font-size: medium;
+	    color: #008cba;
+	    font-weight:bold;
+	}
+	.sectionHeader {
+		margin-top: 1em;
+	    border-bottom: 2px solid #999999;
+	    padding-left: 1em;
+	}
+
+</style>
 
 <div class="row" ng-controller="FormController"
      ng-show = "globalConfig.designMode"  
-     style="padding: 0.5rem; margin: 0.5rem 0 0 0;"
+     style="padding: 0.5rem; margin: 0; background-color: #f7f5df;"
 >
-  <h5>dj-form</h5>
-   {{JSON.stringify(widget)}} 
+
+  	<h3 ng-if="disabled" style="color: #f08a24;" class="fi-alert"> DJ-Form is disabled. You can use only single instance of DJ-Form per page.</h3>
+  	
+  	<div ng-if="!disabled" class="row" style="margin: 0.5em 0 0 0; height:auto;">
+		<h2> 
+			DJ-Form configuration
+			<span  class="tiny" ng-if="form" style="margin:0">
+		  		<a class="action">[Clone...]</a>
+		  	</span>
+		  	<span  class="tiny" ng-if="!form" style="margin:0"> 
+		  		<a class="action" ng-click="createNewForm()">[Create...]</a>
+		  	</span>
+		</h2>
+  		<h3 ng-if="!form" style="color: #f08a24;" class="fi-alert"> DJ-Form is not configured. You cannot use "question" widgets before configure DJ-Form.</h3>
+  	  	
+	  	<div ng-if="form" class="row" style="margin: 0.5em 0 0 0; height:auto;">
+	  			<h4 class="sectionHeader">Attributes</h4>
+	  			<div 	class="row" 
+						style="margin: 0.5em 0 0 0; height:auto;"
+						ng-repeat="pair in formAttributes">
+					<div class="column large-2">
+				      <b>{{pair.key}}:</b>
+				    </div>
+
+				    <div class="column large-10 left">
+				    	{{pair.value}}  
+					</div>
+				</div>	
+				<h4 class="sectionHeader">State</h4>
+	  			<h4 class="sectionHeader">Team</h4>
+	  			<div class="row" ng-repeat="user in team" style="margin: 0.5em 1em;">
+	  				<img src="{{user.photo}}" style="width:48px;"> {{user.name}}
+	  			</div>	
+				<h4 class="sectionHeader">
+					Metadata 
+					<a class="action" ng-click="editFornMetadata(form.metadata)">[Edit...]</a>
+				</h4>
+				<div 	class="row" 
+						style="margin: 0.5em 0 0 0; height:auto;"
+						ng-repeat="pair in formMetadata">
+					<div class="column large-2">
+				      <b>{{pair.key}}:</b>
+				    </div>
+
+				    <div class="column large-10 left">
+				    	{{pair.value}}  
+					</div>
+				</div>	
+		</div>
+	
+		<div ng-if="form" class="row" style="margin: 0.5em 0 0 0; height:auto;">
+			<h4 class="sectionHeader">Project
+				<span ng-if="form.project"><a class="action" ng-click="selectProject()">[Change...]</a></span>
+		  		<span ng-if="!form.project"><a class="action" ng-click="selectProject()">[Select...]</a></span>
+	  		</h4>
+	  		<div 	class="row" 
+					style="margin: 0.5em 0 0 0; height:auto;"
+					ng-repeat="pair in projectMetadata"
+					ng-if="form.project"
+			>
+				<div class="column large-2">
+			      <b>{{pair.key}}:</b>
+			    </div>
+
+			    <div class="column large-10 left">
+			    	{{pair.value}}  
+				</div>
+			</div>	
+		</div>
+		<h4 class="sectionHeader" ng-if="!disabled && form">Questions</h4>
+		{{widget.questions}}
+		<h4 class="sectionHeader" ng-if="!disabled && form">
+				Experts 
+				<a class="action">[Edit...]</a>
+		</h4>
+	</div>	
+
 </div>
 

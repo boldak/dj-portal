@@ -1,149 +1,248 @@
 <style>
 
-  .editor {
-        width: 100%;
-        height: 100%;
-        margin: 0;
-        font-size: 1em;
-        line-height: 0.9;
+  .action {
+      font-size: medium;
+      color: #008cba;
+      font-weight:bold;
+  }
+  .sectionHeader {
+    margin-top: 1em;
+      border-bottom: 2px solid #999999;
+      padding-left: 1em;
   }
 
-  .selected {
-    color:#fff;
-  }
 
-  .menu {
-        list-style-type: none;
-        font-size: small;
-        margin:0;
-        padding: 0 1em;
-        color:#333;
-  }
 
-  .menuitem a:hover{
-    background-color: #0078a0;
-    color:#fff;
-  }
-  .menuitem i {
-    margin: 0 0.5em 0 0;
-  }
-  .menusection {
-    border-bottom:1px solid #ddd;
-  }
-  
-  .menubutton i:hover{
-    color:#000;
-  }
+
+
+ 
+input.toggle {
+  visibility: hidden;
+}
+input.toggle + label {
+  width: 4rem;
+  border-radius: 4rem;
+  visibility: visible;
+}
+input.toggle + label:hover {
+  cursor: pointer;
+}
+input.toggle:disabled + label:before {
+  background-color: rgba(0, 0, 0, 0.1);
+}
+input.toggle:disabled + label:before.dark, .dark input.toggle:disabled + label:before {
+  background-color: rgba(255, 255, 255, 0.075);
+}
+input.toggle:disabled + label:after {
+  background-color: #F5F5F5;
+  box-shadow: 0 0.1rem 0.1rem 0rem rgba(0, 0, 0, 0.2);
+}
+input.toggle:disabled + label:after.dark, .dark input.toggle:disabled + label:after {
+  background-color: #464646;
+}
+
+input.toggle + label:before,
+input.toggle + label:after {
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  content: "";
+}
+
+input.toggle + label:before {
+  right: 1rem;
+  left: 0.5rem;
+  top: 0.8rem;
+  bottom: 1.8rem;
+  border-radius: 5rem;
+  transition: background 0.3s;
+  background-color: rgba(0, 0, 0, 0.2);
+}
+input.toggle + label:before.dark, .dark input.toggle + label:before {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+input.toggle + label:after {
+  width: 3rem;
+  height: 3rem;
+  top: 0.2rem;
+  left: 0.3rem;
+  background-color: #fff;
+  border-radius: 100%;
+  box-shadow: 0 0.1rem 0.25rem 0rem rgba(0, 0, 0, 0.3);
+  -webkit-transition: all 0.3s cubic-bezier(0.915, 0.01, 0.075, 0.995);
+  -moz-transition: all 0.3s cubic-bezier(0.915, 0.01, 0.075, 0.995);
+  -o-transition: all 0.3s cubic-bezier(0.915, 0.01, 0.075, 0.995);
+  transition: all 0.3s cubic-bezier(0.915, 0.01, 0.075, 0.995);
+}
+input.toggle + label:after.dark, .dark input.toggle + label:after {
+  background-color: #b4b4b4;
+}
+
+input.toggle:checked + label:before {
+  background-color: #4abc90;
+  opacity: 0.5;
+}
+
+input.toggle:checked + label:after {
+  background-color: #4abc90;
+  margin-left: 3rem;
+  box-shadow: none;
+}
+
+input.checkbox,
+input.radio {
+  display: none;
+}
+
+input.checkbox + label,
+input.radio + label {
+  display: inline-block;
+  line-height: 1.7;
+  position: relative;
+  padding: calc(1.8rem - 1.8rem * 0.54) 0 0.5rem calc(1.8rem + 1rem);
+  min-height: 1.8rem;
+}
+input.checkbox + label:hover,
+input.radio + label:hover {
+  cursor: pointer;
+}
+
+input.checkbox + label:before,
+input.radio + label:before {
+  content: "";
+  height: 1.8rem;
+  width: 1.8rem;
+  position: absolute;
+  left: 0.2rem;
+  top: 0.7rem;
+  background-repeat: no-repeat;
+}
+
+input.radio[disabled] + label:before,
+input.checkbox[disabled] + label:before {
+  opacity: 0.5;
+}
+
+input.radio[disabled] + label,
+input.checkbox[disabled] + label {
+  color: rgba(0, 0, 0, 0.3);
+}
+
+input.checkbox:checked + label:before {
+  background: url(data:image/svg+xml;base64,PHN2ZyB2ZXJzaW9uPSIxLjEiIGlkPSJMYXllcl8xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB4PSIwcHgiIHk9IjBweCIKCSB2aWV3Qm94PSIwIDAgMjQgMjQiIGVuYWJsZS1iYWNrZ3JvdW5kPSJuZXcgMCAwIDI0IDI0IiB4bWw6c3BhY2U9InByZXNlcnZlIj4KPHBhdGggZmlsbD0iIzRBQkI4RiIgZD0iTTIwLDI0SDRjLTIuMiwwLTQtMS44LTQtNFY0YzAtMi4yLDEuOC00LDQtNGgxNmMyLjIsMCw0LDEuOCw0LDR2MTZDMjQsMjIuMiwyMi4yLDI0LDIwLDI0eiIvPgo8cGF0aCBmaWxsPSIjRkZGRkZGIiBkPSJNMjAuNiw1LjdjLTAuNS0wLjUtMS4zLTAuNS0xLjgsMEw5LDE1LjVsLTIuNC0zLjJjLTAuNC0wLjYtMS4zLTAuNy0xLjgtMC4yaDBjLTAuNiwwLjQtMC43LDEuMy0wLjIsMS44CglsMy4zLDQuM2MwLjEsMC4yLDAuMywwLjMsMC41LDAuNGMwLDAsMCwwLDAsMGMwLjEsMCwwLjEsMCwwLjIsMC4xYzAsMCwwLDAsMC4xLDBjMCwwLDAuMSwwLDAuMSwwYzAsMCwwLjEsMCwwLjEsMGMwLDAsMC4xLDAsMC4xLDAKCWMwLjEsMCwwLjEsMCwwLjIsMGMwLDAsMCwwLDAuMSwwYzAuMSwwLDAuMSwwLDAuMi0wLjFjMCwwLDAsMCwwLDBjMC4xLTAuMSwwLjMtMC4xLDAuNC0wLjJMMjAuNiw3LjVDMjEuMSw3LDIxLjEsNi4yLDIwLjYsNS43eiIvPgo8L3N2Zz4=);
+}
+
+input.checkbox + label:before {
+  background-image: url(data:image/svg+xml;base64,PHN2ZyB2ZXJzaW9uPSIxLjEiIGlkPSJMYXllcl8xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB4PSIwcHgiIHk9IjBweCIKCSB2aWV3Qm94PSIwIDAgMjQgMjQiIGVuYWJsZS1iYWNrZ3JvdW5kPSJuZXcgMCAwIDI0IDI0IiB4bWw6c3BhY2U9InByZXNlcnZlIj4KPGc+Cgk8ZyBvcGFjaXR5PSIwLjQ4Ij4KCQk8cGF0aCBmaWxsPSIjQkJCREJGIiBkPSJNMjAsMEg0QzEuOCwwLDAsMS44LDAsNHYxNmMwLDIuMiwxLjgsNCw0LDRoMTZjMi4yLDAsNC0xLjgsNC00VjRDMjQsMS44LDIyLjIsMCwyMCwweiBNMjEsMTkKCQkJYzAsMS4xLTAuOSwyLTIsMkg1Yy0xLjEsMC0yLTAuOS0yLTJWNWMwLTEuMSwwLjktMiwyLTJoMTRjMS4xLDAsMiwwLjksMiwyVjE5eiIvPgoJPC9nPgo8L2c+Cjwvc3ZnPg==);
+}
+
+input.radio:checked + label:before {
+  background: url(data:image/svg+xml;base64,PHN2ZyB2ZXJzaW9uPSIxLjEiIGlkPSJMYXllcl8xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB4PSIwcHgiIHk9IjBweCIKCSB2aWV3Qm94PSIwIDAgMjQgMjQiIGVuYWJsZS1iYWNrZ3JvdW5kPSJuZXcgMCAwIDI0IDI0IiB4bWw6c3BhY2U9InByZXNlcnZlIj4KPGc+Cgk8cGF0aCBvcGFjaXR5PSIwLjQ4IiBmaWxsPSIjMkE5OTc3IiBkPSJNMTIsMEM1LjQsMCwwLDUuNCwwLDEyYzAsNi42LDUuNCwxMiwxMiwxMnMxMi01LjQsMTItMTJDMjQsNS40LDE4LjYsMCwxMiwweiBNMTIsMjIKCQlDNi41LDIyLDIsMTcuNSwyLDEyQzIsNi41LDYuNSwyLDEyLDJzMTAsNC41LDEwLDEwQzIyLDE3LjUsMTcuNSwyMiwxMiwyMnoiLz4KPC9nPgo8Y2lyY2xlIGZpbGw9IiM0QUJCOEYiIGN4PSIxMiIgY3k9IjEyIiByPSI4Ii8+Cjwvc3ZnPg==);
+  -webkit-transition: all 500ms ease-out 1s;
+  -moz-transition: all 500ms ease-out 1s;
+  -o-transition: all 500ms ease-out 1s;
+  transition: all 500ms cubic-bezier(0.18, 0.89, 0.32, 1.28) 100ms;
+}
+
+input.radio + label:before {
+  background-image: url(data:image/svg+xml;base64,PHN2ZyB2ZXJzaW9uPSIxLjEiIGlkPSJMYXllcl8xIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB4PSIwcHgiIHk9IjBweCIKCSB2aWV3Qm94PSIwIDAgMjQgMjQiIGVuYWJsZS1iYWNrZ3JvdW5kPSJuZXcgMCAwIDI0IDI0IiB4bWw6c3BhY2U9InByZXNlcnZlIj4KPGNpcmNsZSBvcGFjaXR5PSIwLjQ4IiBmaWxsPSIjQkJCREJGIiBjeD0iMTIiIGN5PSIxMiIgcj0iMTAiLz4KPC9zdmc+);
+}
+
+html ul {
+  list-style: none;
+  padding: 0;
+  display: inline-block;
+  width: 30rem;
+  margin-right: 5rem;
+}
+
+label.alt {
+  font-size:large;
+}
+
 
 </style>
 
+<div class="row" ng-controller="FormQuestionController"
+     style="  padding: 0.5rem; 
+              margin: 0; 
+              background-color: #f7f5df;"
+>   
 
-<div class="row" ng-controller="ScriptSuiteController"
-     ng-show = "globalConfig.designMode"  
-     style="padding: 0.5rem; margin: 0.5rem 0 0 0;"
->
-  <h5>DPS Suite
-    <div class="column-6" style="
-      float: right; 
-      padding: 0.2em;    
-      "
-    >
-      <div style="position:relative;">
-        <div style="
-            position: absolute;
-            border: {{(!collapsed)?'1px solid #ddd;':'none;'}}
-            box-shadow: {{(!collapsed)?'4px 4px 6px -4px #333333;':'none;'}}
-            background-color:{{(!collapsed)?'#f9f9f9;':'#fff;'}}
-            right: 0;
-            left: auto;
-            min-width: 14em;
-            padding: 0 0.25em;
-            z-index: 400;
-        ">
-          <div  class="row  menubutton" 
-                style="margin:0; cursor:pointer;" 
-                ng-click="collapsed = !collapsed"
-          >
-            <span class="right" style="font-size: small; padding: 0.2em;">MENU</span>
-            <i class="fi-list" style="float:right;"/>
-          </div>  
-          <div ng-if="!collapsed" class="row" style="margin:0;">
-              <ul class="menu">
-                <li ng-if="!processed" ng-click="addScript()" class="menuitem">
-                  <a>
-                     <i class="fi-plus"/>Add script...
-                  </a>
-                </li>
-                <li ng-if="selected && !processed" ng-click="runScript()" class="menuitem">
-                  <a>
-                     <i class="fi-play"/>Run "{{selected}}"
-                  </a>
-                </li>
-
-                <li ng-if="selected && processed" ng-click="cancelProcess()" class="menuitem">
-                  <a>
-                     <i class="fi-x"/>Cancel process "{{selected}}"
-                  </a>
-                </li>
-                
-                <li ng-if="selected && notSaved && !processed" ng-click="saveScript()" class="menuitem">
-                  <a>
-                     <i class="fi-save"/>Save "{{selected}}"
-                  </a>
-                </li>
-                <li ng-if="selected && !processed" ng-click="renameScript()" class="menuitem">
-                  <a>
-                     <i class="fi-page-edit"/>Rename "{{selected}}"...
-                  </a>
-                </li>
-                <li ng-if="selected && !processed" ng-click="deleteScript()" class="menuitem">
-                  <a>
-                     <i class="fi-trash"/>Delete "{{selected}}"...
-                  </a>
-                </li>
-                 <li><a> </a></li>
-              </ul>
-          </div>
-        </div>  
-      </div>
-    </div> 
- </h5>
- <hr style="margin:0.2em 0;"/>   
-
- <div class="column medium-2 left" style="margin:0; padding: 0 0.25em 0 0.5em;">
+    <h3 ng-if="disabled" style="color: #f08a24;" class="fi-alert"> Question is disabled. You canot use 'v2.form-question' widgets without "v2.form" widget.</h3>
     
-    <div  class="row" style="margin:0; padding:0;font-size:small;">
-        <pre>Script:</pre>
-    </div>
- 
-    <div class="row" style="margin:0;border: 1px solid #999;height:32em; overflow:auto;">
-      <div ng-repeat="name in widget.script track by $index">
-        <div 
-          ng-class="classed($index)" 
-          style="margin:0;padding:0 0.2em;cursor:pointer;font-size:small; font-stretch: extra-condensed;" 
-          ng-click="select(keys(widget.script)[$index])" >
-            {{keys(widget.script)[$index]}} <span class="right" ng-if="classed($index)=='row selected' && notSaved" style="font-size:x-small">(not saved)</span>
-        </div>
-      </div> 
-    </div>
-  </div>
+    <div ng-if="!disabled" class="row" style="margin: 0.5em 0 0 0; height:auto;">
+         <h4 class="sectionHeader">Options</h4>
+          <div  class="row" 
+            style="margin: 0.5em 0 0 0; height:auto;">
+            <div class="column large-2">
+                <b>ID:</b>
+              </div>
 
-  <div class="column medium-10 left" style="margin:0; padding:0 0.5em 0 0;">
-    <div ng-if="selected">
-      <div  class="row" style="margin:0; padding:0;font-size:small;">
-        <pre>{{selected}} <span ng-if="selected && notSaved" style="font-size:x-small">(not saved)</span> <span ng-if="processed" style="font-size:x-small">(processed...)</span><span ng-if="successed" style="font-size:x-small">(successed)</span><span ng-if="rejected" style="font-size:x-small">(rejected)</span></pre>
-      </div>
-      <div  class="row"
-             style="padding: 0.1rem; border: 1px solid #aaa; margin:0; height:{{(widget.height || 32)+'em'}}; overflow:auto;">
-        
-        <div  class= "editor"
-              ng-ace
-              data="script" 
-              options = "options"
-              >
+            <div class="column large-10 left">
+                {{widget.ID}}  
+            </div>
         </div>
-      </div>
+        <div  class="row" 
+            style="margin: 0.5em 0 0 0; height:auto;">
+            <div class="column large-2">
+                <b>Type:</b>
+            </div>
+
+            <div class="column large-10 left">
+              {{options.type}}
+              <span  class="tiny" style="margin:0"> 
+                <a class="action" ng-click="selectType()">[Select...]</a>
+              </span>
+            </div>
+
+            <h4 class="sectionHeader">Title
+              <a class="action" ng-click="editTitle()">[Edit...]</a>
+            </h4>
+            <div class="row" 
+              style="margin: 0.5em 0 0 0; height:auto;background: none;"
+              ng-bind-html="title"
+            >
+            </div>
+            <h5 class="sectionHeader">Note
+                <a class="action" ng-click="editNote()">[Edit...]</a>
+                <div class="switch tiny radius">
+                      <input type="checkbox"
+                             id="staggerLabelsCheckbox"
+                       >
+                  <label for="staggerLabelsCheckbox"></label>
+                </div>
+                <span>
+                  Show note
+                </span>
+                
+            </h5>
+            <div class="row" 
+              style="margin: 0.5em 0 0 0; height:auto;"
+              ng-bind-html="note"
+            />
+            
+            <h4 class="sectionHeader">Values</h4>
+            <div  class="row" 
+              style="margin: 0.5em 0 0 0; height:auto; background: none;"
+              ng-if= "options.type =='radiogroup'"
+            >
+              
+              <ul>
+                <li ng-repeat="alternative in options.values">
+                  <input id="{{alternative.id}}" class="radio" type="radio" name="{{options.id}}">
+                  <label class="alt" for="{{alternative.id}}">{{alternative.text}}</label>
+                </li>
+              </ul>
+
+            </div>
+
+        </div>  
     </div>  
-  </div>
+
 </div>
+
 

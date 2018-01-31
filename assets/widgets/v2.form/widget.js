@@ -1,77 +1,396 @@
 import angular from 'angular';
 // import 'dictionary';
-// import 'ngReact';
-// import 'custom-react-directives';
-// import 'ng-prettyjson';
-import 'ng-ace';
-
 
 let m = angular.module('app.widgets.v2.form', [
-    'app.dps',
-    "ng.ace"
+  'app.dps'
 ])
 
 
 m.controller('FormController', function(
-    $scope, 
-    APIProvider, 
-    dialog, 
-    app,
-    i18n,
-    $dps,
-    EventEmitter,
-    $error, 
-    log,
-    pageSubscriptions,
-    $q,
-    pageWidgets,
-    metadataDialog
+  $scope,
+  APIProvider,
+  APIUser,
+  dialog,
+  app,
+  i18n,
+  $dps,
+  EventEmitter,
+  $error,
+  log,
+  pageSubscriptions,
+  $q,
+  pageWidgets,
+  metadataDialog,
+  config,
+  instanceNameToScope,
+  randomID
 ) {
 
-    const eventEmitter = new EventEmitter($scope);
-    
+  // const eventEmitter = new EventEmitter($scope);
+  const apiUser = new APIUser();
+  // $scope.formatDate = i18n.formatDate;
+  let scopeFor = widgetInstanceName => instanceNameToScope.get(widgetInstanceName);
 
-    
-    new APIProvider($scope)
-        .config( () => {
-           console.log("Form widget config") 
-        })
-        
-        .openCustomSettings(() =>  
-            metadataDialog({
-                title: "Metadata Inspector",
-                note: "Work with dj-form metadata",
-                object: {
-                    title: "metadata object",
-                    id: "1",
-                    note: "test metadata object"
+  let dps = {
+
+    getProjectList: `
+            // getProjectList
+            <?javascript
+                $scope.s = (item) => {
+                    return {
+                        id: item.id,
+                        owner: item.owner,
+                        metadata: item.metadata
+                    }
                 }
-            })
+            ?>
+            dml.select(from:"project", as:{{s}})
+        `,
 
-            // dialog(
-            // {
-            //     title: "Form settings",
-            //     fields: {
-            //         d_listeners: {
-            //             title: "Listeners",
-            //             type: "text",
-            //             value: "",
-            //             required: false
-            //         },
-            //         config:{
-            //           title: "Config",
-            //           type: "text",
-            //           value: JSON.stringify($scope.widget),
-            //           required: false  
-            //         }
-            //     }
-            // })
-            .then((metadata) => {
-                console.log("after dialog Form settings", metadata)
-            })
-        )
+    createProject: `
+            // createProject
+            client();
+            set("owner")
+            <?javascript
+                $scope.project = {
+                    metadata:$scope.project,
+                    owner:$scope.owner.client.user,
+                    history:[
+                        {
+                            state:"created",
+                            message:"Create project via "+$scope.owner.client.app,
+                            user: $scope.owner.client.user,
+                            date: new Date()
+                        }
+                    ]
+                }
+            ?>
+            dml.insert(into:"project", values:{{project}})
+        `,
 
-        .removal(() => {
-            console.log('Form widget is destroyed');
-        });
+    createForm: `
+            // createForm 
+            client();
+            set("owner")
+            <?javascript
+                $scope.form = {
+                    metadata:$scope.form,
+                    owner:$scope.owner.client.user,
+                    history:[
+                        {
+                            state:"created",
+                            message:"Create form via "+$scope.owner.client.app,
+                            user: $scope.owner.client.user,
+                            date: new Date()
+                        }
+                    ]
+                }
+            ?>
+            dml.insert(into:"form", values:{{form}})
+        `,
+
+    updateForm: `
+        // updateForm
+            client();
+            set("owner")
+
+            <?javascript
+
+                $scope.updatedForm = (item) => item.id == $scope.form.id;
+                $scope.update = (item) => {
+                    $scope.form.history.push({
+                        date: new Date(),
+                        message:"Update form",
+                        state:"updated",
+                        user: $scope.owner.client.user
+                    });
+                    
+                    return $scope.form;
+                };
+
+            ?>
+
+            dml.update(for:"form", as:{{update}}, where:{{formID}})
+        `,
+
+    getForm: `
+            // getForm
+            <?javascript
+                $scope.filter = (item) => item.id == $scope.form;
+            ?>
+
+            dml.select(from:"form", where:{{filter}}, populate:"project")
+        `
+  }
+
+  let runDPS = (params) => {
+
+    let script = params.script;
+    let storage = params.state;
+
+    let state = {
+      storage: storage,
+      locale: i18n.locale()
+    }
+
+    return $dps.post("/api/script", {
+        "script": script,
+        "state": state
+      })
+      .then(function(response) {
+        return {
+          type: response.data.type,
+          data: response.data.data
+        }
+      })
+  }
+
+
+  let createNewProject = (form) => {
+    metadataDialog({
+        title: "New Project Metadata",
+        object: {
+          title: "",
+          note: ""
+        }
+      })
+      .then((res) => {
+        runDPS({
+            script: dps.createProject,
+            state: {
+              project: res
+            }
+          })
+          .then((res) => {
+            console.log(res)
+            form.fields.project.options.push({
+              title: res.data[0].metadata.title,
+              value: res.data[0].id,
+              selected: true
+            })
+          })
+      })
+  }
+
+  $scope.selectProject = () => {
+    runDPS({
+        script: dps["getProjectList"]
+    })
+    .then(res =>
+        dialog({
+            title: "Select Project",
+            fields: {
+               project: {
+                title: "Project",
+                type: "select",
+                options: [{ title: "none", value: "" }].concat(
+                  (res.data) 
+                    ? res.data.map((item, index) => {
+                        return {
+                          title: item.metadata.title,
+                          value: item.id
+                        }
+                      }) 
+                    : []
+                ),
+                required: false,
+                value: ($scope.form && $scope.form.project) ? $scope.form.project.id : "",
+                nested: [{
+                  title: "New Project...",
+                  action: createNewProject
+                }]
+              }
+            }
+        })      
+    )
+    .then( form => {
+        $scope.form.project = (form.fields.project.value == "")
+            ? null
+            : form.fields.project.value;
+
+        return runDPS({
+            script: dps.updateForm,
+            state: {
+              form: $scope.form
+            }
+        })
+    })
+    .then(() => {
+            updateWidget();
+            app.markModified();    
+    })  
+  }
+
+  $scope.createNewForm = () => {
+    metadataDialog({
+        title: "New Form Metadata",
+        object: {
+          identity: "",
+          title: "",
+          note: ""
+        }
+      })
+      .then((res) => {
+        runDPS({
+            script: dps.createForm,
+            state: {
+              form: res
+            }
+          })
+          .then((res) => {
+            $scope.widget.form = res.data[0].id;
+            app.markModified();
+            apiUser.invokeAll("formMessage", {action:"configure", data:$scope});
+            updateWidget();
+          })
+      })
+  }
+
+  $scope.editFornMetadata = metadata => {
+    metadataDialog({
+        title: "Edit Form Metadata",
+        object: metadata
+      })
+      .then(res => {
+        $scope.form.metadata = res;
+        return runDPS({
+            script: dps.updateForm,
+            state: {
+              form: $scope.form
+            }
+        })
+      })
+      .then(() => {
+            updateWidget();
+            app.markModified();    
+      })   
+  }
+
+
+
+
+
+
+  let prepaireMetadata = (obj) => {
+    let res = [];
+    obj = obj.metadata;
+    if (obj) {
+      for (let key in obj) {
+        res.push({ key: key, value: obj[key] })
+      }
+    }
+    return res;
+  }
+
+
+
+  let updateWidget = () => {
+     
+    let forms = pageWidgets().filter((item) => item.type === "v2.form");
+    $scope.disabled = $scope.widget.disabled = (forms.length > 1)&&(!$scope.widget.form);
+    if ($scope.widget.form) {
+        runDPS({
+          script: dps.getForm,
+          state: {
+            form: $scope.widget.form
+          }
+        })
+        .then(res => {
+          $scope.form = res.data[0]
+
+          // eventEmitter.emit("formMessage", {action:"update", data:$scope.form});
+          
+          apiUser.invokeAll("formMessage", {action:"update", data:$scope.form});
+          
+
+          $scope.formMetadata = prepaireMetadata($scope.form)
+          $scope.formAttributes = [];
+          $scope.formAttributes.push({key:"Cloned from", value:$scope.form.cloned})
+          $scope.formAttributes.push({key:"Id", value:$scope.form.id})
+          $scope.formAttributes.push({key:"Identity", value:$scope.form.metadata.identity})
+          $scope.formAttributes.push({key:"Created at", value:i18n.formatDate($scope.form.createdAt)})
+          // $scope.formAttributes.push({key:"State", value:$scope.form.history.last().state})
+          $scope.formAttributes.push({key:"Updated at", value:i18n.formatDate($scope.form.updatedAt)})
+          
+
+          $scope.team = [{name:$scope.form.owner.name+" (Author)", photo:$scope.form.owner.photo}]
+                        .concat(config.collaborations.map(item => {
+                            return{name:item.user.name, photo:item.user.photo}
+                        }))
+
+
+          if($scope.form.project){              
+            $scope.projectMetadata = prepaireMetadata($scope.form.project)
+          }
+          $scope.widgetPanel.allowConfiguring = undefined;
+          $scope.widgetPanel.allowCloning = undefined;
+        })
+    }
+  }
+
+  let initQuestion = s => {
+    $scope.widget.questions = ($scope.widget.questions) 
+        ? $scope.widget.questions 
+        : {};
+    s.widget.ID = randomID();
+    s.widget.formWidget = $scope.widget.instanceName; 
+    
+    pageSubscriptions().addListener(
+        {
+            emitter: $scope.widget.instanceName,
+            receiver: s.widget.instanceName,
+            signal: "formMessage",
+            slot: "formMessage"
+        }
+    );
+    pageSubscriptions().addListener(
+        {
+            emitter: s.widget.instanceName,
+            receiver: $scope.widget.instanceName,
+            signal: "questionMessage",
+            slot: "questionMessage"
+        }
+    );
+    $scope.widget.questions[s.widget.ID] = {id: s.widget.ID, form: $scope.form, config:{}}
+  }
+
+  new APIProvider($scope)
+    .config(updateWidget)
+
+    .save(() => {
+      console.log("Save app event handler")
+    })
+
+    .translate(updateWidget)
+
+    .create((event,widget) => {
+        if(!$scope.disabled && $scope.form && (widget.type == "v2.form.question")){
+            initQuestion(scopeFor(widget.instanceName))
+        }
+    })
+
+    .provide('questionMessage', (e, context) => {
+        if(context.action == 'init'){
+            initQuestion(context.data)
+            return
+        }
+
+        if(context.action == 'remove'){
+            $scope.widget.questions[context.data.widget.ID] = undefined
+            return
+        }
+
+    })  
+
+    .provide('formMessage', (e, context) => {
+        if((context.action == "remove") && ($scope.widget.instanceName != context.data.widget.instanceName)){
+            updateWidget()
+        }
+    })  
+
+    .removal(() => {
+      apiUser.invokeAll("formMessage", {action:"remove", data:$scope});
+          
+      console.log('Form widget is destroyed');
+    });
 })

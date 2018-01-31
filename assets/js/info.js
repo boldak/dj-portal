@@ -133,6 +133,23 @@ info.factory('jsonEditor', function($modal) {
     };
 });
 
+
+info.factory('htmlEditor', function($modal) {
+    return (html, title) => {
+        return $modal.open({
+            templateUrl: '/partials/html-editor.html',
+            controller: 'HtmlEditorController',
+            // windowClass: 'dialog-modal',
+            backdrop: 'static',
+            resolve: {
+                html: () => html,
+                title: () => title
+                   
+            }
+        }).result;
+    };
+});
+
 info.factory('dialog', function($modal) {
     return (form) => {
         return $modal.open({
@@ -304,8 +321,35 @@ info.controller('JsonEditorController', function($scope, $modalInstance, json, t
 });
 
 
-info.controller('DialogController', function($scope, $modalInstance, form) {
+info.controller('HtmlEditorController', function($scope, $modalInstance, html, title) {
+   
+    var __script;
+    
+    $scope.options = {
+        mode:'html', 
+        theme:'tomorrow',
+        onChange: function(e){
+            __script = e[1].getSession().getValue();
+        }
+    }
 
+    $scope.getEditorScript = function(){
+            return __script;
+        }    
+    
+    $scope.script = html;
+    $scope.title = title;
+
+    $scope.close = () => {
+        $modalInstance.close(__script);
+    }
+    
+    $scope.dismiss = () => {
+            $modalInstance.dismiss();
+    };
+});
+
+info.controller('DialogController', function($scope, $modalInstance, $document, form) {
     $scope.form = form;
     $scope.form.cancelable = (angular.isDefined($scope.form.cancelable))?$scope.form.cancelable:true;
     for (let i in form.fields) {
@@ -314,7 +358,10 @@ info.controller('DialogController', function($scope, $modalInstance, form) {
         form.fields[i].required = (angular.isDefined(form.fields[i].required)) ? form.fields[i].required : true;
 
         form.fields[i].type = (form.fields[i].type) || "text";
-
+        
+        if(form.fields[i].value && angular.isFunction(form.fields[i].value)){
+            form.fields[i].value = form.fields[i].value()
+        }
 
         if (form.fields[i].type == "typeahead") {
             if (angular.isArray(form.fields[i].list)) {
@@ -340,6 +387,16 @@ info.controller('DialogController', function($scope, $modalInstance, form) {
                 (item, index) => {
                     return (angular.isDefined(item.title)) ? (angular.isDefined(item.value)) ? item : { "title": item.title, "value": false } : (angular.isDefined(item.value)) ? { "title": index, "value": item.value } : { "title": item, "value": false }
                 })
+        }
+
+        if (form.fields[i].type == "html") {
+        
+            setTimeout(()=>{
+                let container = angular.element(document.getElementById(form.fields[i].id)) 
+                let content = angular.element('<div>'+form.fields[i].value+'</div>')[0];
+                container.append(content)
+            },0)
+        
         }
     }
 

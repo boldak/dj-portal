@@ -17,8 +17,24 @@
 	    </div>
 
 	    <div class="column large-9" ng-if="!field.type || field.type=='text'">
-	      <input ng-model="field.value" id="{{field.id}}"
-	             type="text" ng-disabled="!field.editable">
+	      <input 	ng-model="field.value" 
+	      			id="{{field.id}}"
+	             	type="text" 
+	             	ng-disabled="!field.editable"
+	             	ng-change="field.onChange(form)"
+	       >
+	      	<div class="row" ng-if="field.nested"> 
+  				<a  ng-repeat="n in field.nested"
+	      			style="	float: right;
+						    font-weight: bold;
+						    color: #008cba;
+						    margin-top: -0.5em;
+						    font-size: small;
+						    padding-left:1em;" 
+					ng-click="n.action(form)">
+						{{n.title}}
+				</a>
+			</div>
 	    </div>
 
 	    <div class="column large-9" ng-if="!field.type || field.type=='textarea'">
@@ -28,18 +44,50 @@
 				ng-model="field.value" 
 				id="{{field.id}}" 
 				ng-disabled="!field.editable"
+	            ng-change="field.onChange(form)"
 				style="font-family: monospace;line-height: 1;">
        		</textarea>
+       		<div class="row" ng-if="field.nested"> 
+  				<a  ng-repeat="n in field.nested"
+	      			style="	float: right;
+						    font-weight: bold;
+						    color: #008cba;
+						    margin-top: -0.5em;
+						    font-size: small;
+						    padding-left:1em;" 
+					ng-click="n.action(form)">
+						{{n.title}}
+				</a>
+			</div>
         </div>
 
 
 	    <div class="column large-9" ng-if="field.type=='typeahead'">
-	      <input type="text" ng-model="field.value" id="{{field.id}}" ng-disabled="!field.editable"
-             typeahead="item for item in field.getList($viewValue)"
-             typeahead-editable="false"
-             typeahead-on-select=""
-             typeahead-loading="loading" class="form-control">
-      	  <i ng-show="loading" class="glyphicon glyphicon-refresh"></i>       
+	      <input 
+	      		type="text" 
+	      		ng-model="field.value" 
+	      		id="{{field.id}}" 
+	      		ng-disabled="!field.editable"
+	      	   	ng-change="field.onChange(form)"
+             	typeahead="item for item in field.getList($viewValue)"
+             	typeahead-editable="false"
+             	typeahead-on-select=""
+             	typeahead-loading="loading" 
+             	class="form-control"
+           >
+      	  <i ng-show="loading" class="glyphicon glyphicon-refresh"></i>
+      	  <div class="row" ng-if="field.nested"> 
+  				<a  ng-repeat="n in field.nested"
+	      			style="	float: right;
+						    font-weight: bold;
+						    color: #008cba;
+						    margin-top: -0.5em;
+						    font-size: small;
+						    padding-left:1em;" 
+					ng-click="n.action(form)">
+						{{n.title}}
+				</a>
+			</div> 
 	    </div>
 
 	    <div class="column large-9" ng-if="field.type=='number'">
@@ -49,7 +97,20 @@
 	             	min = "{{field.min}}"
 	             	max = "{{field.max}}" 
 	             	ng-disabled="!field.editable"
+	             	ng-change="field.onChange(form)"
 	      >
+	      <div class="row" ng-if="field.nested"> 
+  				<a  ng-repeat="n in field.nested"
+	      			style="	float: right;
+						    font-weight: bold;
+						    color: #008cba;
+						    margin-top: -0.5em;
+						    font-size: small;
+						    padding-left:1em;" 
+					ng-click="n.action(form)">
+						{{n.title}}
+				</a>
+			</div>
 	    </div>
 	    
 	    <div class="column large-9"  ng-if="field.type=='checkgroup'">
@@ -62,10 +123,23 @@
 			          <input type="checkbox"
 			                 id="{{field.id+'.'+$index}}"
 			                 ng-model="c.value"
+	             			 ng-change="field.onChange(form)"
 			           >
 			          <label for="{{field.id+'.'+$index}}"></label>
 			        </div>
 		    	</div>
+		    	<div class="row" ng-if="field.nested"> 
+  				<a  ng-repeat="n in field.nested"
+	      			style="	float: right;
+						    font-weight: bold;
+						    color: #008cba;
+						    margin-top: -0.5em;
+						    font-size: small;
+						    padding-left:1em;" 
+					ng-click="n.action(form)">
+						{{n.title}}
+				</a>
+			</div>
 		    </div>
 		</div>    
 
@@ -77,39 +151,122 @@
 			          <input type="checkbox"
 			                 id="{{field.id}}"
 			                 ng-model="field.value"
+			        		 ng-change="field.onChange(form)"
 			           >
 			          <label for="{{field.id}}"></label>
 			        </div>
 		    	</div>
+		    <div class="row" ng-if="field.nested"> 
+  				<a  ng-repeat="n in field.nested"
+	      			style="	float: right;
+						    font-weight: bold;
+						    color: #008cba;
+						    margin-top: -0.5em;
+						    font-size: small;
+						    padding-left:1em;" 
+					ng-click="n.action(form)">
+						{{n.title}}
+				</a>
+			</div>
 	    </div>
 	    
 
 	    <div class="column large-9" ng-if="field.type == 'select'">
-	    	<select ng-model="field.value" id="{{field.id}}" ng-disabled="!field.editable">
-        		<option ng-repeat="option in field.options" value="{{option.value}}">
+	    	<select 
+	    		ng-model="field.value" 
+	    		id="{{field.id}}" 
+	    		ng-disabled="!field.editable"
+	            ng-change="field.onChange(form)"
+	        >
+        		<option ng-repeat="option in field.options" value="{{option.value}}" ng-selected="option.selected">
         			{{option.title}}
         		</option>
+
       		</select>
+      		<div class="row" ng-if="field.nested"> 
+  				<a  ng-repeat="n in field.nested"
+	      			style="	float: right;
+						    font-weight: bold;
+						    color: #008cba;
+						    margin-top: -0.5em;
+						    font-size: small;
+						    padding-left:1em;" 
+					ng-click="n.action(form)">
+						{{n.title}}
+				</a>
+			</div>
 	    </div>
 
 	    <div class="column large-9" ng-if="field.type == 'multiselect'" style="height:auto;">
-	    	<select ng-model="field.value" id="{{field.id}}" ng-disabled="!field.editable" multiple="1" style="height:25em; font-size:x-small;">
-        		<option ng-repeat="option in field.options" value="{{option.value}}">
+	    	<select 
+	    		ng-model="field.value" 
+	    		id="{{field.id}}" 
+	    		ng-disabled="!field.editable"
+	            ng-change="field.onChange(form)" 
+	    		multiple="1" 
+	    		style="height:25em; font-size:x-small;"
+	    	>
+        		<option ng-repeat="option in field.options" value="{{option.value}}" ng-selected="option.selected" >
         			{{option.title}}
         		</option>
       		</select>
+      		<div class="row" ng-if="field.nested"> 
+  				<a  ng-repeat="n in field.nested"
+	      			style="	float: right;
+						    font-weight: bold;
+						    color: #008cba;
+						    margin-top: -0.5em;
+						    font-size: small;
+						    padding-left:1em;" 
+					ng-click="n.action(form)">
+						{{n.title}}
+				</a>
+			</div>
 	    </div>
 
 	    <div class="column large-9" ng-if="field.type=='file'">
-	    	<input type="file"
-	    	 style="font-size: small; margin: 0 1em;" 	
-	    	 id="{{field.id}}"
-	    	 ng-disabled="!field.editable"	
-             onchange="angular.element(this).scope().setImportFile(
+	    	<input 
+	    		type="file"
+	    	 	style="font-size: small; margin: 0 1em;" 	
+	    	 	id="{{field.id}}"
+	    	 	ng-disabled="!field.editable"	
+             	onchange="angular.element(this).scope().setImportFile(
              	this.files[0], this)"
              >
+            <div class="row" ng-if="field.nested"> 
+  				<a  ng-repeat="n in field.nested"
+	      			style="	float: right;
+						    font-weight: bold;
+						    color: #008cba;
+						    margin-top: -0.5em;
+						    font-size: small;
+						    padding-left:1em;" 
+					ng-click="n.action(form)">
+						{{n.title}}
+				</a>
+			</div>
 	    </div>
 	    
+	    <div class="column large-9" ng-if="field.type=='html'">
+	    	
+	    	<div class="row" id="{{field.id}}">
+	    		
+	    	</div>
+
+            <div class="row" ng-if="field.nested"> 
+  				<a  ng-repeat="n in field.nested"
+	      			style="	float: right;
+						    font-weight: bold;
+						    color: #008cba;
+						    margin-top: -0.5em;
+						    font-size: small;
+						    padding-left:1em;" 
+					ng-click="n.action(form)">
+						{{n.title}}
+				</a>
+			</div>
+	    </div>
+
   	</div>
   	
 

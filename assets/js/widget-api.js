@@ -116,7 +116,10 @@ widgetApi.factory('APIProvider', function ($rootScope, $log,
       return this;
     }
 
-
+    save(slotFn) {
+      this.provide(APIProvider.SAVE_SLOT, slotFn);
+      return this;
+    }
 
     
 
@@ -178,6 +181,11 @@ widgetApi.factory('APIProvider', function ($rootScope, $log,
       return this;
     }
 
+    create(slotFn) {
+      this.provide(APIProvider.CREATE_WIDGET_SLOT, slotFn);
+      return this;
+    }
+
     // beforeConfig(slotFn) {
     //   this.provide(APIProvider.BEFORE_CONFIG_SLOT, slotFn);
     //   return this;
@@ -196,6 +204,9 @@ widgetApi.factory('APIProvider', function ($rootScope, $log,
   APIProvider.PAGE_COMPLETE_SLOT = 'PAGE_COMPLETE_SLOT';
   APIProvider.TRANSLATE_SLOT = 'TRANSLATE_SLOT';
   APIProvider.REMOVAL_SLOT = 'DESTROY_SLOT';
+  APIProvider.SAVE_SLOT = 'SAVE_SLOT';
+  APIProvider.CREATE_WIDGET_SLOT = 'CREATE_WIDGET_SLOT';
+
   APIProvider.OPEN_CUSTOM_SETTINGS_SLOT = 'OPEN_CUSTOM_SETTINGS_SLOT';
   APIProvider.BEFORE_DESIGN_MODE_SLOT = 'BEFORE_DESIGN_MODE_SLOT';
   APIProvider.BEFORE_PRESENTATION_MODE_SLOT = 'BEFORE_PRESENTATION_MODE_SLOT';
@@ -393,8 +404,12 @@ widgetApi.factory('EventEmitter', function ($log, $rootScope,
         if (!this.emitterName() || typeof this.emitterName() !== 'string') {
           $log.info(`Not emitting event through user event wiring system
             because widget's instanceName is not set`);
+          return
         }
-        const wires = eventWires.get(this.scope);
+
+       
+        const wires = eventWires.get(this.scope.widget.instanceName)
+       
         if (!wires) {
           return;
         }

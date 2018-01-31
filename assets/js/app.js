@@ -122,6 +122,7 @@ app.constant('selectedHolder',null);
 // })
 
 app.constant('randomWidgetName', () => Math.random().toString(36).substring(2));
+app.constant('randomID', () => Math.random().toString(36).substring(2));
 
 app.value('duScrollDuration', 500)
 app.value('duScrollOffset', 50)
@@ -382,6 +383,9 @@ app.service('app', function ($http, $state, $stateParams, $log, config, $rootSco
 
     submitToServer(errorCallback, successCallback) {
       this.sendingToServer = true;
+      let user = new APIUser();
+      user.invokeAll('SAVE_SLOT');
+
       return $http.put(appUrls.appConfig, config)
         .then(() => {
           this.wasSavedEver = true;
@@ -403,6 +407,10 @@ app.service('app', function ($http, $state, $stateParams, $log, config, $rootSco
 
      save(cb) {
       this.sendingToServer = true;
+
+      let user = new APIUser();
+      user.invokeAll('SAVE_SLOT');
+
       return $http.put(appUrls.appConfig, config)
         .then(() => {
           this.wasSavedEver = true;
@@ -628,13 +636,14 @@ app.service('app', function ($http, $state, $stateParams, $log, config, $rootSco
       if (!emitterScope || !providerScope) {
         return;
       }
-      const wire = eventWires.get(emitterScope) || [];
+      const wire = eventWires.get(emitterScope.widget.instanceName) || [];
       wire.push({signalName, providerScope, slotName});
-      eventWires.set(emitterScope, wire);
+      // console.log("wireSignalWithSlot", emitterScope.widget.instanceName, wire)
+      eventWires.set(emitterScope.widget.instanceName, wire);
     },
 
     pageSubscriptions() {
-      const pageConf = this.pageConfig() || {};
+      let pageConf = this.pageConfig() || {};
       pageConf.subscriptions = pageConf.subscriptions || [];
       
       
@@ -654,6 +663,7 @@ app.service('app', function ($http, $state, $stateParams, $log, config, $rootSco
           if (!exists) { pageConf.subscriptions.push(listener);}
         }
       };
+
 
       pageConf.subscriptions.addListener = function(listener){
         pageConf.subscriptions.addListeners([listener]);        
@@ -817,9 +827,11 @@ app.service('widgetManager', function ($modal, $timeout, APIUser, APIProvider,
             openConfigOnLoad: true,
             instanceName: randomWidgetName()
           };
-
+         
           holder.widgets = holder.widgets || [];
           holder.widgets.push(realWidget);
+          
+          app.markModified(true);    
         });
     },
 
@@ -1046,7 +1058,7 @@ app.directive('widgetHolder', function (appUrls, widgetManager, app, selectHolde
 app.directive('widget', function ($rootScope, $translate, $window, appUrls, globalConfig, widgetLoader,
                                   config, widgetManager, user, app, randomWidgetName,
                                   instanceNameToScope, widgetSlots, widgetTypesPromise,
-                                  autoWiredSlotsAndEvents, eventWires) {
+                                  autoWiredSlotsAndEvents, eventWires, APIUser, APIProvider) {
   function updateEventsOnNameChange(widget) {
     $rootScope.$watch(() => widget.instanceName, (newName, oldName) => {
       if (newName !== oldName && newName !== undefined) {
@@ -1129,6 +1141,9 @@ app.directive('widget', function ($rootScope, $translate, $window, appUrls, glob
 
           scope.$applyAsync(() => {
             widgetManager.openWidgetConfigurationDialog(scope.widget)
+            const user = new APIUser();
+            // console.log("before create widjet event", realWidget)
+            user.invokeAll(APIProvider.CREATE_WIDGET_SLOT,scope.widget);
           });
         }
       });
@@ -1150,7 +1165,7 @@ app.directive('widget', function ($rootScope, $translate, $window, appUrls, glob
         scope.$on('$destroy', () => {
           // clean widgetSlots and eventWires
           widgetSlots.delete(scope);
-          eventWires.delete(scope);
+          eventWires.delete(scope.widget.instanceName);
 
           // clean autoWiredSlotsAndEvents
           for (let i = autoWiredSlotsAndEvents.length - 1; i >= 0; --i) {
