@@ -1044,9 +1044,14 @@ app.directive('widgetHolder', function (appUrls, widgetManager, app, selectHolde
               event.source.nodeScope.$$childHead.drag = true;
           },
           accept(sourceNodeScope, destNodesScope, destIndex){
-            selectHolder(destNodesScope.$treeScope.$parent.$parent);
+            if(angular.isUndefined(sourceNodeScope.$modelValue.$djItemType)){
+              selectHolder(destNodesScope.$treeScope.$parent.$parent);
+            }
+            // console.log("Source Scope", sourceNodeScope)
+            // console.log("Accept:", angular.isUndefined(sourceNodeScope.$modelValue.$djItemType))
             // console.log(scope, destNodesScope.$treeScope.$parent.$parent);
-            return true;
+            return angular.isUndefined(sourceNodeScope.$modelValue.$djItemType)
+            // return true;
           }
         }
 

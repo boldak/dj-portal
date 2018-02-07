@@ -624,122 +624,7 @@ off {
   </div>  
 </div> 
 
-<!-- 
-
-
-
-    
-    
-    <div ng-if="!disabled" class="row" style="margin: 0.5em 0 0 0; height:auto;">
-      <div ng-if="globalConfig.designMode">
-         <h4 class="divHeader">Options</h4>
-          <div  class="row" 
-            style="margin: 0.5em 0 0 0; height:auto;">
-            <div class="column large-2">
-                <b>ID:</b>
-              </div>
-
-            <div class="column large-10 left">
-                {{widget.ID}}  
-            </div>
-        </div>
-        <div  class="row" 
-            style="margin: 0.5em 0 0 0; height:auto;">
-            <div class="column large-2">
-                <b>Type:</b>
-            </div>
-
-            <div class="column large-10 left">
-              {{options.type}}
-              <span  class="tiny" style="margin:0"> 
-                <a class="action" ng-click="selectType()">[Select...]</a>
-              </span>
-            </div>
-        </div>    
-      </div>
-      <div ng-if="globalConfig.designMode">
-            <h4 class="divHeader">Title
-              <a class="action" ng-click="editTitle()">[Edit...]</a>
-            </h4>
-      </div>     
-            <div class="row" 
-              style="margin: 0.5em 0 0 0; height:auto;background: none;"
-              ng-bind-html="title"
-            >
-            </div>
-      <div ng-if="globalConfig.designMode">      
-            <h5 class="divHeader">Note
-                <a class="action" ng-click="editNote()">[Edit...]</a>
-                <div class="switch tiny radius">
-                      <input type="checkbox"
-                             id="staggerLabelsCheckbox"
-                       >
-                  <label for="staggerLabelsCheckbox"></label>
-                </div>
-                <span>
-                  Show note
-                </span>
-                
-            </h5>
-      </div>     
-            <div class="row" 
-              style="margin: 0.5em 0 0 0; height:auto;"
-              ng-bind-html="note"
-            />
-       <div ng-if="globalConfig.designMode">            
-            <h4 class="divHeader">Values</h4>
-        </div>   
-
-            <div  class="row" 
-              style="margin: 0.5em 0 0 0; height:auto; background: none;"
-              ng-if= "options.type =='radiogroup'"
-            >
-              <div class="medium-12 columns">
-              <ul class="alt">
-                <li ng-repeat="alternative in options.values">
-                  <input 
-                    id="{{alternative.id}}" 
-                    class="radio" 
-                    type="radio" 
-                    ng-model="m"
-                    name="{{options.id}}"
-                    ng-change="setRadioAnswer(alternative.id)"
-                    ng-checked = "{{alternative.id == answer.value}}"
-                  > 
-                  <label class="alt" for="{{alternative.id}}">{{alternative.text}}</label>
-                </li>
-              </ul>
-            </div>
-              {{answer}}
-            </div>
-
-            <div  class="row" 
-              style="margin: 0.5em 0 0 0; height:auto; background: none;"
-              ng-if= "options.type =='checkgroup'"
-            >
-              
-              <div class="medium-12 columns">
-              <ul class="alt">
-                <li ng-repeat="alternative in options.values">
-                  <input 
-                    id="{{alternative.id}}" 
-                    class="checkbox" 
-                    type="checkbox" 
-                    ng-model="answer.value[alternative.id]"
-                    name="{{options.id}}"
-                  > 
-                  <label class="alt" for="{{alternative.id}}">{{alternative.text}}</label>
-                </li>
-              </ul>
-            </div>
-              {{answer}}
-            </div>
-
-
-
-        </div>  
-    </div>   -->
-    <hr/>
+<hr/>
 
 
 
@@ -839,7 +724,7 @@ off {
   </div>
 </div>    
 
-<h2> m from n </h2>
+<h2> Якi проблеми на рiвнi унiверситету, на Вашу думку, є найгострiшими? </h2>
 
 <div class="row" style="margin-bottom:1em">
   <div class="column small-10 small-centered">

@@ -81,17 +81,17 @@ $scope.questionTypes = [
 
 $scope.alt = [];
 for(let i in [1,2,3,4,5,6]){
-    $scope.alt.push({id:randomID(), title:"Alternative "+i})
+    $scope.alt.push({id:randomID(), title:"Alternative "+i, $djItemType:"embeded"})
 }
 
 $scope.rows = [];
 for(let i in [1,2,3,4,5]){
-    $scope.rows.push({id:randomID(), title:"Object "+i})
+    $scope.rows.push({id:randomID(), title:"Object "+i, $djItemType:"embeded"})
 }
 
 $scope.cols = [];
 for(let i in [1,2,3]){
-    $scope.cols.push({id:randomID(), title:"Property "+i})
+    $scope.cols.push({id:randomID(), title:"Property "+i, $djItemType:"embeded"})
 }
 
 
@@ -106,7 +106,7 @@ $scope.delete = (object,index) => {
     object.splice(index,1)
 }
 $scope.add = (object) => {
-    object.push({value:randomID(), title:"New item"})
+    object.push({id:randomID(), title:"New item",$djItemType:"embeded"})
 }
 
 $scope.cselect = (value) => {
@@ -215,7 +215,7 @@ $scope.treeOptions = {
   accept: (sourceNodeScope, destNodesScope, destIndex) => {
     if(dest != destNodesScope){
         dest = destNodesScope;
-        console.log("acccept ", dest)
+        // console.log("acccept ", dest)
     }
     // console.log("ACCEPT", sourceNodeScope, destNodesScope, destIndex)
     // selectHolder(destNodesScope.$treeScope.$parent.$parent);
