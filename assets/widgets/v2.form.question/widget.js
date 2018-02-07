@@ -1,8 +1,11 @@
 import angular from 'angular';
+import 'angular-ui-tree';
+import "custom-react-directives";
+import "d3";
 
 
 let m = angular.module('app.widgets.v2.form.question', [
-  'app.dps'
+  'app.dps','ui.tree',"custom-react-directives"
   // ,
   // 'ngSanitize'
 ])
@@ -25,12 +28,19 @@ m.controller('FormQuestionController', function(
   config,
   instanceNameToScope,
   $sce,
-  htmlEditor
+  htmlEditor,
+  randomID,
+  d3
+  
 ) {
 
   // const eventEmitter = new EventEmitter($scope);
 
-
+$scope.answer = {
+    type:"radio"
+    // ,
+    // value:"a4"
+};
 
 $scope.options = {
     title:`
@@ -41,6 +51,7 @@ $scope.options = {
     note:"<i>Як, у цiлому, Ви оцiнюєте свою стараннiсть у навчаннi?</i>",
     type:"radiogroup",
     closure:"closed",
+    // values:[]
     values:[
         {id:"a1", text:"Навчаюся з повною вiддачею сил"},
         {id:"a2", text:"Навчаюся старанно лише час вiд часу"},
@@ -52,13 +63,166 @@ $scope.options = {
 
 
 $scope.questionTypes = [
-    {value:"string", title:"String"},
-    {value:"text", title:"Text"},
-    {value:"radiogroup", title:"Radio"},
-    {value:"checkgroup", title:"Checkbox"},
-    {value:"scale", title:"Scale"},
-    {value:"matrix", title:"Matrix"}
+    {value:"text", title:"Text", css:"fa fa-align-left"},
+    {value:"date", title:"Date", css:"fa fa-calendar"},
+    {value:"month", title:"Month", css:"fa fa-calendar"},
+    {value:"time", title:"Time", css:"fa fa-calendar"},
+    {value:"datetime", title:"Date Time", css:"fa fa-calendar"},
+    {value:"radio", title:"1 from n", css:"fa fa-stop-circle"},
+    {value:"check", title:"m from n", css:"fa fa-check-square"},
+    {value:"dropdown", title:"Dropdown", css:"fa fa-list"},
+    {value:"scale", title:"Scale", css:"fa fa-ellipsis-h"},
+    {value:"rate", title:"Rate", css:"fa fa-star"},
+    {value:"range", title:"Range", css:"fa fa-arrows-h"},
+    {value:"scales", title:"Scales", css:"fa fa-th-list"},
+    {value:"pairs", title:"Pairs", css:"fa fa-th"},
+    {value:"influence", title:"Influence", css:"fa fa-braille"}
 ]
+
+$scope.alt = [];
+for(let i in [1,2,3,4,5,6]){
+    $scope.alt.push({id:randomID(), title:"Alternative "+i})
+}
+
+$scope.rows = [];
+for(let i in [1,2,3,4,5]){
+    $scope.rows.push({id:randomID(), title:"Object "+i})
+}
+
+$scope.cols = [];
+for(let i in [1,2,3]){
+    $scope.cols.push({id:randomID(), title:"Property "+i})
+}
+
+
+$scope._click = null;
+
+$scope.select = (value) => {
+    console.log("SELECT", value)
+    $scope._over = value
+}
+
+$scope.delete = (object,index) => {
+    object.splice(index,1)
+}
+$scope.add = (object) => {
+    object.push({value:randomID(), title:"New item"})
+}
+
+$scope.cselect = (value) => {
+    console.log("CSELECT", value)
+    $scope._click = value
+}
+
+
+$scope.influencePallete = ["#f7fcb9", "#addd8e", "#31a354"];
+$scope.influenceUndefinedColor = "#eee";
+$scope.influenceDisabledColor = "#00000080";
+$scope.influenceOpacity = 70;
+
+
+$scope.setPallete = (pallete) => {
+    $scope.influencePallete = pallete;
+}
+
+$scope.influenceScale = {
+    "min":1,
+    "max":7,
+    "undefined":0
+}
+
+$scope.getColor = (value) => {
+      let pc;
+      if(value == "d"){
+        pc = $scope.influenceDisabledColor
+      } else {
+        if (value == $scope.influenceScale["undefined"]) {
+            pc = $scope.influenceUndefinedColor
+        } else {
+            let s = d3.scale.linear().domain([$scope.influenceScale.min,$scope.influenceScale.max]).rangeRound([0,$scope.influencePallete.length-1])
+            pc = $scope.influencePallete[s(value)]
+        }
+      }
+
+      let c = d3.rgb(pc);
+      return "rgba("+ c.r + ","+ c.g + ","+ c.b + ","+($scope.influenceOpacity/100)+ ")"
+}
+
+$scope.getInvColor = (value) => {
+      let pc;
+      if(value == "d"){
+        pc = $scope.influenceDisabledColor
+      } else {
+        if (value == $scope.influenceScale["undefined"]) {
+            pc = $scope.influenceUndefinedColor
+        } else {
+            let s = d3.scale.linear().domain([$scope.influenceScale.min,$scope.influenceScale.max]).rangeRound([0,$scope.influencePallete.length-1])
+            pc = $scope.influencePallete[s(value)]
+        }
+      }
+
+      let c = d3.rgb(pc);
+      return "rgba("+ (255-c.r) + ","+ (255-c.g) + ","+ (255-c.b) + ",1)"
+}
+
+
+$scope.influenceStyle = (i,j) => {
+    return {background: $scope.getColor($scope.influenceData[i][j])}
+}
+
+$scope.labelStyle = (i,j) => {
+    return {color: $scope.getInvColor($scope.influenceData[i][j]), textAlign:"center"}
+}
+
+$scope.influenceData = [
+    [0,1,2,3,4,5,6],
+    ["d",0,0,0,"d",0,7],
+    ["d","d",0,0,0,0,0],
+    ["d","d","d",0,0,0,0]
+]
+
+
+
+$scope.influenceDataRows = [0,1,2,3]
+$scope.influenceDataCols = [0,1,2,3,4,5,6]
+
+$scope.setValue = (i,j) => {
+    if($scope.influenceData[i][j] == "d") return;
+    $scope.influenceData[i][j]++;
+    $scope.influenceData[i][j] = ($scope.influenceData[i][j] > $scope.influenceScale.max)
+        ? (angular.isNumber($scope.influenceScale["undefined"]))
+            ? $scope.influenceScale["undefined"]
+            : $scope.influenceScale.min
+        : $scope.influenceData[i][j] 
+}
+
+
+let dest = null;
+let startDest = null;
+$scope.treeOptions = {
+  // dropped:(event) => {
+  //   console.log("DROP", event.source.index+" -> "+event.dest.index)
+  //   // event.source.nodeScope.$$childHead.drag = false;
+  //   // selectHolder(null);
+  //   // app.markModified()
+  // },
+  dragStart:(event) => {
+        dest = event.dest.nodesScope;
+        startDest = event.dest.nodesScope;
+      // console.log("DRAGSTART", event)
+      // event.source.nodeScope.$$childHead.drag = true;
+  },
+  accept: (sourceNodeScope, destNodesScope, destIndex) => {
+    if(dest != destNodesScope){
+        dest = destNodesScope;
+        console.log("acccept ", dest)
+    }
+    // console.log("ACCEPT", sourceNodeScope, destNodesScope, destIndex)
+    // selectHolder(destNodesScope.$treeScope.$parent.$parent);
+    // console.log(scope, destNodesScope.$treeScope.$parent.$parent);
+    return startDest == dest;
+  }
+}
 
 
 $scope.selectType = () => {
@@ -75,6 +239,25 @@ $scope.selectType = () => {
     })
     .then (form => {
         $scope.options.type = form.fields.type.value
+        
+        if($scope.options.type == "radiogroup"){
+            $scope.answer = {
+                type:"radio"
+            };
+        }
+
+        if($scope.options.type == "checkgroup"){
+           let value = {}
+           $scope.options.values.forEach((item) => {
+                value[item.id] = false
+           })
+           value["a2"] = true;
+           
+           $scope.answer = {
+                type:"check",
+                value: value
+            };
+        }
     })
 }
 
@@ -94,6 +277,35 @@ $scope.editNote = () => {
         })
 } 
 
+$scope.selectQtype = (type) => {
+    $scope.qtype = type
+}
+
+$scope.setRadioAnswer = value => {
+    $scope.answer = {
+        type:"radio",
+        value:value
+    }
+}
+
+$scope.m = true;
+
+$scope.setCheckAnswer = value => {
+    
+    // $scope.answer = {
+    //     type:"check",
+    //     value: ($scope.answer.value) ? $scope.answer.value : new Set()
+    // }
+
+
+    if(!$scope.answer.value.has(value)){ 
+        $scope.answer.value.add(value);
+    } else {
+        $scope.answer.value.delete(value);
+    }
+        
+    console.log($scope.answer.value)
+}
 
   
   let scopeFor = widgetInstanceName => instanceNameToScope.get(widgetInstanceName);

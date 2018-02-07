@@ -7,7 +7,7 @@ import "date-and-time";
 
 
 
-let m = angular.module("custom-react-directives",['react','app.widgets.palettes']);
+let m = angular.module("custom-react-directives",['app','react','app.widgets.palettes']);
 m.service("d3", function(){return d3});
 
 let WdcTable = React.createClass( {
@@ -254,6 +254,65 @@ m.value( "WdcTable",WdcTable);
 
 m.directive( 'wdcTable', function( reactDirective ) {
   return reactDirective( 'WdcTable' );
+});
+
+
+let ulStyle = {
+  height:"10rem", 
+  overflow: "auto"
+}
+
+let colorStyle = (color) => {
+  return {
+    backgroundColor: color,
+    width: "10px",
+    height: "10px",
+    display: "inline-block", 
+    margin: "0",
+    padding: "0",
+    border: "1px solid #afafaf"
+  }
+}
+
+
+
+let renderColor = (color,indexc,indexp) => <span key={"color"+indexp+indexc} style={colorStyle(color)}></span>
+
+let renderRow = (pal,indexp,onSelect,dest) => { 
+  let clickHandler = () => {
+      onSelect.call(dest,pal)
+  }
+  return <li key={'pal'+indexp} onClick={clickHandler}>{pal.map((c,indexc)=>renderColor(c,indexp,indexc))}</li>
+}
+
+let Pal = React.createClass({
+    propTypes : {
+      setter: React.PropTypes.func.isRequired,
+      dest: React.PropTypes.object.isRequired
+     },
+
+    getDefaultProps: function() {
+      return {
+        setter :  (data) => {console.log(data)},
+        dest : {}
+      };
+    },
+    
+    render:function(){
+     
+     let setter = this.props.setter;
+     let dest = this.props.dest;
+     
+     return <ul className={"f-dropdown tiny"} style={ulStyle} id={'fast_color_peaker'}>
+          {Palettes.map((pal,index) => renderRow(pal, index, setter, dest)) }
+        </ul>
+    }    
+})
+
+m.value( "Pal",Pal);
+
+m.directive( 'fastPalettePeacker', function( reactDirective ) {
+  return reactDirective( 'Pal' );
 });
 
 

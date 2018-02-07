@@ -5,7 +5,7 @@
       color: #008cba;
       font-weight:bold;
   }
-  .sectionHeader {
+  .divHeader {
     margin-top: 1em;
       border-bottom: 2px solid #999999;
       padding-left: 1em;
@@ -154,28 +154,485 @@ input.radio + label:before {
 html ul {
   list-style: none;
   padding: 0;
-  display: inline-block;
+  /*display: inline-block;
   width: 30rem;
-  margin-right: 5rem;
+  margin-right: 5rem;*/
 }
 
-label.alt {
+
+
+input[type], select, textarea {
+  font-size: large;
+}
+
+input[type]:focus, textarea.text:focus, select:focus {
+    border: 2px solid #4abb8f;
+    outline:none;
+}
+
+input[type=range] {
+  -webkit-appearance: none;
+  width: 100%;
+  margin: 9px 0;
+}
+input[type=range]:focus {
+  outline: none;
+}
+input[type=range]::-webkit-slider-runnable-track {
+  width: 100%;
+  height: 6px;
+  cursor: pointer;
+  box-shadow: 0px 0px 0px rgba(0, 0, 0, 0), 0px 0px 0px rgba(13, 13, 13, 0);
+  background: rgba(238, 238, 238, 0);
+  border-radius: 0.9px;
+  border: 1px solid #4abb8f;
+}
+input[type=range]::-webkit-slider-thumb {
+  box-shadow: 0px 0px 0px rgba(0, 170, 0, 0), 0px 0px 0px rgba(0, 195, 0, 0);
+  border: 3px solid #aaaaaa;
+  height: 24px;
+  width: 12px;
+  border-radius: 4px;
+  background: #ffffff;
+  cursor: pointer;
+  -webkit-appearance: none;
+  margin-top: -10px;
+}
+input[type=range]:focus::-webkit-slider-runnable-track {
+  background: rgba(255, 255, 255, 0);
+}
+input[type=range]::-moz-range-track {
+  width: 100%;
+  height: 6px;
+  cursor: pointer;
+  box-shadow: 0px 0px 0px rgba(0, 0, 0, 0), 0px 0px 0px rgba(13, 13, 13, 0);
+  background: rgba(238, 238, 238, 0);
+  border-radius: 0.9px;
+  border: 1px solid #4abb8f;
+}
+input[type=range]::-moz-range-thumb {
+  box-shadow: 0px 0px 0px rgba(0, 170, 0, 0), 0px 0px 0px rgba(0, 195, 0, 0);
+  border: 3px solid #aaaaaa;
+  height: 24px;
+  width: 12px;
+  border-radius: 4px;
+  background: #ffffff;
+  cursor: pointer;
+}
+input[type=range]::-ms-track {
+  width: 100%;
+  height: 6px;
+  cursor: pointer;
+  background: transparent;
+  border-color: transparent;
+  color: transparent;
+}
+input[type=range]::-ms-fill-lower {
+  background: rgba(213, 213, 213, 0);
+  border: 1px solid #4abb8f;
+  border-radius: 1.8px;
+  box-shadow: 0px 0px 0px rgba(0, 0, 0, 0), 0px 0px 0px rgba(13, 13, 13, 0);
+}
+input[type=range]::-ms-fill-upper {
+  background: rgba(238, 238, 238, 0);
+  border: 1px solid #4abb8f;
+  border-radius: 1.8px;
+  box-shadow: 0px 0px 0px rgba(0, 0, 0, 0), 0px 0px 0px rgba(13, 13, 13, 0);
+}
+input[type=range]::-ms-thumb {
+  box-shadow: 0px 0px 0px rgba(0, 170, 0, 0), 0px 0px 0px rgba(0, 195, 0, 0);
+  border: 3px solid #aaaaaa;
+  height: 24px;
+  width: 12px;
+  border-radius: 4px;
+  background: #ffffff;
+  cursor: pointer;
+  height: 6px;
+}
+input[type=range]:focus::-ms-fill-lower {
+  background: rgba(238, 238, 238, 0);
+}
+input[type=range]:focus::-ms-fill-upper {
+  background: rgba(255, 255, 255, 0);
+}
+
+input[type=color] {
+      padding: 0.05em;
+}
+
+label.large, a.large {
   font-size:large;
+  color: #999999;
 }
 
+on {
+  color: #4abb8f;
+  font-size: 32px;
+}
+
+off {
+  color: #ddd;
+  font-size: 32px;
+}
 
 </style>
 
 <div class="row" ng-controller="FormQuestionController"
      style="  padding: 0.5rem; 
-              margin: 0; 
-              background-color: #f7f5df;"
+              margin: 0;"
 >   
 
-    <h3 ng-if="disabled" style="color: #f08a24;" class="fi-alert"> Question is disabled. You canot use 'v2.form-question' widgets without "v2.form" widget.</h3>
+
+<h3 ng-if="disabled" style="color: #f08a24;" class="fi-alert"> Question is disabled. You canot use 'v2.form-question' widgets without "v2.form" widget.</h3>
+
+
+
+<div ng-if="globalConfig.designMode && !disabled" class="row">
+  <div class="columns small-12">
+
+  <!-- container -->
+    <div class="row">
+      <div class="column small-8">
+        <label class="large"> Title
+          <textarea placeholder="Title" class="text" rows=5></textarea>
+        </label>  
+      </div>
+      <div class='column small-4'>
+        <label class="large">Type</label>
+          <a  class="button split small-12"  
+              style="font-size: large;"
+          >
+            <i ng-if="qtype"> <i class="{{qtype.css}}" style="padding-right: 1em;"/><i>{{qtype.title}}</i></i>
+            <i ng-if="!qtype">Select...</i>
+            <span dropdown-toggle="{{'#'+widget.instanceName+'_q_type'}}"/>
+          </a>
+          <ul id="{{widget.instanceName+'_q_type'}}" class="f-dropdown">
+            <li>
+              <a ng-click="selectQtype(i)" ng-repeat="i in questionTypes" style="font-size: large;">
+                <i class="{{i.css}}" style="padding-right: 1em;"/><i>{{i.title}}</i>
+              </a>
+            </li>
+          </ul>
+        <label class="large"> Required
+          <div class="switch tiny radius">
+            <input type="checkbox" id="{{widget.instanceName+'_required'}}">
+            <label  for="{{widget.instanceName+'_required'}}"></label>
+          </div>
+        </label>    
+      </div>
+    </div>
+
+
+    <div class="row">
+      <div class="column small-12">
+        <label class="large">Alternatives</label>
+        <!-- list start-->
+        <div class="row">
+          <div ui-tree="treeOptions" class="column small-12 small-centered">
+            <ol ui-tree-nodes ng-model="alt">
+              <li ui-tree-node ng-repeat="i in alt" ng-click="cselect(i.id)">
+                  <div class="row">
+                    <div class="columns small-12">
+                      <div ui-tree-handle class="column small-1">
+                        <i  
+                            class="fa fa-ellipsis-v right" 
+                            style="padding:0.4em 0; font-size:1.2em; color:#aaa">
+                        </i>
+                        <!-- <i  
+                          class="fa fa-ellipsis-v right" 
+                          style="padding:0.4em 0.1em; font-size:1.2em; color:#aaa">
+                        </i> -->
+                      </div>
+                      <div class="column small-10">
+                        <input 
+                                  type="text" 
+                                  ng-model="i.title" 
+                                  ng-disabled="_click != i.id" 
+                                  focused="_click != i.id"
+                              >
+                      </div>
+                      <div class="column small-1">
+                        <a 
+                          class="fa fa-times-circle" 
+                          ng-click="delete(alt,$index)"
+                          style="   color: #aaa;
+                                    font-size: 24px;
+                                    margin: 0.35em 0 0 -1em;"
+                        ></a>
+                      </div>
+                    </div>  
+                  </div>  
+              </li>  
+            </ol>  
+          </div>
+
+          <div class="row">
+            <div class="column small-10 small-centered">
+              <a 
+                class="large right"
+                ng-click="add(alt)"
+              >
+                <i class=" fa fa-plus-square"/> 
+                  Add new item
+              </a>
+            </div>  
+          </div>
+
+        </div>    
+        <!-- list end -->
+      </div>          
+    </div>
+
+    <div class="row">
+      <div class="columns small-10 small-centered">
+        
+        <!-- row list -->
+        <div class="column small-6">
+          <label class="large"> Rows </label>
+          <!-- list start-->
+          <div class="row">
+            <div ui-tree="treeOptions" class="column small-12 small-centered">
+              <ol ui-tree-nodes ng-model="rows">
+                <li ui-tree-node ng-repeat="i in rows" ng-click="cselect(i.id)">
+                    <div class="row">
+                      <div class="columns small-12">
+                        <div ui-tree-handle class="column small-1">
+                          <i  
+                              class="fa fa-ellipsis-v right" 
+                              style="padding:0.4em 0; font-size:1.2em; color:#aaa">
+                          </i>
+                          <!-- <i  
+                            class="fa fa-ellipsis-v right" 
+                            style="padding:0.4em 0.1em; font-size:1.2em; color:#aaa">
+                          </i> -->
+                        </div>
+                        <div class="column small-10">
+                          <input 
+                                    type="text" 
+                                    ng-model="i.title" 
+                                    ng-disabled="_click != i.id" 
+                                    focused="_click != i.id"
+                                >
+                        </div>
+                        <div class="column small-1">
+                          <a 
+                            class="fa fa-times-circle" 
+                            ng-click="delete(rows,$index)"
+                            style="   color: #aaa;
+                                      font-size: 24px;
+                                      margin: 0.35em 0 0 -1em;"
+                          ></a>
+                        </div>
+                      </div>  
+                    </div>  
+                </li>  
+              </ol>  
+            </div>
+
+            <div class="row">
+              <div class="column small-10 small-centered">
+                <a 
+                  class="large right"
+                  ng-click="add(rows)"
+                >
+                  <i class=" fa fa-plus-square"/> 
+                    Add new row
+                </a>
+              </div>  
+            </div>
+
+          </div>    
+          <!-- list end -->
+        </div>
+
+        <!-- col list -->
+        <div class="column small-6">
+          <label class="large"> Columns </label>
+          <!-- list start-->
+          <div class="row">
+            <div ui-tree="treeOptions" class="column small-12 small-centered">
+              <ol ui-tree-nodes ng-model="cols">
+                <li ui-tree-node ng-repeat="i in cols" ng-click="cselect(i.id)">
+                    <div class="row">
+                      <div class="columns small-12">
+                        <div ui-tree-handle class="column small-1">
+                          <i  
+                              class="fa fa-ellipsis-v right" 
+                              style="padding:0.4em 0; font-size:1.2em; color:#aaa">
+                          </i>
+                          <!-- <i  
+                            class="fa fa-ellipsis-v right" 
+                            style="padding:0.4em 0.1em; font-size:1.2em; color:#aaa">
+                          </i> -->
+                        </div>
+                        <div class="column small-10">
+                          <input 
+                                    type="text" 
+                                    ng-model="i.title" 
+                                    ng-disabled="_click != i.id" 
+                                    focused="_click != i.id"
+                                >
+                        </div>
+                        <div class="column small-1">
+                          <a 
+                            class="fa fa-times-circle" 
+                            ng-click="delete(cols,$index)"
+                            style="   color: #aaa;
+                                      font-size: 24px;
+                                      margin: 0.35em 0 0 -1em;"
+                          ></a>
+                        </div>
+                      </div>  
+                    </div>  
+                </li>  
+              </ol>  
+            </div>
+
+            <div class="row">
+              <div class="column small-10 small-centered">
+                <a 
+                  class="large right"
+                  ng-click="add(cols)"
+                >
+                  <i class=" fa fa-plus-square"/> 
+                    Add new column
+                </a>
+              </div>  
+            </div>
+
+          </div>    
+          <!-- list end -->
+        </div>
+        
+          
+      </div>  
+    </div>
+
+    <div class="rows">
+      <div class="columns small-10 small-centered">
+        <label class="large">Color Pallete</label>
+        <div class="column small-6">
+          
+          <a class="second dropdown tiny left"
+              ng-if="!influencePallete" 
+              dropdown-toggle="#dropdown-example-3" 
+              style="margin: 0 0 0 0.3rem;
+              padding: 0.3rem 2.5rem 0.3rem 0.5rem;"
+          >
+            Select...
+          </a>
+          
+          <a  class="button tiny split small-12"  
+              style="font-size: large;"
+          >
+            <div class="columns small-12">
+              <div  
+                ng-if="influencePallete"
+                class="left column small-1"
+                ng-repeat="color in  influencePallete"
+                style="
+                    background-color: {{color}};
+                    /*width: 1em;*/
+                    display: inline-block;
+                    margin: 0px;
+                    padding: 0px 0.2rem;
+                    font-size: large;
+                    border: 1px solid rgb(175, 175, 175);"
+              >
+                &nbsp;
+              </div>
+            </div>  
+            <div ng-if="!influencePallete">
+              Select...
+            </div>    
+            <span dropdown-toggle="#fast_color_peaker"/>
+          </a>
+
+          <fast-palette-peacker 
+            dest="influencePallete" 
+            setter="setPallete" 
+            watch-depth="reference">
+          </fast-palette-peacker>
+        </div>  
+      </div>  
+    </div> 
+
+    <div class="rows">
+      <div class="columns small-12">
+        <div class="column small-3">
+          <label class="large"> Undefined Value Color </label>
+          <div class="small-2">
+            <input type="color" ng-model="influenceUndefinedColor">
+          </div>  
+        </div>
+        <div class="column small-3">
+          <label class="large"> Disabled Value Color </label>
+          <div class="small-2">
+            <input type="color" ng-model="influenceDisabledColor">
+          </div>  
+        </div>
+        <div class="column small-6">
+          <label class="large"> Opacity </label>
+          <div class="column small-10">
+             <input type="range" name="range" ng-model="influenceOpacity" min="{{0}}"  max="{{100}}">
+             <span class="label success right" ng-if="influenceOpacity">{{influenceOpacity}}%</span>
+          </div>  
+        </div>
+      </div>  
+    </div> 
+  <!-- end of container -->
+  </div>  
+</div>  
+
+
+<h2> Influence </h2> 
+
+<div class="row" style="margin-bottom:1em">
+  <div class="column small-10 small-centered">
+
+    <div class="row" style="background: #eee;
+    border-bottom: 1px solid #999;">
+      <div class="column small-2">
+          &nbsp;
+      </div> 
+      <div class="column small-1 left" ng-repeat="j in influenceDataCols" style="padding-bottom: 0.3em;
+    padding-top: 0.5em; text-align: center;
+    padding-left: 1.4em;">
+        Effect {{j}} 
+      </div>
+    </div>  
+  
+
+    <div class="row" style="    
+    border-bottom: 1px solid #999;" ng-repeat="i in influenceDataRows">
+      <div class="column small-2" style="background: #eee; padding-bottom: 0.3em;
+    padding-top: 0.5em;">
+          Factor {{i}}
+      </div> 
+      <div class="column small-1 left" ng-repeat="j in influenceDataCols"
+            ng-style="influenceStyle(i,j)">
+        <label class="large" ng-style="labelStyle(i,j)" ng-click="setValue(i,j)">{{
+          (influenceData[i][j]=="d")
+            ? "&nbsp;" 
+            : (influenceData[i][j]==influenceScale['undefined'])
+                ? "&nbsp;" 
+                : influenceData[i][j]
+        }}</label>
+      </div>
+    </div>  
+  
+  </div>  
+</div> 
+
+<!-- 
+
+
+
+    
     
     <div ng-if="!disabled" class="row" style="margin: 0.5em 0 0 0; height:auto;">
-         <h4 class="sectionHeader">Options</h4>
+      <div ng-if="globalConfig.designMode">
+         <h4 class="divHeader">Options</h4>
           <div  class="row" 
             style="margin: 0.5em 0 0 0; height:auto;">
             <div class="column large-2">
@@ -198,16 +655,20 @@ label.alt {
                 <a class="action" ng-click="selectType()">[Select...]</a>
               </span>
             </div>
-
-            <h4 class="sectionHeader">Title
+        </div>    
+      </div>
+      <div ng-if="globalConfig.designMode">
+            <h4 class="divHeader">Title
               <a class="action" ng-click="editTitle()">[Edit...]</a>
             </h4>
+      </div>     
             <div class="row" 
               style="margin: 0.5em 0 0 0; height:auto;background: none;"
               ng-bind-html="title"
             >
             </div>
-            <h5 class="sectionHeader">Note
+      <div ng-if="globalConfig.designMode">      
+            <h5 class="divHeader">Note
                 <a class="action" ng-click="editNote()">[Edit...]</a>
                 <div class="switch tiny radius">
                       <input type="checkbox"
@@ -220,29 +681,336 @@ label.alt {
                 </span>
                 
             </h5>
+      </div>     
             <div class="row" 
               style="margin: 0.5em 0 0 0; height:auto;"
               ng-bind-html="note"
             />
-            
-            <h4 class="sectionHeader">Values</h4>
+       <div ng-if="globalConfig.designMode">            
+            <h4 class="divHeader">Values</h4>
+        </div>   
+
             <div  class="row" 
               style="margin: 0.5em 0 0 0; height:auto; background: none;"
               ng-if= "options.type =='radiogroup'"
             >
-              
-              <ul>
+              <div class="medium-12 columns">
+              <ul class="alt">
                 <li ng-repeat="alternative in options.values">
-                  <input id="{{alternative.id}}" class="radio" type="radio" name="{{options.id}}">
+                  <input 
+                    id="{{alternative.id}}" 
+                    class="radio" 
+                    type="radio" 
+                    ng-model="m"
+                    name="{{options.id}}"
+                    ng-change="setRadioAnswer(alternative.id)"
+                    ng-checked = "{{alternative.id == answer.value}}"
+                  > 
                   <label class="alt" for="{{alternative.id}}">{{alternative.text}}</label>
                 </li>
               </ul>
-
+            </div>
+              {{answer}}
             </div>
 
+            <div  class="row" 
+              style="margin: 0.5em 0 0 0; height:auto; background: none;"
+              ng-if= "options.type =='checkgroup'"
+            >
+              
+              <div class="medium-12 columns">
+              <ul class="alt">
+                <li ng-repeat="alternative in options.values">
+                  <input 
+                    id="{{alternative.id}}" 
+                    class="checkbox" 
+                    type="checkbox" 
+                    ng-model="answer.value[alternative.id]"
+                    name="{{options.id}}"
+                  > 
+                  <label class="alt" for="{{alternative.id}}">{{alternative.text}}</label>
+                </li>
+              </ul>
+            </div>
+              {{answer}}
+            </div>
+
+
+
         </div>  
+    </div>   -->
+    <hr/>
+
+
+
+
+
+
+<h2> Text </h2>
+
+<div class="row" style="margin-bottom:1em">
+  <div class="column small-10 small-centered">
+    <textarea placeholder="small-10.columns" class="text" rows=5></textarea>
+  </div>
+</div> 
+
+<h2> Date </h2>
+
+<div class="row" style="margin-bottom:1em">
+  <div class="column small-10 small-centered">
+    <div class="column small-5">
+      <input type="date" id="exampleInput" name="input" ng-model="date"
+            placeholder="yyyy-MM-dd" min="2013-01-01" max="2013-12-31"/>
+    </div>        
+  </div>
+</div> 
+
+<h2> Month </h2>
+
+<div class="row" style="margin-bottom:1em">
+  <div class="column small-10 small-centered">
+    <div class="column small-5">
+      <input type="month" id="exampleInput" name="input" ng-model="month"
+            placeholder="MM-dd" min="2013-01-01" max="2013-12-31"/>
     </div>  
+  </div>
+</div> 
+
+<h2> Time </h2>
+
+<div class="row" style="margin-bottom:1em">
+  <div class="column small-10 small-centered">
+    <div class="column small-5">
+      <input type="time" id="exampleInput" name="input" ng-model="time"
+            placeholder="HH:mm:ss" min="2013-01-01" max="2013-12-31"/>
+    </div>
+  </div>
+</div> 
+
+<h2> Date Time </h2>
+
+<div class="row" style="margin-bottom:1em">
+  <div class="column small-10 small-centered">
+    <div class="column small-5">
+      <input type="datetime-local" id="exampleInput" name="input" ng-model="example.value"
+          placeholder="yyyy-MM-ddTHH:mm:ss" min="2001-01-01T00:00:00" max="2013-12-31T00:00:00"/>
+    </div>
+  </div>
+</div> 
+
+<h2> Rating </h2>
+
+<div class="row" style="margin-bottom:1em">
+  <div class="column small-10 small-centered">
+    <!-- <rating value="rate" max=7 state-on="'fi-star on'" state-off="'fi-star off'"></rating>
+     -->
+     <rating value="rate" max=7 style="color: #4abb8f;
+  font-size: 32px;"></rating>
+    <span class="label success" ng-if="rate">{{rate}}</span>
+  </div>
+</div> 
+
+<h2> Range </h2>
+
+<div class="row" style="margin-bottom:1em">
+  <div class="column small-10 small-centered">
+    <div class="column small-5">
+      <input type="range" name="range" ng-model="range" min="{{0}}"  max="{{100}}">
+      <span class="label success right" ng-if="range">{{range}}</span>
+    </div>  
+  </div>
+</div> 
+
+<h2> 1 from n </h2>
+
+<div class="row" style="margin-bottom:1em">
+  <div class="column small-10 small-centered">
+    <ul class="alt">
+      <li ng-repeat="alternative in [1,2,3,4,5]">
+        <input 
+          id="{{'ra'+alternative}}" 
+          class="radio" 
+          type="radio" 
+          name="{{'ra'}}"
+         > 
+        <label for="{{'ra'+alternative}}" style="font-size: large;">{{'alternative text '+alternative}}</label>
+      </li>
+    </ul>
+  </div>
+</div>    
+
+<h2> m from n </h2>
+
+<div class="row" style="margin-bottom:1em">
+  <div class="column small-10 small-centered">
+    <ul class="alt">
+      <li ng-repeat="alternative in [1,2,3,4,5]">
+        <input 
+          id="{{'ca'+alternative}}" 
+          class="checkbox" 
+          type="checkbox" 
+          name="{{'ca'}}"
+         > 
+        <label for="{{'ca'+alternative}}" style="font-size: large;">{{'alternative text '+alternative}}</label>
+      </li>
+    </ul>
+  </div>
+</div>  
+
+<h2> Dropdown </h2>
+
+<div class="row" style="margin-bottom:1em">
+  <div class="column small-10 small-centered">
+
+    <a class="button split small-5"  style="background-color: #4abb8f;
+    border-color: #368a55;
+    color: #FFFFFF;
+    font-size: large;">
+      {{(dropdownTitle)? dropdownTitle : 'Select...'}}
+      <span dropdown-toggle="#dropdown-example-2"/>
+    </a>
+    <ul id="dropdown-example-2" class="f-dropdown">
+      <li><a ng-click="dropdownTitle = 'This is a link'">This is a link</a></li>
+      <li><a ng-click="dropdownTitle = 'This is another'">This is another</a></li>
+      <li><a ng-click="dropdownTitle = 'Yet another'">Yet another</a></li>
+    </ul>
+
+    
+  </div>
+</div>    
+
+
+<h2> Scale </h2>
+
+<div class="row" style="margin-bottom:1em">
+  <div class="column small-10 small-centered">
+
+    <div class="row" style="background: #eee;
+    /*padding: 0.5em 0;*/
+    border-bottom: 1px solid #999;">
+      <div class="column small-1">
+          &nbsp;
+      </div> 
+      <div class="column small-1" ng-repeat="j in [1,2,3,4,5,6,7,8,9,10]" style="padding-bottom: 0.3em;
+    padding-top: 0.5em; text-align: center;
+    padding-left: 1.4em;">
+         {{j}} 
+      </div>
+      <div class="column small-1">
+          &nbsp;
+      </div> 
+    </div>  
+  
+
+    <div class="row" style="    
+    /*padding: 0.5em 0;*/
+    border-bottom: 1px solid #999;">
+      <div class="column small-1" style="background: #eee; padding-bottom: 0.3em;
+    padding-top: 0.5em;">
+          Low value
+      </div> 
+      <div class="column small-1" ng-repeat="i in [1,2,3,4,5,6,7,8,9,10]">
+        <input 
+          type="radio" 
+          class="radio" 
+          name="{{'srt'}" 
+          value="{{'src'+i}}" 
+          id="{{'src'+i}}"
+        >
+        <label for="{{'src'+i}}"/>
+      </div>
+    
+      <div class="column small-1" style="background: #eee; padding-bottom: 0.3em;
+    padding-top: 0.5em;">
+          High value
+      </div> 
+    </div>  
+  
+  </div>  
+</div>  
+
+
+<h2> Scales </h2>
+
+
+<div class="row" style="margin-bottom:1em">
+  <div class="column small-10 small-centered">
+
+    <div class="row" style="background: #eee;
+    border-bottom: 1px solid #999;">
+      <div class="column small-2">
+          &nbsp;
+      </div> 
+      <div class="column small-1" ng-repeat="j in [1,2,3,4,5,6,7,8,9,10]" style="padding-bottom: 0.3em;
+    padding-top: 0.5em; text-align: center;
+    padding-left: 1.4em;">
+         {{j}} 
+      </div>
+    </div>  
+  
+
+    <div class="row" style="    
+    border-bottom: 1px solid #999;" ng-repeat="i in [1,2,3,4,5,6,7,8,9]">
+      <div class="column small-2" style="background: #eee; padding-bottom: 0.3em;
+    padding-top: 0.5em;">
+          Object {{i}}  long description
+      </div> 
+      <div class="column small-1" ng-repeat="j in [1,2,3,4,5,6,7,8,9,10]">
+        <input 
+          type="radio" 
+          class="radio" 
+          name="{{'rt'+i}}" 
+          value="{{'rc'+i+'r'+j}}" 
+          id="{{'rc'+i+'r'+j}}"
+        >
+        <label for="{{'rc'+i+'r'+j}}"/>
+      </div>
+    </div>  
+  
+  </div>  
+</div>  
+
+<h2> Pairs </h2> 
+
+<div class="row" style="margin-bottom:1em">
+  <div class="column small-10 small-centered">
+
+    <div class="row" style="background: #eee;
+    border-bottom: 1px solid #999;">
+      <div class="column small-2">
+          &nbsp;
+      </div> 
+      <div class="column small-1" ng-repeat="j in [1,2,3,4,5,6,7,8,9,10]" style="padding-bottom: 0.3em;
+    padding-top: 0.5em; text-align: center;
+    padding-left: 1.4em;">
+        Property {{j}} for object
+      </div>
+    </div>  
+  
+
+    <div class="row" style="    
+    border-bottom: 1px solid #999;" ng-repeat="i in [1,2,3,4,5,6,7,8,9]">
+      <div class="column small-2" style="background: #eee; padding-bottom: 0.3em;
+    padding-top: 0.5em;">
+          Object {{i}}  long description
+      </div> 
+      <div class="column small-1" ng-repeat="j in [1,2,3,4,5,6,7,8,9,10]">
+        <input 
+          type="checkbox" 
+          class="checkbox" 
+          name="{{'gt'+j}}" 
+          value="{{'gc'+i+'r'+j}}" 
+          id="{{'gc'+i+'r'+j}}"
+        >
+        <label for="{{'gc'+i+'r'+j}}"/>
+      </div>
+    </div>  
+  
+  </div>  
+</div>  
+
+
+ 
 
 </div>
-
 

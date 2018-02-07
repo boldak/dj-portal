@@ -45,7 +45,8 @@
     "angular-ui-ace": "bower",
     "pretty-data": "vkiryukhin/pretty-data",
     "lodash": "^4.17.4",
-    "numeral": "^2.0.6"
+    "numeral": "^2.0.6",
+    "components-font-awesome": "^4.7.0"
   },
   "resolutions": {
     "d3": "v3.5.17"

@@ -1,3 +1,10 @@
+<style>
+  i.toolbar {
+    color:#999;
+    font-size: large;
+    cursor:pointer;
+  }
+</style>
 
 <div ng-if="globalConfig.designMode && widget" class="widget-design-panel clearfix design-mode-only" title="{{type}}">
   
@@ -40,34 +47,42 @@
   <span ng-if="widgetPanel.allowDeleting"
         class="widget-delete-btn right" ng-click="widgetPanel.deleteWidget()"
         title="{{'DELETE_THIS_WIDGET' | translate}}">
-    <i class="glyphicon fi-x"></i>
+    <!-- <i class="glyphicon fi-x"></i> -->
+     <i class="fa fa-window-close toolbar"></i>
   </span>
   <span ng-if="widgetPanel.allowConfiguring"
         class="widget-config-btn right" ng-click="widgetPanel.openWidgetConfigurationDialog(widget)"
         title="{{'OPEN_CONFIG_DIALOG_FOR_THIS_WIDGET' | translate}}">
-    <i class="glyphicon fi-wrench"></i>
+    <!-- <i class="glyphicon fi-wrench"></i>
+     -->
+     <i class="fa fa-cog toolbar"></i>
   </span>
   <span ng-if="widgetPanel.allowCloning"
         class="widget-clone-btn right" ng-click="widgetPanel.cloneWidget()"
         title="{{ 'CLONE_THIS_WIDGET' | translate }}">
-    <i class="glyphicon fi-page-copy"></i>
+    <!-- <i class="glyphicon fi-page-copy"></i>
+     -->
+     <i class="fa fa-clone toolbar"></i>
   </span>
   <span ng-if="widgetPanel.allowOpenHelp"
         class="widget-help-btn right" ng-click="widgetPanel.openHelp()"
         title="{{ 'HELP' | translate }}">
-    <i class="glyphicon fi-info"></i>
+    <!-- <i class="glyphicon fi-info"></i> -->
+    <i class="fa fa-question-circle toolbar"></i>
   </span>
 
   <span ng-if="!widgetPanel.collapsed" ng-click="widgetPanel.collapsed = true"
         class="widget-help-btn right" 
         title="{{ 'Collapse' | translate }}">
-    <i class="glyphicon fi-arrows-in"></i>
+    <!-- <i class="glyphicon fi-arrows-in"></i> -->
+    <i class="fa fa-window-minimize toolbar"></i>
   </span>
 
   <span ng-if="widgetPanel.collapsed" ng-click="widgetPanel.collapsed = false"
         class="widget-help-btn right" 
         title="{{ 'Expand' | translate }}">
-    <i class="glyphicon fi-arrows-out"></i>
+    <!-- <i class="glyphicon fi-arrows-out"></i> -->
+    <i class="fa fa-window-maximize toolbar"></i>
   </span>
 
 </div>

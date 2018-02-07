@@ -8,6 +8,20 @@ import 'lodash';
 
 const info = angular.module('app.info', ['mm.foundation', 'ngFileUpload', 'app.i18n',"ng.ace"]);
 
+info.directive('focused', function($timeout){
+    return {
+        link:function(scope,elem,attr){
+            var focusTarget = attr['focused'];
+            scope.$watch(focusTarget,function(value){
+                $timeout(function(){
+                    elem[0].focus();
+                },100);
+            });
+        }
+    }
+});
+
+
 info.service('alert', function($modal, $log) {
     this.message = (msg) => {
         if (angular.isArray(msg)) {
