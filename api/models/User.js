@@ -10,6 +10,11 @@ var User = {
     passports : { collection: 'Passport', via: 'user' },
     isAdmin: {type: 'boolean'}//, required: true}
   }
+  // ,
+  //  beforeCreate: function(user,cb){
+  //   user.isAdmin = (_.isUndefined(user.isAdmin))? false : user.isAdmin; 
+  //   cb();
+  // }
 };
 
 module.exports = User;
