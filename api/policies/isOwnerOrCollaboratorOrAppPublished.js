@@ -20,19 +20,24 @@ module.exports = function (req, res, next) {
   } else {
     return next();
   }
+  console.log("POLICY", req.params.appId, req.params.appName, query)
+  
   AppConfig.findOne(query)
     .populate('owner')
     .then(function (app) {
+      console.log("APP", app)
       if (app.isPublished ||
         AppConfig.isOwner(app, req.user) ||
         AppConfig.isCollaborator(app, req.user)) {
+        console.log("ACCESSED")
         return next();
       } else {
+        console.log("FORBIDDEN")
         sails.log('isOwnerOrCollaboratorOrAppPublished policy not passed');
         return res.forbidden();
       }
     }).catch(function (err) {
       sails.log.info('isOwnerOrCollaboratorOrAppPublished policy: ' + err);
-      res.forbidden();
+      return res.forbidden();
     });
 };

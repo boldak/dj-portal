@@ -25,15 +25,17 @@ module.exports.policies = {
     createCloneDefault: ['passport', 'isAuthenticated'],
     getDefaultConfig: [], // no need to detect user
     import: ['passport', 'isAuthenticated'],
-    update: ['passport', 'isOwnerOrCollaborator'],
-    rename: ['passport', 'isOwnerOrCollaborator'],
-    export: ['passport', 'isOwnerOrCollaboratorOrAppPublished'],
-    destroy: ['passport', 'isOwner']
-  },
-
-  AppViewController: {
-    getView: ['passport', 'isOwnerOrCollaboratorOrAppPublished']
+    update: ['passport', 'isAuthenticated'],//,'isOwnerOrCollaborator'],
+    rename: ['passport', 'isAuthenticated'],// 'isOwnerOrCollaborator'],
+    export: ['passport', 'isAuthenticated'],
+    destroy: ['passport', 'isAuthenticated']// 'isOwner']
   }
+
+  // ,
+
+  // AppViewController: {
+  //   getView: ['passport', 'isOwnerOrCollaboratorOrAppPublished']
+  // }
 
   // ,
 
