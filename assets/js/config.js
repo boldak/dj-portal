@@ -59,6 +59,7 @@ System.config({
     "wizard-directives": "widgets/v2.steps/wizard-directives.js",
     "md5": "components/md5/js/md5.js",
     "lodash": "components/lodash/lodash.js",
+    "tinycolor": "components/tinycolor/tinycolor.js",
     "pretty-data": "js/lib/pretty-data/pretty-data.js",
     "*": "*.js",
     "github:*": "../../jspm_packages/github/*.js"
@@ -235,6 +236,11 @@ System.config({
     "lodash": {
       "exports": "_"
     },
+
+    "tinycolor": {
+      "exports": "tinycolor"
+    },
+    
     "jsinq": {
       "exports": "jsinq"
     },

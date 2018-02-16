@@ -1,0 +1,73 @@
+
+<div class="row" style="margin:1em 0">
+  <div class="column small-10 small-centered">
+    
+      <div class="row" style="
+    border-bottom: 1px solid #e7e7e7;" ng-repeat="a in alternatives">
+        <div class="column small-12">
+          <div class="column small-9">
+            <input 
+              id="{{a.id}}" 
+              class="radio" 
+              type="radio" 
+              name="{{'radio_'+widget.ID}}"
+              ng-model="answer.value[0]"
+              ng-change="config.callback.setValue(a.id)"
+              value="{{a.id}}"
+             > 
+            <label for="{{a.id}}" style="font-size: large;">
+              <span class="left"> {{a.title}} </span>
+            </label>
+          </div>
+          <div ng-if="config.options.showUserInfo && a.user" class="column small-3" style="margin-top: 1em;">
+            <i>
+            <span   style=" 
+                background-image: url({{a.user.photo}});
+                background-size: 2em 2em;
+                border-radius: 50%;
+                display: block;
+                overflow: hidden;
+                position: relative;
+                height: 2em;
+                width: 2em;
+                float: left;
+                margin: -0.25em 0.5em 0 3em;
+                background-color: red;"></span>
+             <span style="float: left; font-size: smaller; margin: 0.25em 0 0 0.5em">
+              {{a.user.name}}
+            </span>
+          </i>
+          </div>  
+        </div>      
+      </div>
+          
+    <div class="row" style="margin-top: 1em;" ng-if="config.options.addEnabled">
+      <div class="column small-11 small-centered" style="padding: 0 0.5em;">
+        <div class="column small-7 left" style="padding:0 0;">
+          <input  ng-model="textFields.alternative" type="text" placeholder="Text">
+        </div>
+        <div class="column small-3 left">  
+          <button
+            class="large left"
+            ng-click="addPMAlternative(alternatives)"
+            ng-disabled="!textFields.alternative"
+            style=" /*color: #5f8ab9;*/
+                    background: #5f8ab9;
+                    margin-top: 0.16em;
+                    /* font-size: larger; */
+                    /*border: 1px solid #5f8ab9;*/
+                    border-radius: 6px;
+                    padding: 0.2em 0.5em 0.2em 0.5em;"
+          >
+            <i class=" fa fa-plus-square"/> 
+              <widget-translate>Add new item</widget-translate>
+          </button>
+         </div> 
+      </div>  
+    </div>
+  </div>
+</div>
+
+
+
+<!-- <pre>{{answer | json }}</pre>  -->

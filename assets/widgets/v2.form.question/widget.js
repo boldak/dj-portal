@@ -1,11 +1,16 @@
+
+
 import angular from 'angular';
 import 'angular-ui-tree';
 import "custom-react-directives";
 import "d3";
+import "angular-oclazyload";
+import "tinycolor";
+
 
 
 let m = angular.module('app.widgets.v2.form.question', [
-  'app.dps','ui.tree',"custom-react-directives"
+  'app.dps','ui.tree',"custom-react-directives","oc.lazyLoad"
   // ,
   // 'ngSanitize'
 ])
@@ -30,182 +35,68 @@ m.controller('FormQuestionController', function(
   $sce,
   htmlEditor,
   randomID,
-  d3
+  d3,
+  $ocLazyLoad,
+  user
   
 ) {
 
-  // const eventEmitter = new EventEmitter($scope);
+// Load css
+$ocLazyLoad.load({files:["/widgets/v2.form.question/djform.css"]}); 
 
-$scope.answer = {
-    type:"radio"
-    // ,
-    // value:"a4"
-};
+// Call it when app config was modified
+$scope.markModified = () => {
+  app.markModified();
+}  
 
-$scope.options = {
-    title:`
-        <h5 style="color:#cd7b18;">
-        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS1_8ltcpWl3s18O0f7i4zzznzb_1hGfWkra-cCAvsFdN1S8ZLT" style="width:2em; margin-right:1em;">
-        Як, у цiлому, Ви оцiнюєте свою стараннiсть у навчаннi?
-        </h5>`,
-    note:"<i>Як, у цiлому, Ви оцiнюєте свою стараннiсть у навчаннi?</i>",
-    type:"radiogroup",
-    closure:"closed",
-    // values:[]
-    values:[
-        {id:"a1", text:"Навчаюся з повною вiддачею сил"},
-        {id:"a2", text:"Навчаюся старанно лише час вiд часу"},
-        {id:"a3", text:"Навчаюся зовсiм нестаранно"},
-        {id:"a4", text:"Важко вiдповiсти"}
-    ]
+// for template urls
+const prefix = "./widgets/v2.form.question/partitions/";
+
+
+// initial state for helped data structures
+$scope.alternatives = [];
+$scope.entities = [];
+$scope.properties = [];
+$scope.factors = [];
+$scope.effects = [];
+
+
+// default configure implementation
+let defaultConfigure = conf => {
+  conf.options.title = $scope.config.options.title;
+  conf.options.note = $scope.config.options.note;
+  conf.options.required = $scope.config.options.required;
+  return conf;
 }
 
-
-
-$scope.questionTypes = [
-    {value:"text", title:"Text", css:"fa fa-align-left"},
-    {value:"date", title:"Date", css:"fa fa-calendar"},
-    {value:"month", title:"Month", css:"fa fa-calendar"},
-    {value:"time", title:"Time", css:"fa fa-calendar"},
-    {value:"datetime", title:"Date Time", css:"fa fa-calendar"},
-    {value:"radio", title:"1 from n", css:"fa fa-stop-circle"},
-    {value:"check", title:"m from n", css:"fa fa-check-square"},
-    {value:"dropdown", title:"Dropdown", css:"fa fa-list"},
-    {value:"scale", title:"Scale", css:"fa fa-ellipsis-h"},
-    {value:"rate", title:"Rate", css:"fa fa-star"},
-    {value:"range", title:"Range", css:"fa fa-arrows-h"},
-    {value:"scales", title:"Scales", css:"fa fa-th-list"},
-    {value:"pairs", title:"Pairs", css:"fa fa-th"},
-    {value:"influence", title:"Influence", css:"fa fa-braille"}
-]
-
-$scope.alt = [];
-for(let i in [1,2,3,4,5,6]){
-    $scope.alt.push({id:randomID(), title:"Alternative "+i, $djItemType:"embeded"})
-}
-
-$scope.rows = [];
-for(let i in [1,2,3,4,5]){
-    $scope.rows.push({id:randomID(), title:"Object "+i, $djItemType:"embeded"})
-}
-
-$scope.cols = [];
-for(let i in [1,2,3]){
-    $scope.cols.push({id:randomID(), title:"Property "+i, $djItemType:"embeded"})
-}
-
-
+// list editor tools
 $scope._click = null;
 
-$scope.select = (value) => {
-    console.log("SELECT", value)
-    $scope._over = value
-}
-
 $scope.delete = (object,index) => {
-    object.splice(index,1)
+    object.splice(index,1);
+    $scope.markModified();
 }
 $scope.add = (object) => {
-    object.push({id:randomID(), title:"New item",$djItemType:"embeded"})
+    object.push({id:randomID(), title:"New item",$djItemType:"embeded"});
+    $scope.markModified();
 }
 
 $scope.cselect = (value) => {
-    console.log("CSELECT", value)
     $scope._click = value
 }
 
 
-$scope.influencePallete = ["#f7fcb9", "#addd8e", "#31a354"];
-$scope.influenceUndefinedColor = "#eee";
-$scope.influenceDisabledColor = "#00000080";
-$scope.influenceOpacity = 70;
-
-
-$scope.setPallete = (pallete) => {
-    $scope.influencePallete = pallete;
-}
-
-$scope.influenceScale = {
-    "min":1,
-    "max":7,
-    "undefined":0
-}
-
-$scope.getColor = (value) => {
-      let pc;
-      if(value == "d"){
-        pc = $scope.influenceDisabledColor
-      } else {
-        if (value == $scope.influenceScale["undefined"]) {
-            pc = $scope.influenceUndefinedColor
-        } else {
-            let s = d3.scale.linear().domain([$scope.influenceScale.min,$scope.influenceScale.max]).rangeRound([0,$scope.influencePallete.length-1])
-            pc = $scope.influencePallete[s(value)]
-        }
-      }
-
-      let c = d3.rgb(pc);
-      return "rgba("+ c.r + ","+ c.g + ","+ c.b + ","+($scope.influenceOpacity/100)+ ")"
-}
-
-$scope.getInvColor = (value) => {
-      let pc;
-      if(value == "d"){
-        pc = $scope.influenceDisabledColor
-      } else {
-        if (value == $scope.influenceScale["undefined"]) {
-            pc = $scope.influenceUndefinedColor
-        } else {
-            let s = d3.scale.linear().domain([$scope.influenceScale.min,$scope.influenceScale.max]).rangeRound([0,$scope.influencePallete.length-1])
-            pc = $scope.influencePallete[s(value)]
-        }
-      }
-
-      let c = d3.rgb(pc);
-      return "rgba("+ (255-c.r) + ","+ (255-c.g) + ","+ (255-c.b) + ",1)"
-}
-
-
-$scope.influenceStyle = (i,j) => {
-    return {background: $scope.getColor($scope.influenceData[i][j])}
-}
-
-$scope.labelStyle = (i,j) => {
-    return {color: $scope.getInvColor($scope.influenceData[i][j]), textAlign:"center"}
-}
-
-$scope.influenceData = [
-    [0,1,2,3,4,5,6],
-    ["d",0,0,0,"d",0,7],
-    ["d","d",0,0,0,0,0],
-    ["d","d","d",0,0,0,0]
-]
-
-
-
-$scope.influenceDataRows = [0,1,2,3]
-$scope.influenceDataCols = [0,1,2,3,4,5,6]
-
-$scope.setValue = (i,j) => {
-    if($scope.influenceData[i][j] == "d") return;
-    $scope.influenceData[i][j]++;
-    $scope.influenceData[i][j] = ($scope.influenceData[i][j] > $scope.influenceScale.max)
-        ? (angular.isNumber($scope.influenceScale["undefined"]))
-            ? $scope.influenceScale["undefined"]
-            : $scope.influenceScale.min
-        : $scope.influenceData[i][j] 
-}
-
+// drag&drop options
 
 let dest = null;
 let startDest = null;
 $scope.treeOptions = {
-  // dropped:(event) => {
+  dropped:(event) => {
   //   console.log("DROP", event.source.index+" -> "+event.dest.index)
   //   // event.source.nodeScope.$$childHead.drag = false;
   //   // selectHolder(null);
-  //   // app.markModified()
-  // },
+    $scope.markModified()
+  },
   dragStart:(event) => {
         dest = event.dest.nodesScope;
         startDest = event.dest.nodesScope;
@@ -215,97 +106,890 @@ $scope.treeOptions = {
   accept: (sourceNodeScope, destNodesScope, destIndex) => {
     if(dest != destNodesScope){
         dest = destNodesScope;
-        // console.log("acccept ", dest)
     }
-    // console.log("ACCEPT", sourceNodeScope, destNodesScope, destIndex)
-    // selectHolder(destNodesScope.$treeScope.$parent.$parent);
-    // console.log(scope, destNodesScope.$treeScope.$parent.$parent);
     return startDest == dest;
   }
 }
 
 
-$scope.selectType = () => {
-    dialog({
-        title: "Select question type",
-        fields:{
-            type:{
-                title:"Question type",
-                type:"select",
-                options:$scope.questionTypes,
-                value:$scope.options.type
-            }
-        }
-    })
-    .then (form => {
-        $scope.options.type = form.fields.type.value
-        
-        if($scope.options.type == "radiogroup"){
-            $scope.answer = {
-                type:"radio"
-            };
-        }
+  
+  
+// default question configuration
+$scope.defaultQuestionConfig = {
+  text: {
+    type:{value:"text", title:"Text"}, 
+    widget:{
+      css:"fa fa-align-left", 
+      view:prefix+"text.view.html", 
+      options:prefix+"text.options.html"
+    },
+    options:{
+      required: false,
+      title:"", 
+      note:""
+    }
+  },
 
-        if($scope.options.type == "checkgroup"){
-           let value = {}
-           $scope.options.values.forEach((item) => {
-                value[item.id] = false
-           })
-           value["a2"] = true;
-           
-           $scope.answer = {
-                type:"check",
-                value: value
-            };
+  date: {
+      type:{value:"date", title:"Date"}, 
+      widget:{
+        css:"fa fa-calendar", 
+        view:prefix+"date.view.html", 
+        options:prefix+"date.options.html"
+      },
+      options:{
+        required: false,
+        title:"", 
+        note:"",
+        range:{
+          min:"2013-01-01",
+          max:"2018-01-01"
+        }  
+      }
+  },
+
+  month:{
+      type:{value:"month", title:"Month"}, 
+      widget:{
+        css:"fa fa-calendar",
+        view:prefix+"month.view.html", 
+        options:prefix+"month.options.html"
+      },
+      options:{
+        required: false,
+        title:"", 
+        note:"",
+        range:{
+          min:"2013-01-01",
+          max:"2018-01-01"
+        }  
+      }
+  },
+
+  time:{
+      type:{value:"time", title:"Time"}, 
+      widget:{
+        css:"fa fa-calendar",
+        view:prefix+"time.view.html", 
+        options:prefix+"time.options.html"
+      },
+      options:{
+        required: false,
+        title:"", 
+        note:"",
+        range:{
+          min:"2013-01-01",
+          max:"2018-01-01"
+        }  
+      }
+  },
+
+  datetime:{
+      type:{value:"datetime", title:"Date & Time"}, 
+      widget:{
+        css:"fa fa-calendar",
+        view:prefix+"datetime.view.html", 
+        options:prefix+"datetime.options.html"
+      },
+      options:{
+        required: false,
+        title:"", 
+        note:"",
+        range:{
+          min:"2013-01-01",
+          max:"2018-01-01"
+        }  
+      }
+  },
+
+  radio:{
+      type:{value:"radio", title:"Оne of many"}, 
+      widget:{
+        css:"fa fa-stop-circle", 
+        view:prefix+"radio.view.html", 
+        options:prefix+"radio.options.html"
+      },
+      options:{
+        required: false,
+        addEnabled: false,
+        showUserInfo: true,
+        title:"", 
+        note:"",
+        nominals:{}
+      },
+      callback:{
+
+        configure: () => {
+          
+          // prepare question config before setting $scope.qtype variable 
+          // res - next config, $scope.config - previus config
+          let res = $scope.defaultQuestionConfig.radio;
+          if(angular.isUndefined($scope.config)) return res;
+
+          res = defaultConfigure(res);
+          if(["dropdown","check"].indexOf($scope.config.type.value) < 0) return res;
+          
+          res.options.nominals = {};
+          
+          for(let item of $scope.alternatives){
+            res.options.nominals[item.id] = {title:item.title, user:item.user}; 
+          }
+          
+          if ($scope.config.type.value == "check"){
+            res.options.addEnabled = $scope.config.options.addEnabled;
+            res.options.showUserInfo = $scope.config.options.showUserInfo;
+          }
+          $scope.markModified();  
+          return res;
+        },
+        
+        prepare: () => {
+
+          // prepare helped data structures
+          $scope.alternatives = _.toPairs($scope.config.options.nominals)
+                                  .map(item => {
+                                    return {
+                                      id:item[0],
+                                      title:item[1].title,
+                                      user:item[1].user
+                                    }
+                                  })
+          $scope.answer = {
+            question: $scope.widget.ID,
+            user: user,
+            type:"radio",
+            value:[]
+          }
+        },
+
+        setValue: (value) => {
+          
+          $scope.answerCompleted = (angular.isDefined($scope.answer.value[0])) 
+        },
+
+        updateConfig: () => {
+          //  transform helped data structures into config
+          $scope.config.options.nominals = {};
+          for(let item of $scope.alternatives){
+            $scope.config.options.nominals[item.id] = {title: item.title, user:item.user}; 
+          }
         }
-    })
+      }
+  },
+
+  check:{
+      type:{value:"check", title:"Many of many"}, 
+      widget:{
+        css:"fa fa-check-square", 
+        view:prefix+"check.view.html", 
+        options:prefix+"check.options.html"
+      },
+      options:{
+        required: false,
+        addEnabled: false,
+        showUserInfo: true,
+        title:"", 
+        note:"",
+        nominals:{}
+      },
+      callback:{
+      
+        configure: () => {
+          
+          // prepare question config before setting $scope.qtype variable 
+          // res - next config, $scope.config - previus config
+          let res = $scope.defaultQuestionConfig.check;
+          if(angular.isUndefined($scope.config)) return res;
+
+          res = defaultConfigure(res);
+          if(["dropdown","radio"].indexOf($scope.config.type.value) < 0) return res;
+          
+          res.options.nominals = {};
+          
+          for(let item of $scope.alternatives){
+            res.options.nominals[item.id] = {title:item.title, user:item.user}; 
+          }
+          
+          if ($scope.config.type.value == "radio"){
+            res.options.addEnabled = $scope.config.options.addEnabled;
+            res.options.showUserInfo = $scope.config.options.showUserInfo;
+          }
+
+          return res;
+        },
+        
+        prepare: () => {
+
+          // prepare helped data structures
+          $scope.alternatives = _.toPairs($scope.config.options.nominals)
+                                  .map(item => {
+                                    return {
+                                      id:item[0],
+                                      title:item[1].title,
+                                      user:item[1].user
+                                    }
+                                  })
+          $scope.checkboxes = {};
+          for(let item of $scope.alternatives){
+           $scope.checkboxes[item.id] = false; 
+          }   
+
+          $scope.answer = {
+            question: $scope.widget.ID,
+            user: user,
+            type: "check",
+            value: []
+          }
+        },
+
+        setValue: (value) => {
+          $scope.answer.value = _.toPairs($scope.checkboxes)
+                                  .filter(item => item[1])
+                                  .map(item => item[0]);
+          $scope.answerCompleted = $scope.answer.value.length > 0;                         
+        },
+
+        updateConfig: () => {
+          //  transform helped data structures into config
+          $scope.config.options.nominals = {};
+          for(let item of $scope.alternatives){
+            $scope.config.options.nominals[item.id] = {title: item.title, user:item.user}; 
+          }
+        }
+      }
+    },
+
+  dropdown:{
+      type:{value:"dropdown", title:"Dropdown"}, 
+      widget:{
+        css:"fa fa-list", 
+        view:prefix+"dropdown.view.html", 
+        options:prefix+"dropdown.options.html"
+      },
+      options:{
+        required: false,
+        title:"", 
+        note:"",
+        nominals:{}
+      },
+      callback:{
+
+        configure: () => {
+          
+          // prepare question config before setting $scope.qtype variable 
+          // res - next config, $scope.config - previus config
+          let res = $scope.defaultQuestionConfig.dropdown;
+          if(angular.isUndefined($scope.config)) return res;
+
+          res = defaultConfigure(res);
+          if(["radio","check"].indexOf($scope.config.type.value) < 0) return res;
+          
+          res.options.nominals = {};
+          
+          for(let item of $scope.alternatives){
+            res.options.nominals[item.id] = {title:item.title}; 
+          }
+          
+          
+          $scope.markModified();  
+          return res;
+        },
+        
+        prepare: () => {
+
+          // prepare helped data structures
+          $scope.alternatives = _.toPairs($scope.config.options.nominals)
+                                  .map(item => {
+                                    return {
+                                      id:item[0],
+                                      title:item[1].title,
+                                      user:item[1].user
+                                    }
+                                  })
+          $scope.answer = {
+            question: $scope.widget.ID,
+            user: user,
+            type:"dropdown",
+            value:[]
+          }
+        },
+
+        setValue: (value) => {
+          $scope.answer.value[0] = value.id;
+          $scope.answerCompleted = (angular.isDefined($scope.answer.value[0])) 
+        },
+
+        updateConfig: () => {
+          //  transform helped data structures into config
+          $scope.config.options.nominals = {};
+          for(let item of $scope.alternatives){
+            $scope.config.options.nominals[item.id] = {title: item.title}; 
+          }
+        }
+      }
+  },
+
+  scale:{
+      type:{value:"scale", title:"Scale"}, 
+      widget:{
+        css:"fa fa-ellipsis-h", 
+        view:prefix+"scale.view.html", 
+        options:prefix+"scale.options.html"
+      },
+      options:{
+        required: false,
+        title:"", 
+        note:"",
+        ordinals:{
+          range:{ min:1, max:7 },
+          "undefined":{title:"undefined", value:0},
+          values : [
+            {value:1, title:"Low"},
+            {value:2},
+            {value:3},
+            {value:4, title:"Medium"},
+            {value:5},
+            {value:6},
+            {value:7, title:"High"}
+          ]
+        },
+        colors:{
+          pallete:["#f7fcb9", "#addd8e", "#31a354"],
+          opacity: 70,
+          "undefined":" #aaa"  
+        }
+      },
+      callback:{
+
+        configure: () => {
+          let res = $scope.defaultQuestionConfig.scale;
+          $scope.markModified();  
+
+          if(angular.isUndefined($scope.config)) return res;
+
+          // res = defaultConfigure(res);
+          
+          // if(["radio","check"].indexOf($scope.config.type.value) < 0) return res;
+          
+          return res;
+        },
+        
+        prepare: () => {
+
+          $scope.answer = {
+            question: $scope.widget.ID,
+            user: user,
+            type:"scale",
+            value:[]
+          }
+         
+        },
+
+        setValue: (value) => {
+          $scope.answer.value[0] = value;
+          $scope.answerCompleted = (angular.isDefined($scope.answer.value[0])) 
+        },
+
+        updateConfig: () => {
+          //  transform helped data structures into config
+          // $scope.config.options.nominals = {};
+        }
+      } 
+  },
+
+  rate:{
+      type:{value:"rate", title:"Rate"}, 
+      widget:{
+        css:"fa fa-star", 
+        view:prefix+"rate.view.html", 
+        options:prefix+"rate.options.html"
+      },
+      options:{
+        title:"", 
+        note:"",
+        max:5  
+      }
+  },
+
+  range:{
+      type:{value:"range", title:"Range"}, 
+      widget:{
+        css:"fa fa-arrows-h", 
+        view:prefix+"range.view.html", 
+        options:prefix+"range.options.html"
+      },
+      options:{
+        required: false,
+        title:"", 
+        note:"",
+        step:1,
+        min:0,
+        max:100
+      }  
+  },
+
+  scales:{
+      type:{value:"scales", title:"Scales"}, 
+      widget:{
+        css:"fa fa-th-list", 
+        view:prefix+"scales.view.html", 
+        options:prefix+"scales.options.html"
+      },
+      options:{
+        required: false,
+        title:"", 
+        note:"",
+        entities:{
+          e1: {title:"Entity 1"},
+          e2: {title:"Entity 2"},
+          e3: {title:"Entity 3"}
+        },
+        ordinals:{
+          range:{ min:1, max:7 },
+          "undefined":{title:"undefined", value:0},
+          values : [
+            {value:1, title:"Low"},
+            {value:2},
+            {value:3},
+            {value:4, title:"Medium"},
+            {value:5},
+            {value:6},
+            {value:7, title:"High"}
+          ]
+        },
+        disables:[],
+        colors:{
+          pallete:["#f7fcb9", "#addd8e", "#31a354"],
+          opacity: 70,
+          "undefined":" #aaa"  
+        }  
+      },
+      callback:{
+
+        configure: () => {
+          let res = $scope.defaultQuestionConfig.scales;
+          $scope.markModified();  
+
+          if(angular.isUndefined($scope.config)) return res;
+
+          res = defaultConfigure(res);
+          
+          if(["scale"].indexOf($scope.config.type.value) < 0) return res;
+          
+          return res;
+        },
+        
+        prepare: () => {
+          $scope.entities = _.toPairs($scope.config.options.entities)
+                                  .map(item => {
+                                    return {
+                                      id:item[0],
+                                      title:item[1].title,
+                                      user:item[1].user
+                                    }
+                                  })
+
+          
+          $scope.answer = {
+            question: $scope.widget.ID,
+            user: user,
+            type:"scales",
+            value: [] // angular.copy($scope.config.options.entities)
+          }
+         
+        },
+
+        setValue: (entity, value) => {
+          let index = $scope.answer.value
+                      .map(item => item.entity)
+                      .indexOf(entity)
+          
+          if(index < 0){
+            $scope.answer.value.push({entity:entity, value:value})
+          } else {
+            $scope.answer.value[index].value = value;
+          }
+          
+          $scope.answerCompleted = $scope.entities.length == $scope.answer.value.length; 
+        },
+
+        updateConfig: () => {
+          //  transform helped data structures into config
+          // $scope.config.options.nominals = {};
+        }
+      } 
+  },
+
+  pairs:{
+      type:{value:"pairs", title:"Paired matches"}, 
+      widget:{
+        css:"fa fa-th", 
+        view:prefix+"pairs.view.html", 
+        options:prefix+"pairs.options.html"
+      },
+      options:{
+        required: false,
+        title:"", 
+        note:"",
+        entities:{},
+        properties:{},
+        disables:[]  
+      }
+  },
+
+  influences:{
+      type:{value:"influences", title:"Impact assessment"}, 
+      widget:{
+        css:"fa fa-braille", 
+        view:prefix+"influences.view.html", 
+        options:prefix+"influences.options.html"
+      },
+      options:{
+        required: false,
+        title:"", 
+        note:"",
+       
+        factors:{
+          f1: {title:"Factor 1"},
+          f2: {title:"Factor 2"},
+          f3: {title:"Factor 3"}
+        },
+       
+        effects:{
+          ef1: {title:"Effect 1"},
+          ef2: {title:"Effect 2"},
+          ef3: {title:"Effect 3"},
+          ef4: {title:"Effect 4"},
+          ef5: {title:"Effect 5"},
+          ef6: {title:"Effect 6"},
+          ef7: {title:"Effect 7"},
+          ef8: {title:"Effect 8"}
+        },
+       
+        ordinals:{
+          range:{ min:-3, max:3 },
+          "undefined":{title:"undefined", value:0},
+          values : [
+            {value:-3, title:"negatively"},
+            {value:-2},
+            {value:-1},
+            {value:0, title:"neutrally"},
+            {value:1},
+            {value:2},
+            {value:3, title:"positively"}
+          ]
+        },
+
+        disables:[
+          {factor:"f2",effect:"ef1"},
+          {factor:"f2",effect:"ef2"},
+          {factor:"f3",effect:"ef1"}
+        ],
+
+        colors:{
+          pallete:["#d73027", "#fc8d59", "#fee090", "#ffffbf", "#e0f3f8", "#91bfdb", "#4575b4"],
+          opacity: 70,
+          "undefined":" #aaa"  
+        }
+      },
+       callback:{
+
+        configure: () => {
+          let res = $scope.defaultQuestionConfig.influences;
+          $scope.markModified();  
+
+          if(angular.isUndefined($scope.config)) return res;
+
+          res = defaultConfigure(res);
+          
+          // if(["scale"].indexOf($scope.config.type.value) < 0) return res;
+          
+          return res;
+        },
+        
+        prepare: () => {
+          $scope.factors = _.toPairs($scope.config.options.factors)
+                                  .map(item => {
+                                    return {
+                                      id:item[0],
+                                      title:item[1].title,
+                                      user:item[1].user
+                                    }
+                                  })
+
+          $scope.effects = _.toPairs($scope.config.options.effects)
+                                  .map(item => {
+                                    return {
+                                      id:item[0],
+                                      title:item[1].title,
+                                      user:item[1].user
+                                    }
+                                  })
+                                  
+          
+          $scope.answer = {
+            question: $scope.widget.ID,
+            user: user,
+            type:"influences",
+            value: [] // angular.copy($scope.config.options.entities)
+          }
+         
+        },
+
+        setValue: (factor, effect, value) => {
+          
+          let index = -1;
+          $scope.answer.value.forEach((item, i) => {
+            if((item.factor == factor) && (item.effect == effect)) index = i;
+          })
+
+          
+          if(index < 0){
+            $scope.answer.value.push({factor:factor, effect:effect, value:value})
+          } else {
+            $scope.answer.value[index].value = value;
+          }
+           
+          $scope.answerCompleted = 
+          (
+            ( $scope.factors.length * $scope.effects.length ) 
+            - 
+            ( $scope.answer.value.length + $scope.config.options.disables.length )
+          )
+          < Number.EPSILON; 
+        },
+
+        getValue: (factor, effect) => {
+          let index = -1;
+          $scope.answer.value.forEach((item, i) => {
+            if((item.factor == factor) && (item.effect == effect)) index = i;
+          })
+          if(index >= 0 ) return $scope.answer.value[index].value;
+          return "-";
+        },
+
+        disabled: (factor, effect) => {
+          let index = -1;
+          $scope.config.options.disables.forEach((item, i) => {
+            if((item.factor == factor) && (item.effect == effect)) index = i;
+          })
+
+          return index >= 0;
+        },
+
+        updateConfig: () => {
+          //  transform helped data structures into config
+          // $scope.config.options.nominals = {};
+        }
+      } 
+  }
 }
 
-$scope.editTitle = () => {
-    htmlEditor($scope.options.title, "Edit question title")
-        .then (res => {
-            $scope.options.title = res;
-            updateWidget()
-        })
-} 
+$scope.questionTypes = _.toPairs($scope.defaultQuestionConfig).map(item => item[0]);
 
-$scope.editNote = () => {
-    htmlEditor($scope.options.note, "Edit question note")
-        .then (res => {
-            $scope.options.note = res;
-            updateWidget()
-        })
-} 
 
 $scope.selectQtype = (type) => {
-    $scope.qtype = type
+  
+  if($scope.config && $scope.config.type.value == type) return;
+  
+  $scope.qtype = type;
+    
+  $scope.config = 
+  ($scope.defaultQuestionConfig[type].callback && $scope.defaultQuestionConfig[type].callback.configure)
+    ? $scope.defaultQuestionConfig[type].callback.configure()
+    : $scope.defaultQuestionConfig[type]; 
+    
+    if ($scope.config.callback && $scope.config.callback.prepare) $scope.config.callback.prepare(); 
 }
 
-$scope.setRadioAnswer = value => {
-    $scope.answer = {
-        type:"radio",
-        value:value
+$scope.textFields = {
+  alternative: "",
+  object: "",
+  property:"",
+  effect:"",
+  factor:""
+}  
+
+$scope.addPMAlternative = (collection) => {
+ 
+  collection.push({
+      id:randomID(), 
+      title: $scope.textFields.alternative,
+      user:user, 
+      $djItemType:"embeded"
+  })
+  
+  $scope.textFields.alternative = undefined;
+}
+
+
+
+$scope.setOpacity = (value) => {$scope.influenceOpacity = value}
+
+
+$scope.setPallete = (pallete) => {
+    $scope.influencePallete = pallete;
+}
+
+$scope.reversePallete = () => {
+    $scope.influencePallete = $scope.influencePallete.reverse();
+}
+
+
+$scope.getColor = (p,o,r,value,invert) => {
+
+      if (angular.isDefined(value)){
+        let pc;
+        let s = d3.scale.linear().domain([r.min,r.max]).rangeRound([0,p.length-1])
+        pc = p[s(value)]
+        
+
+
+        let c = tinycolor(pc);
+        if ( invert ) {
+            c.spin(180);
+            if(c.isLight()){
+              return c.darken(70).toRgbString()
+            } else {
+              return c.lighten(70).toRgbString()
+            }
+        } else {
+          c.setAlpha(o/100);
+          return c.toRgbString()
+        }  
+      } else {
+        return "#e7e7e7"
+      }
+}
+
+
+$scope.coloredScaleStyle = (value) => {
+  
+  return {
+    margin: "0.25em 0",
+    background: "none", 
+    color:  ( angular.isDefined($scope.answer.value[0]))
+              ? ((value >= $scope.config.options.ordinals.range.min)
+                  && (value < $scope.answer.value[0])
+                ) 
+                ? $scope.getColor(
+                        $scope.config.options.colors.pallete,
+                        $scope.config.options.colors.opacity,
+                        $scope.config.options.ordinals.range,
+                        value)
+                : ((value >= $scope.config.options.ordinals.range.min)
+                    && (value == $scope.answer.value[0])
+                  )
+                  ? $scope.getColor(
+                        $scope.config.options.colors.pallete,
+                        $scope.config.options.colors.opacity,
+                        $scope.config.options.ordinals.range,
+                        value)
+                  : "#e7e7e7"
+              : "#e7e7e7"              
+  }
+}
+
+$scope.coloredMScaleStyle = (entity, value) => {
+  
+  let index = $scope.answer.value.map(item => item.entity).indexOf(entity)
+
+  return {
+    margin: "0.25em 0",
+    background: "none", 
+    color:  ( angular.isDefined($scope.answer.value[index]))
+              ? ((value >= $scope.config.options.ordinals.range.min)
+                  && (value < $scope.answer.value[index].value)
+                ) 
+                ? $scope.getColor(
+                        $scope.config.options.colors.pallete,
+                        $scope.config.options.colors.opacity,
+                        $scope.config.options.ordinals.range,
+                        value)
+                : ((value >= $scope.config.options.ordinals.range.min)
+                    && (value == $scope.answer.value[index].value)
+                  )
+                  ? $scope.getColor(
+                        $scope.config.options.colors.pallete,
+                        $scope.config.options.colors.opacity,
+                        $scope.config.options.ordinals.range,
+                        value)
+                  : "#e7e7e7"
+              : "#e7e7e7"              
+  }
+}
+
+$scope.isEntityValue = (entity, value) => {
+  let index = $scope.answer.value.map(item => item.entity).indexOf(entity)
+  return (index>=0) && ($scope.answer.value[index].value == value)
+}   
+
+
+$scope.influenceStyle = (factor, effect) => {
+  let index = -1;
+  $scope.answer.value.forEach((item, i) => {
+    if((item.factor == factor) && (item.effect == effect)) index = i;
+  })
+  if( index >= 0 ){
+    let value = $scope.answer.value[index].value;
+    let bg = $scope.getColor(
+        $scope.config.options.colors.pallete,
+        $scope.config.options.colors.opacity,
+        $scope.config.options.ordinals.range,
+        value
+    )    
+    
+    return {
+      background: bg,
+      border:"3px solid "+tinycolor(bg).darken(10).toRgbString(),
+      color: $scope.getColor(
+        $scope.config.options.colors.pallete,
+        $scope.config.options.colors.opacity,
+        $scope.config.options.ordinals.range,
+        value,
+        true
+      )
+    }
+  } else {
+    return {
+      background:"#e7e7e7",
+      border:"3px solid "+tinycolor("#e7e7e7").darken(10).toRgbString(),
+    }
+  }  
+}
+
+$scope.scaleStyle = (value) => {
+    
+    if( angular.isDefined(value) ){
+      return {
+        background: $scope.getColor(
+          $scope.config.options.colors.pallete,
+          $scope.config.options.colors.opacity,
+          $scope.config.options.ordinals.range,
+          value
+        ),
+        color: $scope.getColor(
+          $scope.config.options.colors.pallete,
+          $scope.config.options.colors.opacity,
+          $scope.config.options.ordinals.range,
+          value,
+          true
+        )
+      }  
+    } else {
+      return {
+        background: "#e7e7e7"
+      }
     }
 }
+
+// $scope.labelStyle = (i,j) => {
+//     return {color: $scope.getInvColor($scope.influenceData[i][j]), textAlign:"center"}
+// }
+
 
 $scope.m = true;
 
-$scope.setCheckAnswer = value => {
-    
-    // $scope.answer = {
-    //     type:"check",
-    //     value: ($scope.answer.value) ? $scope.answer.value : new Set()
-    // }
-
-
-    if(!$scope.answer.value.has(value)){ 
-        $scope.answer.value.add(value);
-    } else {
-        $scope.answer.value.delete(value);
-    }
-        
-    console.log($scope.answer.value)
-}
 
   
   let scopeFor = widgetInstanceName => instanceNameToScope.get(widgetInstanceName);
@@ -313,26 +997,54 @@ $scope.setCheckAnswer = value => {
   
   
   let updateWidget = () => {
-
+    
     $scope.disabled = $scope.widget.disabled = angular.isUndefined($scope.widget.ID);
-    const eventEmitter = new EventEmitter($scope);
-    eventEmitter.emit("questionMessage", {action:"update question",data:$scope})
-    $scope.title = $sce.trustAsHtml($scope.options.title)
-    $scope.note = $sce.trustAsHtml($scope.options.note)
-    $scope.options.id = $scope.widget.ID;
-    // setHTML($scope.options.id+"title", $scope.options.title)
-    // setHTML($scope.options.id+"note", $scope.options.note)
+    
+    if(!$scope.disabled){
+      if($scope.widget && $scope.widget.config){
+        $scope.config = $scope.widget.config;
+        if($scope.config.type) $scope.qtype = $scope.config.type.value;
+        $scope.config.callback = $scope.defaultQuestionConfig[$scope.config.type.value].callback;
+        if ($scope.config.callback && $scope.config.callback.prepare) $scope.config.callback.prepare(); 
+      }
+    }
+
+    // const eventEmitter = new EventEmitter($scope);
+    // eventEmitter.emit("questionMessage", {action:"update question",data:$scope})
+    
+
+    
+    
   }
 
-  $scope.$watch("widget.ID", ( oldValue, newValue)=>{
+  $scope.$watch("widget.ID", ( oldValue, newValue) => {
     if(oldValue != newValue) updateWidget();
   })
   
   new APIProvider($scope)
     .config(updateWidget)
 
+    .beforePresentationMode(() => {
+      if( $scope.config.callback && $scope.config.callback.updateConfig ) {
+        $scope.config.callback.updateConfig();
+      }  
+        $scope.widget.config = $scope.config;
+    })
+
+    .beforeDesignMode(() => {
+      if( $scope.config ) {
+        $scope.qtype = $scope.config.type.value;
+        if( $scope.config.callback && $scope.config.callback.updateConfig ) {
+          $scope.config.callback.updateConfig();
+        } 
+      }  
+    })
+
     .save(() => {
-      console.log("Save app event handler")
+      if( $scope.config.callback && $scope.config.callback.updateConfig ) {
+        $scope.config.callback.updateConfig();
+      }  
+        $scope.widget.config = $scope.config;
     })
 
    .create((event, widget) => {

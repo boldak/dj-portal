@@ -1,0 +1,33 @@
+<div class="row" style="margin:1em 0">
+  <div class="column small-10 small-centered">
+
+    <div class="row header bordered">
+      <div class="column small-2">
+          &nbsp;
+      </div> 
+      <div class="column small-1" ng-repeat="j in [1,2,3,4,5,6,7,8,9,10]" style="padding-bottom: 0.3em;
+    padding-top: 0.5em; text-align: center;
+    padding-left: 1.4em;">
+        Property {{j}} for object
+      </div>
+    </div>  
+  
+
+    <div class="row bordered" ng-repeat="i in [1,2,3,4,5,6,7,8,9]">
+      <div class="column small-2 header" style="padding: 0.75em 0.5em;">
+          Object {{i}}
+      </div> 
+      <div class="column small-1" ng-repeat="j in [1,2,3,4,5,6,7,8,9,10]">
+        <input 
+          type="checkbox" 
+          class="checkbox" 
+          name="{{'gt'+j}}" 
+          value="{{'gc'+i+'r'+j}}" 
+          id="{{'gc'+i+'r'+j}}"
+        >
+        <label for="{{'gc'+i+'r'+j}}"/>
+      </div>
+    </div>  
+  
+  </div>  
+</div>

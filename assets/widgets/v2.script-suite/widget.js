@@ -28,7 +28,8 @@ m.controller('ScriptSuiteController', function(
     $error, 
     log,
     pageSubscriptions,
-    $q
+    $q,
+    config
 ) {
 
     const eventEmitter = new EventEmitter($scope);
@@ -247,6 +248,8 @@ m.controller('ScriptSuiteController', function(
     
     new APIProvider($scope)
         .config(() => {
+            console.log("CONfIG",config)
+            $scope.dataProcessingServer = config.dps;
             $scope.widget.script = $scope.widget.script || {}
             $scope.collapsed = ($scope.keys($scope.widget.script).length > 0)
             

@@ -1,0 +1,218 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      <div class="row">
+        <div class="columns small-10 small-centered">
+          
+          <!-- row list -->
+          <div class="column small-6">
+            <label class="large"> Rows </label>
+            <!-- list start-->
+            <div class="row">
+              <div ui-tree="treeOptions" class="column small-12 small-centered">
+                <ol ui-tree-nodes ng-model="rows">
+                  <li ui-tree-node ng-repeat="i in rows" ng-click="cselect(i.id)">
+                      <div class="row">
+                        <div class="columns small-12">
+                          <div ui-tree-handle class="column small-1">
+                            <i  
+                                class="fa fa-ellipsis-v right" 
+                                style="padding:0.4em 0; font-size:1.2em; color:#aaa">
+                            </i>
+                            <!-- <i  
+                              class="fa fa-ellipsis-v right" 
+                              style="padding:0.4em 0.1em; font-size:1.2em; color:#aaa">
+                            </i> -->
+                          </div>
+                          <div class="column small-10">
+                            <input 
+                                      type="text" 
+                                      ng-model="i.title" 
+                                      ng-disabled="_click != i.id" 
+                                      focused="_click != i.id"
+                                  >
+                          </div>
+                          <div class="column small-1">
+                            <a 
+                              class="fa fa-times-circle" 
+                              ng-click="delete(rows,$index)"
+                              style="   color: #aaa;
+                                        font-size: 24px;
+                                        margin: 0.35em 0 0 -1em;"
+                            ></a>
+                          </div>
+                        </div>  
+                      </div>  
+                  </li>  
+                </ol>  
+              </div>
+
+              <div class="row">
+                <div class="column small-10 small-centered">
+                  <a 
+                    class="large right"
+                    ng-click="add(rows)"
+                  >
+                    <i class=" fa fa-plus-square"/> 
+                      Add new row
+                  </a>
+                </div>  
+              </div>
+
+            </div>    
+            <!-- list end -->
+          </div>
+
+          <!-- col list -->
+          <div class="column small-6">
+            <label class="large"> Columns </label>
+            <!-- list start-->
+            <div class="row">
+              <div ui-tree="treeOptions" class="column small-12 small-centered">
+                <ol ui-tree-nodes ng-model="cols">
+                  <li ui-tree-node ng-repeat="i in cols" ng-click="cselect(i.id)">
+                      <div class="row">
+                        <div class="columns small-12">
+                          <div ui-tree-handle class="column small-1">
+                            <i  
+                                class="fa fa-ellipsis-v right" 
+                                style="padding:0.4em 0; font-size:1.2em; color:#aaa">
+                            </i>
+                            <!-- <i  
+                              class="fa fa-ellipsis-v right" 
+                              style="padding:0.4em 0.1em; font-size:1.2em; color:#aaa">
+                            </i> -->
+                          </div>
+                          <div class="column small-10">
+                            <input 
+                                      type="text" 
+                                      ng-model="i.title" 
+                                      ng-disabled="_click != i.id" 
+                                      focused="_click != i.id"
+                                  >
+                          </div>
+                          <div class="column small-1">
+                            <a 
+                              class="fa fa-times-circle" 
+                              ng-click="delete(cols,$index)"
+                              style="   color: #aaa;
+                                        font-size: 24px;
+                                        margin: 0.35em 0 0 -1em;"
+                            ></a>
+                          </div>
+                        </div>  
+                      </div>  
+                  </li>  
+                </ol>  
+              </div>
+
+              <div class="row">
+                <div class="column small-10 small-centered">
+                  <a 
+                    class="large right"
+                    ng-click="add(cols)"
+                  >
+                    <i class=" fa fa-plus-square"/> 
+                      Add new column
+                  </a>
+                </div>  
+              </div>
+
+            </div>    
+            <!-- list end -->
+          </div>
+          
+            
+        </div>  
+      </div>
+
+      <div class="rows">
+        <div class="columns small-10 small-centered">
+          <label class="large">Color Pallete</label>
+          <div class="column small-6">
+            
+            <a class="second dropdown tiny left"
+                ng-if="!influencePallete" 
+                dropdown-toggle="#dropdown-example-3" 
+                style="margin: 0 0 0 0.3rem;
+                padding: 0.3rem 2.5rem 0.3rem 0.5rem;"
+            >
+              Select...
+            </a>
+            
+            <a  class="button tiny split small-12 left"  
+                style="font-size: large;"
+            >
+              <div class="columns small-12">
+                <div  
+                  ng-if="influencePallete"
+                  class="left column small-1"
+                  ng-repeat="color in  influencePallete"
+                  style="
+                      background-color: {{color}};
+                      /*width: 1em;*/
+                      display: inline-block;
+                      margin: 0px;
+                      padding: 0px 0.2rem;
+                      font-size: large;
+                      border: 1px solid rgb(175, 175, 175);"
+                >
+                  &nbsp;
+                </div>
+              </div>  
+              <div ng-if="!influencePallete">
+                Select...
+              </div>    
+              <span dropdown-toggle="#fast_color_peaker"/>
+            </a>
+
+            <fast-palette-peacker 
+              dest="influencePallete" 
+              setter="setPallete" 
+              watch-depth="reference">
+            </fast-palette-peacker>
+          </div>
+          <div class="column small-3 left">
+            <a class="button" style="padding: 0.82em 1em;" ng-click="reversePallete()"> Reverse Pallete </a>
+          </div>  
+        </div>  
+      </div> 
+
+      <div class="rows">
+        <div class="columns small-12">
+          <div class="column small-3">
+            <label class="large"> Undefined Value Color </label>
+            <div class="small-2">
+              <input type="color" ng-model="influenceUndefinedColor">
+            </div>  
+          </div>
+          <div class="column small-3">
+            <label class="large"> Disabled Value Color </label>
+            <div class="small-2">
+              <input type="color" ng-model="influenceDisabledColor">
+            </div>  
+          </div>
+          <div class="column small-6">
+            <label class="large"> Opacity </label>
+            <div class="column small-10">
+               <input type="range" name="range" ng-model="influenceOpacity" ng-change="setOpacity(influenceOpacity)" min=0  max=100>
+               <span class="label right" ng-if="influenceOpacity" style="background: #5f8ab9; color:#e7e7e7">{{influenceOpacity}}%</span>
+            </div>  
+          </div>
+        </div>  
+      </div> 

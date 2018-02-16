@@ -1,0 +1,98 @@
+<div class="row">
+  <div class="column small-12">
+    <div class="row">
+      <div class="column small-12">
+        <label class="large">Alternatives</label>
+        <div class="row">
+          <div class="column small-12">
+            <div class="column small-6">
+              <label class="large" style="color:{{(config.options.addEnabled)?'#008CBA':'';}}">   Add new items in presentation mode
+                  <div class="switch tiny radius">
+                    <input  type="checkbox"  
+                            id="{{widget.instanceName+'_add'}}"
+                            ng-model="config.options.addEnabled"
+                            ng-change="markModified()">
+                    <label  for="{{widget.instanceName+'_add'}}"></label>
+                  </div>
+              </label>
+            </div>
+            <div class="column small-6">
+              <label  class="large" 
+                      style="color:{{(config.options.showUserInfo)?'#008CBA':'';}}"
+              > 
+                Show user information
+                <div class="switch tiny radius">
+                  <input  type="checkbox"  
+                          id="{{widget.instanceName+'_showUser'}}"
+                          ng-model="config.options.showUserInfo"
+                          ng-change="markModified()">
+                  <label  for="{{widget.instanceName+'_showUser'}}"></label>
+                </div>
+              </label>
+            </div>
+          </div>
+        </div>    
+              
+          
+        
+      </div>  
+    </div>  
+    <!-- list start-->
+    <div class="row">
+      <div ui-tree="treeOptions" class="column small-10 small-centered">
+        <ol ui-tree-nodes ng-model="alternatives">
+          <li ui-tree-node ng-repeat="i in alternatives" ng-click="cselect(i.id)">
+              <div class="row">
+                <div class="columns small-12">
+                  <div ui-tree-handle class="column small-1">
+                    <i  
+                        class="fa fa-ellipsis-v right" 
+                        style="padding:0.4em 0; font-size:1.2em; color:#aaa">
+                    </i>
+                    <!-- <i  
+                      class="fa fa-ellipsis-v right" 
+                      style="padding:0.4em 0.1em; font-size:1.2em; color:#aaa">
+                    </i> -->
+                  </div>
+                  <div class="column small-10">
+                    <input 
+                              type="text" 
+                              ng-model="i.title" 
+                              ng-disabled="_click != i.id" 
+                              focused="_click != i.id"
+                          >
+                  </div>
+                  <div class="column small-1">
+                    <a 
+                      class="fa fa-times-circle" 
+                      ng-click="delete(alternatives,$index)"
+                      style="   color: #aaa;
+                                font-size: 24px;
+                                margin: 0.35em 0 0 -1em;"
+                    ></a>
+                  </div>
+                </div>  
+              </div>  
+          </li>  
+        </ol>  
+      </div>
+
+      <div class="row">
+        <div class="column small-10 small-centered">
+          <a 
+            class="large right"
+            ng-click="add(alternatives)"
+          >
+            <i class=" fa fa-plus-square"/> 
+              Add new item
+          </a>
+        </div>  
+      </div>
+
+    </div>    
+    <!-- list end -->
+      
+  </div> 
+
+
+</div>

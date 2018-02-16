@@ -1,0 +1,27 @@
+
+<div class="row" style="margin:1em 0;">
+  <div class="column small-10 small-centered">
+      
+      <div class="row">
+        <div  class=" left" 
+              ng-repeat="v in config.options.ordinals.values"
+              ng-style="coloredScaleStyle(v.value)"
+              style=" padding:0 0.25em; 
+                      cursor:pointer;    
+                      font-size: large;
+                      text-align: center;
+                      font-weight: bold;"
+              ng-click="config.callback.setValue(v.value)"
+        > 
+          
+           <span style="color:#5b6d81;font-size:small;">{{v.value}}</span><br/>
+           <i style="font-size:xx-large; font-weight:bold;" class="fa fa-pause"></i><br/>
+           <span style="color:#5b6d81; font-size:xx-small;">{{v.title}}</span>
+        </div>
+      </div>
+
+
+   </div>  
+</div>  
+
+<!-- <pre>{{answer | json }}</pre>  -->

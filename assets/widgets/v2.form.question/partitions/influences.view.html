@@ -1,0 +1,92 @@
+<div class="row" style="margin:1em 0">
+  <div class="column small-11 small-centered">
+
+    <table style="width:100%">
+      <tr>
+        <td style="font-size: large;
+                    color: #5b6d81;
+                    border:none;
+                    max-width:25em;
+                    text-align: center;"
+        >
+            &nbsp;
+        </td>
+        <td style="font-size: large;
+                    color: #5b6d81;
+                    border:none;
+                    text-align: center;" 
+            ng-repeat="e in effects"
+        >
+          {{e.title}}
+        </td>  
+      </tr>
+      
+      <tr ng-repeat="f in factors">
+        <td style="font-size: large;
+                    color: #5b6d81;
+                    border:none;
+                    max-width:25em;
+                    text-align: center;"
+        >
+          {{f.title}}
+        </td>  
+        <td style="border:none;"
+          ng-repeat="e in effects"
+        >
+          <div ng-if="!config.callback.disabled(f.id, e.id)">
+            <a>  
+            <div  class="column small-4 small-centered" 
+                  dropdown-toggle="{{'#'+widget.instanceName+'_v_'+f.id+'_'+e.id}}"
+                  ng-style="influenceStyle(f.id, e.id)"
+                  style=" padding: 0.5em 0;
+                          text-align: center;
+                          border-radius: 8px;
+                          font-size: large;"
+            >
+                  {{
+                    config.callback.getValue(f.id, e.id)
+                  }}
+            </div>
+
+          </a>
+
+          <ul id="{{widget.instanceName+'_v_'+f.id+'_'+e.id}}" 
+              class="f-dropdown" 
+              style="width: max-content;"
+          >
+            <li>
+              <a 
+                ng-click="config.callback.setValue(f.id, e.id, v.value)" 
+                ng-style="scaleStyle(v.value)" 
+                ng-repeat="v in config.options.ordinals.values" 
+                style=" font-size: large;
+                        border-bottom: 1px solid #999;"
+              >
+                {{v.value}} : {{v.title}}
+              </a>
+            </li>
+          </ul>
+        </div>
+        <div ng-if="config.callback.disabled(f.id, e.id)">
+          <div  class="column small-4 small-centered" 
+                  style=" padding: 0.5em 0;
+                          text-align: center;
+                          border-radius: 8px;
+                          font-size: x-large;
+                          color:#e7e7e7"
+            >
+              <i class="fa fa-times"/>
+            </div>  
+        </div>    
+
+
+        </td>  
+        
+      </tr>  
+        
+    </table>  
+
+  </div>  
+</div> 
+
+<pre>{{answer | json}}</pre>

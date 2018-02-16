@@ -1,0 +1,35 @@
+
+<div class="row" style="margin:1em 0;">
+  <div class="column small-11 small-centered">
+    <table style="width:100%; border:none;">
+      <tr ng-repeat="e in entities">
+        <td style=" font-size: large;
+                    color: #5b6d81;
+                    border:none;
+                    max-width:25em;"
+        >
+            {{e.title}}
+        </td>
+        <td style="border:none;"> 
+          <div  class=" left" 
+                ng-repeat="v in config.options.ordinals.values"
+                ng-style="coloredMScaleStyle(e.id, v.value)"
+                style=" padding:0 0.25em; 
+                        cursor:pointer;    
+                        font-size: large;
+                        text-align: center;
+                        font-weight: bold;"
+                ng-click="config.callback.setValue(e.id,v.value)"
+          > 
+            
+             <span style="color:#5b6d81; font-size:small;">{{v.value}}</span><br/>
+             <i style="font-size:xx-large; font-weight:bold;" class="fa fa-pause"></i><br/>
+             <span style="color:#5b6d81; font-size:xx-small;">{{v.title}}</span>
+          </div>
+        </td>  
+      </tr>  
+    </table>  
+  </div>  
+</div>  
+
+<!-- <pre>{{answer | json }}</pre>  -->
