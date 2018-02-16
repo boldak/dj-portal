@@ -248,7 +248,11 @@ gulp.task('build-js', ['build-template-cache', 'build-widgets', 'build-component
     return;
   }
 
-  gulp.src(`${buildPublicDir}/**/*.js`)
+  gulp.src([
+      `${buildPublicDir}/**/*.js`,
+      `!${buildPublicDir}/components/*.*`,
+      `!${buildPublicDir}/bower_components/*.*`
+  ])
     .pipe(plugins.cached('build-js'))
     .pipe(plugins.plumber())
     .pipe(plugins.if(minifyCode, plugins.uglify()))
