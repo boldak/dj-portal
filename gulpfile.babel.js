@@ -250,14 +250,14 @@ gulp.task('build-js', ['build-template-cache', 'build-widgets', 'build-component
 
   gulp.src([
       `${buildPublicDir}/**/*.js`,
-      `!${buildPublicDir}/components/*.*`,
-      `!${buildPublicDir}/bower_components/*.*`
+      `!${buildPublicDir}/**/components/**`,
+      `!${buildPublicDir}/**/bower_components/**`
   ])
     .pipe(plugins.cached('build-js'))
     .pipe(plugins.plumber())
     .pipe(plugins.if(minifyCode, plugins.uglify()))
     .on('error', handleError)
-    .pipe(plugins.if(showFilesLog, plugins.size({showFiles: true, title: 'JS'})))
+    .pipe(plugins.if(showFilesLog, plugins.size({showFiles: true, title: 'JS => '})))
     .pipe(gulp.dest(buildPublicDir));
 });
 
@@ -502,4 +502,22 @@ gulp.task('clean', done =>
   del([buildDir], done)
 );
 
+var _sourceDir ="temp";
+var _destDir = "temp1";
+  
+gulp.task('clean-temp', done => {
+  console.log("Clear ", _destDir);
+  del([_destDir], done)
+});
 
+gulp.task('test-build', ['clean-temp'],() => {
+  gulp.src([
+      `${_sourceDir}/**/*.*`,
+      `!${_sourceDir}/**/*.html`,
+      `!${_sourceDir}/**/js/*.js`
+  ])
+    .pipe(plugins.cached('test-build'))
+    .on('error', handleError)
+    .pipe(plugins.if(showFilesLog, plugins.size({showFiles: true, title: 'TEST_BUILD'})))
+    .pipe(gulp.dest(_destDir));
+});
