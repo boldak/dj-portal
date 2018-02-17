@@ -244,6 +244,8 @@ gulp.task('copy-es6-polyfill', () =>
 
 gulp.task('build-js', ['build-template-cache', 'build-widgets', 'build-components',
   'compile-js', 'annotate-js', 'copy-es6-polyfill'], () => {
+  console.log("No code minification")
+  return
   if (!minifyCode) {
     return;
   }

@@ -1,4 +1,4 @@
-import angular from 'angular';
+// import angular from 'angular';
 import 'angular-foundation';
 import 'file-upload';
 import 'i18n';
