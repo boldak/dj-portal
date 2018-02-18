@@ -71,7 +71,7 @@
         </div>
       </div>
 
-      <pre>{{config | json}}</pre> 
+      <!-- <pre>{{config | json}}</pre>  -->
       
       <div class="row">
         <div class="column small-12" ng-include="config.widget.options"></div>
@@ -130,7 +130,26 @@
       </div>      
      <!--  <hr/> -->
       <div class="row" ng-include="config.view || config.widget.view"></div>
-      <hr/>
+      
+      <div class="row">
+        <div class="column small-10 small-centered">
+          <button class="large right"
+            ng-click = "submit()"
+            ng-disabled="!answerCompleted"
+            style=" /*color: #5f8ab9;*/
+                    background: #5f8ab9;
+                    margin-top: 0.16em;
+                    /* font-size: larger; */
+                    /*border: 1px solid #5f8ab9;*/
+                    border-radius: 6px;
+                    padding: 0.2em 0.5em 0.2em 0.5em;"
+          >
+            <i class="fa fa-check"/> 
+            <widget-translate>Submit</widget-translate>
+          </button>
+        </div>
+      </div>
+      <hr/>      
     </div>   
   </div>
   

@@ -15,14 +15,29 @@
 
 <div class="row" ng-controller="FormController"
      ng-show = "globalConfig.designMode"  
-     style="padding: 0.5rem; margin: 0; background-color: #f7f5df;"
+     style="padding: 0.5rem; margin: 0;"
 >
 
-  	<h3 ng-if="disabled" style="color: #f08a24;" class="fi-alert"> DJ-Form is disabled. You can use only single instance of DJ-Form per page.</h3>
+  	<h3 	ng-if="disabled" 
+  			style="	color: #f08a24;" 
+  					class="fi-alert"
+  	> 
+  		DJ-Form is disabled. You can use only single instance of DJ-Form per page.
+  	</h3>
   	
-  	<div ng-if="!disabled" class="row" style="margin: 0.5em 0 0 0; height:auto;">
+  	<div ng-if="!disabled && processing" class="row">
+  		<div 	class="column small-2 small-centered" 
+  				style="	text-align:center;
+  						color:#999;
+  						font-size:xx-large"
+  		>
+  			<i class="fa fa-spinner fa-pulse"/>
+  		</div>	
+  	</div>
+
+  	<div ng-if="!disabled && !processing" class="row" style="margin: 0.5em 0 0 0; height:auto;">
 		<h2> 
-			DJ-Form configuration
+			DJ-Form
 			<span  class="tiny" ng-if="form" style="margin:0">
 		  		<a class="action">[Clone...]</a>
 		  	</span>
@@ -92,7 +107,9 @@
 				Experts 
 				<a class="action">[Edit...]</a>
 		</h4>
-	</div>	
+	</div>
+
+<pre> {{ pageConfig | json }} </pre>		
 
 </div>
 

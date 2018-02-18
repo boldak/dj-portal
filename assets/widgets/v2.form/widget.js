@@ -23,13 +23,21 @@ m.controller('FormController', function(
   metadataDialog,
   config,
   instanceNameToScope,
-  randomID
+  randomID,
+  $window
 ) {
 
+
+$scope.pageConfig = app.pageConfig();
+
   // const eventEmitter = new EventEmitter($scope);
-  const apiUser = new APIUser();
+  // const apiUser = new APIUser();
   // $scope.formatDate = i18n.formatDate;
   let scopeFor = widgetInstanceName => instanceNameToScope.get(widgetInstanceName);
+
+// operation process indicator
+
+$scope.processing = false;
 
   let dps = {
 
@@ -98,19 +106,20 @@ m.controller('FormController', function(
 
                 $scope.updatedForm = (item) => item.id == $scope.form.id;
                 $scope.update = (item) => {
-                    $scope.form.history.push({
-                        date: new Date(),
-                        message:"Update form",
-                        state:"updated",
-                        user: $scope.owner.client.user
-                    });
+                    
+                    // $scope.form.history.push({
+                    //     date: new Date(),
+                    //     message:"Update form",
+                    //     state:"updated",
+                    //     user: $scope.owner.client.user
+                    // });
                     
                     return $scope.form;
                 };
 
             ?>
 
-            dml.update(for:"form", as:{{update}}, where:{{formID}})
+            dml.update(for:"form", as:{{update}}, where:{{updatedForm}})
         `,
 
     getForm: `
@@ -120,7 +129,17 @@ m.controller('FormController', function(
             ?>
 
             dml.select(from:"form", where:{{filter}}, populate:"project")
-        `
+        `,
+
+    deleteForm:`
+            // deleteForm
+            <?javascript
+                $scope.filter = (item) => item.id == $scope.form;
+            ?>
+
+            dml.delete(from:"form", where:{{filter}})
+    `
+
   }
 
   let runDPS = (params) => {
@@ -162,7 +181,7 @@ m.controller('FormController', function(
             }
           })
           .then((res) => {
-            console.log(res)
+            // console.log(res)
             form.fields.project.options.push({
               title: res.data[0].metadata.title,
               value: res.data[0].id,
@@ -221,30 +240,6 @@ m.controller('FormController', function(
     })  
   }
 
-  $scope.createNewForm = () => {
-    metadataDialog({
-        title: "New Form Metadata",
-        object: {
-          identity: "",
-          title: "",
-          note: ""
-        }
-      })
-      .then((res) => {
-        runDPS({
-            script: dps.createForm,
-            state: {
-              form: res
-            }
-          })
-          .then((res) => {
-            $scope.widget.form = res.data[0].id;
-            app.markModified();
-            apiUser.invokeAll("formMessage", {action:"configure", data:$scope});
-            updateWidget();
-          })
-      })
-  }
 
   $scope.editFornMetadata = metadata => {
     metadataDialog({
@@ -284,23 +279,50 @@ m.controller('FormController', function(
 
 
 
-  let updateWidget = () => {
-     
-    let forms = pageWidgets().filter((item) => item.type === "v2.form");
-    $scope.disabled = $scope.widget.disabled = (forms.length > 1)&&(!$scope.widget.form);
-    if ($scope.widget.form) {
-        runDPS({
-          script: dps.getForm,
-          state: {
-            form: $scope.widget.form
-          }
-        })
-        .then(res => {
-          $scope.form = res.data[0]
+    let createNewForm = () => {
+
+      $scope.processing = true;
+
+      let meta = {
+        app_name: config.name,
+        app_title: config.title,
+        app_url: $window.location.href,
+        app_icon:config.icon,
+        page_title:app.pageConfig().shortTitle
+      }
+      
+      
+
+      runDPS({
+        script: dps.createForm,
+        state: {
+          form: meta
+        }
+      })
+      .then((res) => {
+        $scope.widget.form = res.data[0].id;
+        app.markModified();
+        let usr = new APIUser;
+        usr.invokeAll("formMessage", {action:"configure", data:$scope});
+        updateWidget();
+        $scope.processing = false;
+      })
+    }
+
+    let loadForm = () => {
+      runDPS({
+        script: dps.getForm,
+        state: {
+          form: $scope.widget.form
+        }  
+      })
+      .then(res => {
+        $scope.processing = false;
+        $scope.form = res.data[0];
 
           // eventEmitter.emit("formMessage", {action:"update", data:$scope.form});
-          
-          apiUser.invokeAll("formMessage", {action:"update", data:$scope.form});
+          let usr = new APIUser(); 
+          usr.invokeAll("formMessage", {action:"update", data:$scope.form});
           
 
           $scope.formMetadata = prepaireMetadata($scope.form)
@@ -325,7 +347,17 @@ m.controller('FormController', function(
           $scope.widgetPanel.allowConfiguring = undefined;
           $scope.widgetPanel.allowCloning = undefined;
         })
-    }
+      }
+
+
+  let updateWidget = () => {
+    // let forms = pageWidgets().filter((item) => item.type === "v2.form");
+    // $scope.disabled = $scope.widget.disabled = (forms.length > 1)&&(!$scope.widget.form);
+    
+    if($scope.disabled) return;
+    
+    if($scope.widget.form) loadForm()
+    
   }
 
   let initQuestion = s => {
@@ -355,7 +387,9 @@ m.controller('FormController', function(
   }
 
   new APIProvider($scope)
-    .config(updateWidget)
+    .config(() => {
+        updateWidget()  
+    })
 
     .save(() => {
       console.log("Save app event handler")
@@ -364,6 +398,12 @@ m.controller('FormController', function(
     .translate(updateWidget)
 
     .create((event,widget) => {
+        
+        if( widget.instanceName == $scope.widget.instanceName){
+          let forms = pageWidgets().filter((item) => item.type === "v2.form");
+          if(forms.length == 1) createNewForm();
+        } 
+        
         if(!$scope.disabled && $scope.form && (widget.type == "v2.form.question")){
             initQuestion(scopeFor(widget.instanceName))
         }
@@ -389,7 +429,21 @@ m.controller('FormController', function(
     })  
 
     .removal(() => {
-      apiUser.invokeAll("formMessage", {action:"remove", data:$scope});
+      let user = new APIUser();
+      user.invokeAll("formMessage", {action:"remove", data:$scope});
+      
+      $scope.processing = true;
+      if($scope.form){
+        runDPS({
+            script: dps.deleteForm,
+            state: {
+              form: $scope.form.id
+            }
+        })
+        .then(() => {
+          $scope.processing = false;        
+        })  
+      }
           
       console.log('Form widget is destroyed');
     });

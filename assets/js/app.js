@@ -358,14 +358,34 @@ app.service('app', function ($http, $state, $stateParams, $log, config, $rootSco
 
       $log.warn("app.pageIndexByHref can't find page!");
     },
+
     pageConfig() {
       return pageConf;
     },
 
+    // updatePageConfig (widget) {
+    //   let c = this.pageConfig();
+    //   console.log(c)
+    //   for(let h in c.holders){
+    //     console.log(h)
+    //     for(let w of c.holders[h].widgets){
+    //       if(w.instanceName == widget.instanceName) {
+    //         // angular.copy(widget, w)
+    //         console.log("PAge config updated", w)      
+    //       }
+    //     }
+    //   }
+      
+    // },
+
     markModified() {
       this.wasModified = true;
     },
-
+    
+    unmarkModified() {
+      this.wasModified = false;
+    },
+    
     deletePage(page) {
       
       const curPageHref = $stateParams.href;
@@ -707,6 +727,8 @@ app.service('app', function ($http, $state, $stateParams, $log, config, $rootSco
         }
       });
     }
+
+
   });
 
   pageConf = config.pages[this.pageIndexByHref($stateParams.href || '')];
@@ -798,7 +820,8 @@ app.service('widgetManager', function ($modal, $timeout, APIUser, APIProvider,
           }
         }
       }).result.then((newWidgetConfig) => {
-          angular.copy(newWidgetConfig, widget);
+          // angular.copy(newWidgetConfig, widget);
+          angular.extend(widget,newWidgetConfig);
           const user = new APIUser();
           user.invokeAll(APIProvider.RECONFIG_SLOT,{source:widget.instanceName});
           app.markModified(true);
@@ -825,11 +848,14 @@ app.service('widgetManager', function ($modal, $timeout, APIUser, APIProvider,
           const realWidget = {
             type: widgetType.type,
             openConfigOnLoad: true,
-            instanceName: randomWidgetName()
+            instanceName: randomWidgetName(),
+            initPhase: true
           };
          
           holder.widgets = holder.widgets || [];
           holder.widgets.push(realWidget);
+          
+          // console.log("PUSH REALWIDGET")
           
           app.markModified(true);    
         });
@@ -983,6 +1009,8 @@ app.controller('MainController', function ($scope, $location, $cookies, $window,
    
   });
 
+
+
   $window.onbeforeunload = (evt) => {
     const message = $translate.instant('LEAVE_WEBSITE_WITHOUT_SAVING');
     if (app.wasModified) {
@@ -1060,10 +1088,13 @@ app.directive('widgetHolder', function (appUrls, widgetManager, app, selectHolde
   };
 });
 
-app.directive('widget', function ($rootScope, $translate, $window, appUrls, globalConfig, widgetLoader,
+app.directive('widget', function ($rootScope, $translate, $window, appUrls, 
+                                  globalConfig, widgetLoader,
                                   config, widgetManager, user, app, randomWidgetName,
                                   instanceNameToScope, widgetSlots, widgetTypesPromise,
-                                  autoWiredSlotsAndEvents, eventWires, APIUser, APIProvider) {
+                                  autoWiredSlotsAndEvents, eventWires, APIUser, APIProvider,
+                                  $timeout) {
+
   function updateEventsOnNameChange(widget) {
     $rootScope.$watch(() => widget.instanceName, (newName, oldName) => {
       if (newName !== oldName && newName !== undefined) {
@@ -1137,18 +1168,18 @@ app.directive('widget', function ($rootScope, $translate, $window, appUrls, glob
       });
 
       updateEventsOnNameChange(scope.widget);
-
       widgetLoader.load(scope.type).then(() => {
         scope.widgetCodeLoaded = true;
 
+        
         if (scope.widget.openConfigOnLoad) {
           delete scope.widget.openConfigOnLoad;
 
           scope.$applyAsync(() => {
             widgetManager.openWidgetConfigurationDialog(scope.widget)
-            const user = new APIUser();
-            // console.log("before create widjet event", realWidget)
-            user.invokeAll(APIProvider.CREATE_WIDGET_SLOT,scope.widget);
+            // const user = new APIUser();
+            // console.log("before create widget event", scope.widget.instanceName)
+            // user.invokeAll(APIProvider.CREATE_WIDGET_SLOT,scope.widget);
           });
         }
       });
@@ -1230,8 +1261,21 @@ app.directive('widget', function ($rootScope, $translate, $window, appUrls, glob
                   $window.open(url, '_blank');
                 }
               }
-            })
+            });
+           
+           $timeout(() => {
+                if(scope.widget.initPhase){
+                  // console.log("INVOKE CREATE EVENT")
+                  const user = new APIUser();
+                  // console.log("before create widget event", JSON.stringify(scope))
+                  user.invokeAll(APIProvider.CREATE_WIDGET_SLOT, scope.widget);
+                  scope.widget.initPhase = false;
+                }  
+          },100);    
+
         })
+      
+
     }
   };
 });

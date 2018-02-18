@@ -37,7 +37,8 @@ m.controller('FormQuestionController', function(
   randomID,
   d3,
   $ocLazyLoad,
-  user
+  user,
+  globalConfig
   
 ) {
 
@@ -74,10 +75,12 @@ $scope._click = null;
 
 $scope.delete = (object,index) => {
     object.splice(index,1);
+    // updateConfig()
     $scope.markModified();
 }
 $scope.add = (object) => {
     object.push({id:randomID(), title:"New item",$djItemType:"embeded"});
+    // updateConfig()
     $scope.markModified();
 }
 
@@ -263,7 +266,8 @@ $scope.defaultQuestionConfig = {
         },
 
         setValue: (value) => {
-          
+          if(!globalConfig.designMode) app.markModified();
+
           $scope.answerCompleted = (angular.isDefined($scope.answer.value[0])) 
         },
 
@@ -343,6 +347,8 @@ $scope.defaultQuestionConfig = {
         },
 
         setValue: (value) => {
+          if(!globalConfig.designMode) app.markModified();
+          
           $scope.answer.value = _.toPairs($scope.checkboxes)
                                   .filter(item => item[1])
                                   .map(item => item[0]);
@@ -415,6 +421,8 @@ $scope.defaultQuestionConfig = {
         },
 
         setValue: (value) => {
+          if(!globalConfig.designMode) $scope.markModified(); 
+          
           $scope.answer.value[0] = value.id;
           $scope.answerCompleted = (angular.isDefined($scope.answer.value[0])) 
         },
@@ -486,6 +494,8 @@ $scope.defaultQuestionConfig = {
         },
 
         setValue: (value) => {
+          if(!globalConfig.designMode) $scope.markModified(); 
+          
           $scope.answer.value[0] = value;
           $scope.answerCompleted = (angular.isDefined($scope.answer.value[0])) 
         },
@@ -600,6 +610,8 @@ $scope.defaultQuestionConfig = {
         },
 
         setValue: (entity, value) => {
+          if(!globalConfig.designMode) $scope.markModified(); 
+          
           let index = $scope.answer.value
                       .map(item => item.entity)
                       .indexOf(entity)
@@ -737,6 +749,9 @@ $scope.defaultQuestionConfig = {
         },
 
         setValue: (factor, effect, value) => {
+          if(!globalConfig.designMode) $scope.markModified(); 
+          
+          console.log("SET VALUE",globalConfig, app.wasModified)
           
           let index = -1;
           $scope.answer.value.forEach((item, i) => {
@@ -809,6 +824,12 @@ $scope.textFields = {
   effect:"",
   factor:""
 }  
+
+$scope.submit = () => {
+// TODO save answer on server
+
+  $scope.answerCompleted = false;
+}
 
 $scope.addPMAlternative = (collection) => {
  
@@ -994,10 +1015,36 @@ $scope.m = true;
   
   let scopeFor = widgetInstanceName => instanceNameToScope.get(widgetInstanceName);
 
+  let updateConfig = () => {
+
+    if(!$scope.config) return;
+    console.log("Update config")
+    if( $scope.config.callback && $scope.config.callback.updateConfig ) {
+        $scope.config.callback.updateConfig();
+      }  
+        $scope.widget.config = $scope.config;
+  }
   
-  
+  $scope.$watch("config", (oldConf, newConf) => {
+    if(oldConf != newConf) updateConfig()
+  },true)
+
+  // $scope.$watchCollection("alternatives", updateConfig);
+  // $scope.$watchCollection("entities", updateConfig);
+  // $scope.$watchCollection("properties", updateConfig);
+  // $scope.$watchCollection("factors", updateConfig);
+  // $scope.$watchCollection("effects", updateConfig);
+
+  $scope.$watch("alternatives", updateConfig, true);
+  $scope.$watch("entities", updateConfig, true);
+  $scope.$watch("properties", updateConfig, true);
+  $scope.$watch("factors", updateConfig, true);
+  $scope.$watch("effects", updateConfig, true);
+
+
   let updateWidget = () => {
     
+
     $scope.disabled = $scope.widget.disabled = angular.isUndefined($scope.widget.ID);
     
     if(!$scope.disabled){

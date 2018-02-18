@@ -176,12 +176,18 @@ widgetApi.factory('APIProvider', function ($rootScope, $log,
       return this;
     }
 
+    beforeUnload(slotFn) {
+      this.provide(APIProvider.BEFORE_UNLOAD_SLOT, slotFn);
+      return this;
+    }
+
     pageComplete(slotFn) {
       this.provide( APIProvider.PAGE_COMPLETE_SLOT, slotFn);
       return this;
     }
 
     create(slotFn) {
+      // console.log("PROVIDE APIProvider.CREATE_WIDGET_SLOT")
       this.provide(APIProvider.CREATE_WIDGET_SLOT, slotFn);
       return this;
     }
@@ -211,6 +217,7 @@ widgetApi.factory('APIProvider', function ($rootScope, $log,
   APIProvider.BEFORE_DESIGN_MODE_SLOT = 'BEFORE_DESIGN_MODE_SLOT';
   APIProvider.BEFORE_PRESENTATION_MODE_SLOT = 'BEFORE_PRESENTATION_MODE_SLOT';
   APIProvider.BEFORE_CHANGE_PAGE_SLOT = 'BEFORE_CHANGE_PAGE_SLOT';
+  APIProvider.BEFORE_UNLOAD_SLOT = 'BEFORE_UNLOAD_SLOT';
   // APIProvider.BEFORE_CONFIG_SLOT = 'BEFORE_CONFIG_SLOT';
   // APIProvider.BEFORE_CLONE_WIDGET_SLOT = 'BEFORE_CLONE_WIDGET_SLOT';
 
@@ -307,6 +314,7 @@ widgetApi.factory('APIUser', function (widgetSlots, instanceNameToScope, getWidg
      */
     invokeAll(slotName, ...args) {
       // console.log("Start invokeAll with ", slotName, args)
+      // console.log("WIDGETSLOTS",widgetSlots)
       for (let slots of widgetSlots.values()) {
         for (let slot of slots) {
           if (slot.slotName === slotName) {
