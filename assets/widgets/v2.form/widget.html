@@ -18,14 +18,14 @@
      style="padding: 0.5rem; margin: 0;"
 >
 
-  	<h3 	ng-if="disabled" 
+  	<h3 	ng-if="isDisabled()" 
   			style="	color: #f08a24;" 
   					class="fi-alert"
   	> 
   		DJ-Form is disabled. You can use only single instance of DJ-Form per page.
   	</h3>
   	
-  	<div ng-if="!disabled && processing" class="row">
+  	<div ng-if="!disabled() && processing" class="row">
   		<div 	class="column small-2 small-centered" 
   				style="	text-align:center;
   						color:#999;
@@ -35,79 +35,153 @@
   		</div>	
   	</div>
 
-  	<div ng-if="!disabled && !processing" class="row" style="margin: 0.5em 0 0 0; height:auto;">
-		<h2> 
-			DJ-Form
-			<span  class="tiny" ng-if="form" style="margin:0">
-		  		<a class="action">[Clone...]</a>
-		  	</span>
-		  	<span  class="tiny" ng-if="!form" style="margin:0"> 
-		  		<a class="action" ng-click="createNewForm()">[Create...]</a>
-		  	</span>
-		</h2>
-  		<h3 ng-if="!form" style="color: #f08a24;" class="fi-alert"> DJ-Form is not configured. You cannot use "question" widgets before configure DJ-Form.</h3>
-  	  	
-	  	<div ng-if="form" class="row" style="margin: 0.5em 0 0 0; height:auto;">
-	  			<h4 class="sectionHeader">Attributes</h4>
-	  			<div 	class="row" 
-						style="margin: 0.5em 0 0 0; height:auto;"
-						ng-repeat="pair in formAttributes">
-					<div class="column large-2">
-				      <b>{{pair.key}}:</b>
-				    </div>
-
-				    <div class="column large-10 left">
-				    	{{pair.value}}  
-					</div>
-				</div>	
-				<h4 class="sectionHeader">State</h4>
-	  			<h4 class="sectionHeader">Team</h4>
-	  			<div class="row" ng-repeat="user in team" style="margin: 0.5em 1em;">
-	  				<img src="{{user.photo}}" style="width:48px;"> {{user.name}}
-	  			</div>	
-				<h4 class="sectionHeader">
-					Metadata 
-					<a class="action" ng-click="editFornMetadata(form.metadata)">[Edit...]</a>
-				</h4>
-				<div 	class="row" 
-						style="margin: 0.5em 0 0 0; height:auto;"
-						ng-repeat="pair in formMetadata">
-					<div class="column large-2">
-				      <b>{{pair.key}}:</b>
-				    </div>
-
-				    <div class="column large-10 left">
-				    	{{pair.value}}  
-					</div>
-				</div>	
+  	<div ng-if="!disabled() && !processing" class="row" style="margin: 0.5em 0 0 0; height:auto;">
+		<h3> 
+			DJ-Form <span style="font-size: smaller;">#{{form.id}}</span>
+		</h3>
+		<div class="row">
+			<div ng-if="form.cloned" class="column small-12" style="font-size: small;">
+				Cloned from: #{{form.cloned}}
+			</div>
 		</div>
-	
-		<div ng-if="form" class="row" style="margin: 0.5em 0 0 0; height:auto;">
-			<h4 class="sectionHeader">Project
-				<span ng-if="form.project"><a class="action" ng-click="selectProject()">[Change...]</a></span>
-		  		<span ng-if="!form.project"><a class="action" ng-click="selectProject()">[Select...]</a></span>
-	  		</h4>
-	  		<div 	class="row" 
-					style="margin: 0.5em 0 0 0; height:auto;"
-					ng-repeat="pair in projectMetadata"
-					ng-if="form.project"
-			>
-				<div class="column large-2">
-			      <b>{{pair.key}}:</b>
-			    </div>
-
-			    <div class="column large-10 left">
-			    	{{pair.value}}  
-				</div>
-			</div>	
+		<div class="row">
+			<div class="column small-12" style="font-size: small;">
+				Created at: {{formatDate(form.createdAt)}}
+			</div>
 		</div>
-		<h4 class="sectionHeader" ng-if="!disabled && form">Questions</h4>
-		{{widget.questions}}
-		<h4 class="sectionHeader" ng-if="!disabled && form">
+		<div class="row">
+			<div class="column small-12" style="font-size: small;">
+				Last update: {{formatDate(form.updatedAt)}}
+			</div>
+		</div>
+			
+		<hr/>
+		
+		<h4>
+			Metadata	
+		</h4>
+      <div class="row">
+        <div class="column small-12">
+          <div class="column small-3 left">
+            <label class="large">Key</label>
+          </div>
+          <div class="column small-8 left">
+            <label class="large">Value</label> 
+          </div>
+        </div>
+      </div>	
+  		<div ng-repeat="m in metadata" class="row">
+  			<div class="column small-12">
+  				<div class="column small-3 left">
+  					<input 	  style="margin-bottom: 0.25em;"	
+                              type="text" 
+                              ng-model="m.key"
+                              ng-value="m.key" 
+                              ng-disabled="m.required"
+                          >
+  					
+  				</div>
+  				<div class="column small-8 left">
+  					<input    style="margin-bottom: 0.25em;"
+                              type="text" 
+                              ng-model="m.value"
+                              ng-value="m.value" 
+                              ng-disabled="!m.editable"
+                          >
+  					
+  				</div>
+  				<div class="column small-1" style="padding: 0.25em;">
+  					<button 
+                    style=" color: #5f8ab9;
+                            background: none;
+                            font-size: xx-large;
+                            padding: 0;
+                            margin: 0;
+                            cursor: pointer;"
+            >
+              <i class="fa fa-times-circle"/>
+            </button>
+  					<!-- <span ng-if="m.required">&nbsp;</span> -->	
+  				</div>	
+  			</div>
+  		</div>
+      <div class="row">
+        <div class="column small-12">
+          <div class="column small-3 left">
+            <input    style="margin-bottom: 0.25em;"  
+                              type="text" 
+                              ng-model="m.key"
+                              ng-value="m.key" 
+                              
+                          >
+            
+          </div>
+          <div class="column small-8 left">
+            <input    style="margin-bottom: 0.25em;"
+                              type="text" 
+                              ng-model="m.value"
+                              ng-value="m.value" 
+                              
+                          >
+            
+          </div>
+          <div class="column small-1" style="padding: 0.25em;">
+            <button style=" color: #5f8ab9;
+                            background: none;
+                            font-size: xx-large;
+                            padding: 0;
+                            margin: 0;
+                            cursor: pointer;"
+            >
+              <i class="fa fa-plus-circle"/>
+            </button>
+              
+          </div>  
+        </div>
+      </div>
+  		
+  		<hr/>
+	  	<h4>
+        Access   
+      </h4>
+	    <div class="row">
+        <div class="column small-12">
+          <div class="column small-2 left">
+            <a 
+                class="button split tiny"  
+                style="   background-color: #5f8ab9;
+                           color: #e7e7e7;
+                          font-size: large;"
+            >
+              For all
+              <span dropdown-toggle="{{'#'+widget.ID+'_access_type'}}"/>
+            </a>
+            <ul id="{{widget.ID+'_access_type'}}" class="f-dropdown">
+              <li><a>For any</a></li>
+              <li><a>For users</a></li>
+              <li><a>For invited</a></li>
+            </ul>
+          </div>
+          <div class="column small-4 left" style="margin: 0.5em;">
+            <label class="large left" style="margin-right: 1em;">Enable: </label>
+            <div class="switch tiny radius left">
+              <input  type="checkbox"  
+                      id="{{widget.instanceName+'_access_enabled'}}"
+                      ng-model="config.options.accessEnabled"
+              >
+              <label  for="{{widget.instanceName+'_access_enabled'}}"></label>
+            </div>
+          </div>  
+        </div>
+      </div>
+      <hr/>  
+		
+		
+	<!-- 	<h4 class="sectionHeader" ng-if="!disabled && form">
 				Experts 
 				<a class="action">[Edit...]</a>
 		</h4>
-	</div>
+	</div> -->
 
 <pre> {{ pageConfig | json }} </pre>		
 

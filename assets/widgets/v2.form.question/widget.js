@@ -8,6 +8,7 @@ import "angular-oclazyload";
 import "tinycolor";
 
 
+console.log("START QUESTION CONTROLLER")
 
 let m = angular.module('app.widgets.v2.form.question', [
   'app.dps','ui.tree',"custom-react-directives","oc.lazyLoad"
@@ -751,7 +752,7 @@ $scope.defaultQuestionConfig = {
         setValue: (factor, effect, value) => {
           if(!globalConfig.designMode) $scope.markModified(); 
           
-          console.log("SET VALUE",globalConfig, app.wasModified)
+          
           
           let index = -1;
           $scope.answer.value.forEach((item, i) => {
@@ -1018,7 +1019,6 @@ $scope.m = true;
   let updateConfig = () => {
 
     if(!$scope.config) return;
-    console.log("Update config")
     if( $scope.config.callback && $scope.config.callback.updateConfig ) {
         $scope.config.callback.updateConfig();
       }  
@@ -1042,9 +1042,10 @@ $scope.m = true;
   $scope.$watch("effects", updateConfig, true);
 
 
-  let updateWidget = () => {
-    
 
+  let updateWidget = () => {
+
+    
     $scope.disabled = $scope.widget.disabled = angular.isUndefined($scope.widget.ID);
     
     if(!$scope.disabled){
@@ -1055,13 +1056,6 @@ $scope.m = true;
         if ($scope.config.callback && $scope.config.callback.prepare) $scope.config.callback.prepare(); 
       }
     }
-
-    // const eventEmitter = new EventEmitter($scope);
-    // eventEmitter.emit("questionMessage", {action:"update question",data:$scope})
-    
-
-    
-    
   }
 
   $scope.$watch("widget.ID", ( oldValue, newValue) => {
@@ -1087,12 +1081,7 @@ $scope.m = true;
       }  
     })
 
-    .save(() => {
-      if( $scope.config.callback && $scope.config.callback.updateConfig ) {
-        $scope.config.callback.updateConfig();
-      }  
-        $scope.widget.config = $scope.config;
-    })
+   .save(updateConfig)
 
    .create((event, widget) => {
         console.log("Question handle create widget", widget)
@@ -1133,3 +1122,6 @@ $scope.m = true;
       eventEmitter.emit("questionMessage",{action:"remove", data:$scope})
     });
 })
+
+
+console.log("COMPLETE QUESTION CONTROLLER")

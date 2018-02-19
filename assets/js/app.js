@@ -747,10 +747,10 @@ app.service("logIn", function($cookies, $location,fullReload,appUrls){
 app.service('widgetLoader', function ($q, $ocLazyLoad, widgetTypesPromise, appUrls) {
   this.load = (widgets) => {
     
-    
-
-
     widgets = angular.isArray(widgets) ? widgets : [widgets];
+    
+    console.log("widgetLoader", widgets)
+
     return widgetTypesPromise.then((widgetTypesHTTP) => {
       const widgetControllers = [];
       for (let widget of widgets) {
@@ -1168,7 +1168,9 @@ app.directive('widget', function ($rootScope, $translate, $window, appUrls,
       });
 
       updateEventsOnNameChange(scope.widget);
+      console.log("CALL widgetLoader")
       widgetLoader.load(scope.type).then(() => {
+        console.log("Loaded ")
         scope.widgetCodeLoaded = true;
 
         

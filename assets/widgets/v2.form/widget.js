@@ -2,7 +2,7 @@ import angular from 'angular';
 // import 'dictionary';
 
 let m = angular.module('app.widgets.v2.form', [
-  'app.dps'
+  'app.dps', "oc.lazyLoad"
 ])
 
 
@@ -24,11 +24,15 @@ m.controller('FormController', function(
   config,
   instanceNameToScope,
   randomID,
+  $ocLazyLoad,
   $window
 ) {
 
+$ocLazyLoad.load({files:["/widgets/v2.form.question/djform.css"]}); 
+
 
 $scope.pageConfig = app.pageConfig();
+$scope.formatDate = (date) => i18n.formatDate(date);
 
   // const eventEmitter = new EventEmitter($scope);
   // const apiUser = new APIUser();
@@ -266,29 +270,43 @@ $scope.processing = false;
 
 
 
-  let prepaireMetadata = (obj) => {
-    let res = [];
-    obj = obj.metadata;
-    if (obj) {
-      for (let key in obj) {
-        res.push({ key: key, value: obj[key] })
-      }
-    }
-    return res;
+  // let prepaireMetadata = (obj) => {
+  //   let res = [];
+  //   obj = obj.metadata;
+  //   if (obj) {
+  //     for (let key in obj) {
+  //       res.push({ key: key, value: obj[key] })
+  //     }
+  //   }
+  //   return res;
+  // }
+
+  $scope.metadata = [];
+
+  let prepaireMetadata = (metadata) => {
+    $scope.metadata = _.toPairs(metadata)
+                        .map(item => {
+                          return {
+                            key:item[0],
+                            value:item[1].value,
+                            required:item[1].required,
+                            editable: item[1].editable
+                          }
+                        })
   }
-
-
 
     let createNewForm = () => {
 
       $scope.processing = true;
 
       let meta = {
-        app_name: config.name,
-        app_title: config.title,
-        app_url: $window.location.href,
-        app_icon:config.icon,
-        page_title:app.pageConfig().shortTitle
+        app_name: {value: config.name, required:true, editable:false},
+        app_title: {value: config.title, required:true, editable:false},
+        app_url: {value: $window.location.href, required:true, editable:false},
+        app_icon: {value: config.icon, required:true, editable:false},
+        page_title:{value: app.pageConfig().shortTitle, required:true, editable:false},
+        title: {value: "Form title...", required:true, editable:true},
+        note: {value: "Form note...", required:true, editable:true}
       }
       
       
@@ -324,15 +342,7 @@ $scope.processing = false;
           let usr = new APIUser(); 
           usr.invokeAll("formMessage", {action:"update", data:$scope.form});
           
-
-          $scope.formMetadata = prepaireMetadata($scope.form)
-          $scope.formAttributes = [];
-          $scope.formAttributes.push({key:"Cloned from", value:$scope.form.cloned})
-          $scope.formAttributes.push({key:"Id", value:$scope.form.id})
-          $scope.formAttributes.push({key:"Identity", value:$scope.form.metadata.identity})
-          $scope.formAttributes.push({key:"Created at", value:i18n.formatDate($scope.form.createdAt)})
-          // $scope.formAttributes.push({key:"State", value:$scope.form.history.last().state})
-          $scope.formAttributes.push({key:"Updated at", value:i18n.formatDate($scope.form.updatedAt)})
+          prepaireMetadata($scope.form.metadata);
           
 
           $scope.team = [{name:$scope.form.owner.name+" (Author)", photo:$scope.form.owner.photo}]
@@ -349,6 +359,11 @@ $scope.processing = false;
         })
       }
 
+
+  $scope.isDisabled = () => {
+    let forms = pageWidgets().filter((item) => item.type === "v2.form");
+    return (forms.length > 1) && (!$scope.widget.form);
+  }
 
   let updateWidget = () => {
     // let forms = pageWidgets().filter((item) => item.type === "v2.form");
