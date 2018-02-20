@@ -9,7 +9,7 @@ const modals = angular.module('app.modals', ['ngFileUpload']);
 
 modals.controller('WidgetModalSettingsController', function ($scope, $modalInstance, $timeout,
                                                           widgetScope, widgetConfig, widgetType,
-                                                          app) {
+                                                          app, APIUser, APIProvider) {
   let data = angular.copy(widgetConfig);
 
   // split widgetConfig into basicProperties (not available in json-editor)
@@ -36,6 +36,7 @@ modals.controller('WidgetModalSettingsController', function ($scope, $modalInsta
       // this is probably related to touch vs mouse behaviour and underlying json-editor implementation.
       $timeout(() => {
         $modalInstance.close(angular.extend(data, $scope.basicProperties));
+        
         app.markModified(true);
       }, 100);
     },

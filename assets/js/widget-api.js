@@ -192,6 +192,12 @@ widgetApi.factory('APIProvider', function ($rootScope, $log,
       return this;
     }
 
+
+    appReconfig(slotFn) {
+      // console.log("PROVIDE APIProvider.CREATE_WIDGET_SLOT")
+      this.provide(APIProvider.APP_RECONFIG_SLOT, slotFn);
+      return this;
+    }
     // beforeConfig(slotFn) {
     //   this.provide(APIProvider.BEFORE_CONFIG_SLOT, slotFn);
     //   return this;
@@ -218,6 +224,8 @@ widgetApi.factory('APIProvider', function ($rootScope, $log,
   APIProvider.BEFORE_PRESENTATION_MODE_SLOT = 'BEFORE_PRESENTATION_MODE_SLOT';
   APIProvider.BEFORE_CHANGE_PAGE_SLOT = 'BEFORE_CHANGE_PAGE_SLOT';
   APIProvider.BEFORE_UNLOAD_SLOT = 'BEFORE_UNLOAD_SLOT';
+  APIProvider.APP_RECONFIG_SLOT = 'APP_RECONFIG_SLOT';
+
   // APIProvider.BEFORE_CONFIG_SLOT = 'BEFORE_CONFIG_SLOT';
   // APIProvider.BEFORE_CLONE_WIDGET_SLOT = 'BEFORE_CLONE_WIDGET_SLOT';
 

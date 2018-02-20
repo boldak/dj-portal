@@ -100,6 +100,8 @@ app.constant('globalConfig', {
 
 app.constant('selectedHolder',null);
 
+
+
 // app.constant('appSkins', [
 //   {
 //     name: "default",
@@ -331,6 +333,8 @@ app.service('app', function ($http, $state, $stateParams, $log, config, $rootSco
     wasModified: false,
     wasSavedEver: false,
     currentPageIndex: 0,
+
+    storage:{},
     
     
 
@@ -536,6 +540,9 @@ app.service('app', function ($http, $state, $stateParams, $log, config, $rootSco
       }).result.then((newSettings) => {
         // console.log(newSettings);
         angular.extend(config, newSettings);
+        console.log("INVOKE APP RECONFIG")
+        let user = new APIUser();
+        user.invokeAll("APP_RECONFIG_SLOT",config);
         this.markModified(true);
       });
     },

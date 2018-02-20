@@ -184,117 +184,7 @@ $scope.processing = false;
   }
 
 
-  // let createNewProject = (form) => {
-  //   metadataDialog({
-  //       title: "New Project Metadata",
-  //       object: {
-  //         title: "",
-  //         note: ""
-  //       }
-  //     })
-  //     .then((res) => {
-  //       runDPS({
-  //           script: dps.createProject,
-  //           state: {
-  //             project: res
-  //           }
-  //         })
-  //         .then((res) => {
-  //           // console.log(res)
-  //           form.fields.project.options.push({
-  //             title: res.data[0].metadata.title,
-  //             value: res.data[0].id,
-  //             selected: true
-  //           })
-  //         })
-  //     })
-  // }
 
-  // $scope.selectProject = () => {
-  //   runDPS({
-  //       script: dps["getProjectList"]
-  //   })
-  //   .then(res =>
-  //       dialog({
-  //           title: "Select Project",
-  //           fields: {
-  //              project: {
-  //               title: "Project",
-  //               type: "select",
-  //               options: [{ title: "none", value: "" }].concat(
-  //                 (res.data) 
-  //                   ? res.data.map((item, index) => {
-  //                       return {
-  //                         title: item.metadata.title,
-  //                         value: item.id
-  //                       }
-  //                     }) 
-  //                   : []
-  //               ),
-  //               required: false,
-  //               value: ($scope.form && $scope.form.project) ? $scope.form.project.id : "",
-  //               nested: [{
-  //                 title: "New Project...",
-  //                 action: createNewProject
-  //               }]
-  //             }
-  //           }
-  //       })      
-  //   )
-  //   .then( form => {
-  //       $scope.form.project = (form.fields.project.value == "")
-  //           ? null
-  //           : form.fields.project.value;
-
-  //       return runDPS({
-  //           script: dps.updateForm,
-  //           state: {
-  //             form: $scope.form
-  //           }
-  //       })
-  //   })
-  //   .then(() => {
-  //           updateWidget();
-  //           app.markModified();    
-  //   })  
-  // }
-
-
-  // $scope.editFornMetadata = metadata => {
-  //   metadataDialog({
-  //       title: "Edit Form Metadata",
-  //       object: metadata
-  //     })
-  //     .then(res => {
-  //       $scope.form.metadata = res;
-  //       return runDPS({
-  //           script: dps.updateForm,
-  //           state: {
-  //             form: $scope.form
-  //           }
-  //       })
-  //     })
-  //     .then(() => {
-  //           updateWidget();
-  //           app.markModified();    
-  //     })   
-  // }
-
-
-
-
-
-
-  // let prepaireMetadata = (obj) => {
-  //   let res = [];
-  //   obj = obj.metadata;
-  //   if (obj) {
-  //     for (let key in obj) {
-  //       res.push({ key: key, value: obj[key] })
-  //     }
-  //   }
-  //   return res;
-  // }
 
   $scope.metadata = [];
 
@@ -346,8 +236,11 @@ $scope.processing = false;
       })
       .then((res) => {
         $scope.widget.form = res.data[0].id;
+        app.storage.form = res.data[0];
+        $scope.form = res.data[0];
+        prepaireMetadata($scope.form.metadata);  
         app.markModified();
-        let usr = new APIUser;
+        let usr = new APIUser; 
         usr.invokeAll("formMessage", {action:"configure", data:$scope});
         updateWidget();
         $scope.processing = false;
@@ -364,24 +257,14 @@ $scope.processing = false;
       .then(res => {
         $scope.processing = false;
         $scope.form = res.data[0];
+        app.storage.form = res.data[0];
         $scope.form.config.access.users = $scope.form.config.access.users || []; 
 
-          // eventEmitter.emit("formMessage", {action:"update", data:$scope.form});
           let usr = new APIUser(); 
           usr.invokeAll("formMessage", {action:"update", data:$scope.form});
           
           prepaireMetadata($scope.form.metadata);
-          
 
-          // $scope.team = [{name:$scope.form.owner.name+" (Author)", photo:$scope.form.owner.photo}]
-          //               .concat(config.collaborations.map(item => {
-          //                   return{name:item.user.name, photo:item.user.photo}
-          //               }))
-
-
-          // if($scope.form.project){              
-          //   $scope.projectMetadata = prepaireMetadata($scope.form.project)
-          // }
           $scope.widgetPanel.allowConfiguring = undefined;
           $scope.widgetPanel.allowCloning = undefined;
         })
@@ -394,13 +277,16 @@ $scope.processing = false;
   }
 
   let updateWidget = () => {
-    // let forms = pageWidgets().filter((item) => item.type === "v2.form");
-    // $scope.disabled = $scope.widget.disabled = (forms.length > 1)&&(!$scope.widget.form);
-    
-    if($scope.disabled) return;
-    
-    if($scope.widget.form) loadForm()
-    
+    if($scope.isDisabled()) return;
+    if(!$scope.form && app.storage.form){
+      $scope.form = app.storage.form;
+      prepaireMetadata($scope.form.metadata);
+      return
+    } 
+    if(!$scope.form && !app.storage.form  && $scope.widget.form){  
+      loadForm()
+      return
+    }  
   }
 
   let initQuestion = s => {
@@ -452,30 +338,18 @@ $scope.processing = false;
 
 
   $scope.setAccessType = (value) => {
+    
     $scope.form.config.access.type = value;
     
     if( value == "invited"){
-    
-      //$scope.form.config.access.users = [];
-      // $scope.form.config.access.invitationEnabled = false;
-      // $scope.form.config.access.notificationEnabled = false;
       $scope.form.config.access.invitationTemplate =
       $scope.form.config.access.invitationTemplate ||  "Dear ${user.name} !\nWe invite you for expert assessments  \"${metadata.title}\"\nSee ${ref(metadata.app_url)}";
-      
       $scope.form.config.access.notificationTemplate =
       $scope.form.config.access.notificationTemplate || "notification Template";
-    
-    } else {
-    
-      // $scope.form.config.access.users = undefined;
-      // $scope.form.config.access.invitationEnabled = undefined;
-      // $scope.form.config.access.notificationEnabled = undefined;
-      // $scope.form.config.access.invitationTemplate = undefined;
-      // $scope.form.config.access.notificationTemplate = undefined;
-    
     }
-
+    
     $scope.markModified()
+  
   }
 
   let updateConfig = () => {
@@ -490,15 +364,14 @@ $scope.processing = false;
   }
 
   $scope.markModified = () => {
-    updateConfig()
+    updateConfig();
+    app.storage.form = $scope.form;
     app.markModified();
   } 
 
 
   $scope.getUsers = (filterValue) => {
-    // todo: add support for filterValue
     return $http.get(appUrls.usersList).then(result =>
-        /* Hack: filters do not work in angular-foundation's typeahead view for some reason */
         result.data
           .filter(user =>
             $scope.form.config.access.users.map(item => item.email).indexOf(user.email)<0
@@ -578,16 +451,18 @@ $scope.processing = false;
 
   new APIProvider($scope)
     .config(() => {
+      console.log("config", $scope.widget)
         updateWidget()  
     })
 
     .save(() => {
       $scope.processing = true;
+      updateConfig();
       // TODO behevior for open access in presentation mode when user add alternatives
 
       // TODO get all question config and add into $scope.form.config.questions array
       // This is for design mode
-      
+
       runDPS({
               script: dps.updateForm,
               state: {
@@ -605,13 +480,28 @@ $scope.processing = false;
     .create((event,widget) => {
         
         if( widget.instanceName == $scope.widget.instanceName){
+          console.log("create", widget)
           let forms = pageWidgets().filter((item) => item.type === "v2.form");
-          if(forms.length == 1) createNewForm();
+          if(forms.length == 1) {
+            if(!widget.form) createNewForm();
+          }  
         } 
         
         if(!$scope.disabled && $scope.form && (widget.type == "v2.form.question")){
             initQuestion(scopeFor(widget.instanceName))
         }
+    })
+
+    .appReconfig ((c) => {
+      console.log("APP reconfig")
+
+          $scope.form.metadata.app_name.value = config.name;
+          $scope.form.metadata.app_title.value = config.title;
+          $scope.form.metadata.app_url.value = $window.location.href,
+          $scope.form.metadata.app_icon.value = config.icon;
+          $scope.form.metadata.page_title.value = app.pageConfig().shortTitle;
+          prepaireMetadata($scope.form.metadata);
+
     })
 
     .provide('questionMessage', (e, context) => {
@@ -646,10 +536,10 @@ $scope.processing = false;
             }
         })
         .then(() => {
-          $scope.processing = false;        
+          $scope.processing = false;
+          app.storage.form = undefined;        
         })  
       }
-          
-      console.log('Form widget is destroyed');
-    });
+      
+   });
 })
