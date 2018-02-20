@@ -25,14 +25,28 @@ m.controller('FormController', function(
   instanceNameToScope,
   randomID,
   $ocLazyLoad,
-  $window
+  $window,
+  $http,
+  appUrls
 ) {
+
+
+let emailRegex = /^([A-Z|a-z|0-9](\.|_){0,1})+[A-Z|a-z|0-9]\@([A-Z|a-z|0-9])+((\.){0,1}[A-Z|a-z|0-9]){2}\.[a-z]{2,3}$/;
 
 $ocLazyLoad.load({files:["/widgets/v2.form.question/djform.css"]}); 
 
 
 $scope.pageConfig = app.pageConfig();
+
 $scope.formatDate = (date) => i18n.formatDate(date);
+
+ 
+
+$scope.textFields = {
+  key:undefined,
+  value:undefined,
+  userEmail:undefined
+}
 
   // const eventEmitter = new EventEmitter($scope);
   // const apiUser = new APIUser();
@@ -86,7 +100,8 @@ $scope.processing = false;
             set("owner")
             <?javascript
                 $scope.form = {
-                    metadata:$scope.form,
+                    metadata: $scope.form.metadata,
+                    config: $scope.form.config,
                     owner:$scope.owner.client.user,
                     history:[
                         {
@@ -169,101 +184,101 @@ $scope.processing = false;
   }
 
 
-  let createNewProject = (form) => {
-    metadataDialog({
-        title: "New Project Metadata",
-        object: {
-          title: "",
-          note: ""
-        }
-      })
-      .then((res) => {
-        runDPS({
-            script: dps.createProject,
-            state: {
-              project: res
-            }
-          })
-          .then((res) => {
-            // console.log(res)
-            form.fields.project.options.push({
-              title: res.data[0].metadata.title,
-              value: res.data[0].id,
-              selected: true
-            })
-          })
-      })
-  }
+  // let createNewProject = (form) => {
+  //   metadataDialog({
+  //       title: "New Project Metadata",
+  //       object: {
+  //         title: "",
+  //         note: ""
+  //       }
+  //     })
+  //     .then((res) => {
+  //       runDPS({
+  //           script: dps.createProject,
+  //           state: {
+  //             project: res
+  //           }
+  //         })
+  //         .then((res) => {
+  //           // console.log(res)
+  //           form.fields.project.options.push({
+  //             title: res.data[0].metadata.title,
+  //             value: res.data[0].id,
+  //             selected: true
+  //           })
+  //         })
+  //     })
+  // }
 
-  $scope.selectProject = () => {
-    runDPS({
-        script: dps["getProjectList"]
-    })
-    .then(res =>
-        dialog({
-            title: "Select Project",
-            fields: {
-               project: {
-                title: "Project",
-                type: "select",
-                options: [{ title: "none", value: "" }].concat(
-                  (res.data) 
-                    ? res.data.map((item, index) => {
-                        return {
-                          title: item.metadata.title,
-                          value: item.id
-                        }
-                      }) 
-                    : []
-                ),
-                required: false,
-                value: ($scope.form && $scope.form.project) ? $scope.form.project.id : "",
-                nested: [{
-                  title: "New Project...",
-                  action: createNewProject
-                }]
-              }
-            }
-        })      
-    )
-    .then( form => {
-        $scope.form.project = (form.fields.project.value == "")
-            ? null
-            : form.fields.project.value;
+  // $scope.selectProject = () => {
+  //   runDPS({
+  //       script: dps["getProjectList"]
+  //   })
+  //   .then(res =>
+  //       dialog({
+  //           title: "Select Project",
+  //           fields: {
+  //              project: {
+  //               title: "Project",
+  //               type: "select",
+  //               options: [{ title: "none", value: "" }].concat(
+  //                 (res.data) 
+  //                   ? res.data.map((item, index) => {
+  //                       return {
+  //                         title: item.metadata.title,
+  //                         value: item.id
+  //                       }
+  //                     }) 
+  //                   : []
+  //               ),
+  //               required: false,
+  //               value: ($scope.form && $scope.form.project) ? $scope.form.project.id : "",
+  //               nested: [{
+  //                 title: "New Project...",
+  //                 action: createNewProject
+  //               }]
+  //             }
+  //           }
+  //       })      
+  //   )
+  //   .then( form => {
+  //       $scope.form.project = (form.fields.project.value == "")
+  //           ? null
+  //           : form.fields.project.value;
 
-        return runDPS({
-            script: dps.updateForm,
-            state: {
-              form: $scope.form
-            }
-        })
-    })
-    .then(() => {
-            updateWidget();
-            app.markModified();    
-    })  
-  }
+  //       return runDPS({
+  //           script: dps.updateForm,
+  //           state: {
+  //             form: $scope.form
+  //           }
+  //       })
+  //   })
+  //   .then(() => {
+  //           updateWidget();
+  //           app.markModified();    
+  //   })  
+  // }
 
 
-  $scope.editFornMetadata = metadata => {
-    metadataDialog({
-        title: "Edit Form Metadata",
-        object: metadata
-      })
-      .then(res => {
-        $scope.form.metadata = res;
-        return runDPS({
-            script: dps.updateForm,
-            state: {
-              form: $scope.form
-            }
-        })
-      })
-      .then(() => {
-            updateWidget();
-            app.markModified();    
-      })   
-  }
+  // $scope.editFornMetadata = metadata => {
+  //   metadataDialog({
+  //       title: "Edit Form Metadata",
+  //       object: metadata
+  //     })
+  //     .then(res => {
+  //       $scope.form.metadata = res;
+  //       return runDPS({
+  //           script: dps.updateForm,
+  //           state: {
+  //             form: $scope.form
+  //           }
+  //       })
+  //     })
+  //     .then(() => {
+  //           updateWidget();
+  //           app.markModified();    
+  //     })   
+  // }
 
 
 
@@ -295,26 +310,38 @@ $scope.processing = false;
                         })
   }
 
+
+
     let createNewForm = () => {
 
       $scope.processing = true;
 
-      let meta = {
-        app_name: {value: config.name, required:true, editable:false},
-        app_title: {value: config.title, required:true, editable:false},
-        app_url: {value: $window.location.href, required:true, editable:false},
-        app_icon: {value: config.icon, required:true, editable:false},
-        page_title:{value: app.pageConfig().shortTitle, required:true, editable:false},
-        title: {value: "Form title...", required:true, editable:true},
-        note: {value: "Form note...", required:true, editable:true}
-      }
+      let f = {
+        metadata: {
+          app_name: {value: config.name, required:true, editable:false},
+          app_title: {value: config.title, required:true, editable:false},
+          app_url: {value: $window.location.href, required:true, editable:false},
+          app_icon: {value: config.icon, required:true, editable:false},
+          page_title:{value: app.pageConfig().shortTitle, required:true, editable:false},
+          title: {value: "Form title...", required:true, editable:true},
+          note: {value: "Form note...", required:true, editable:true}
+        },
+        config:{
+          access:{
+            type:"any", // ["any","users", "invited"]
+            enabled:false,
+            users:[]
+          },
+          questions:[]
+        }
+      }  
       
       
 
       runDPS({
         script: dps.createForm,
         state: {
-          form: meta
+          form: f
         }
       })
       .then((res) => {
@@ -337,6 +364,7 @@ $scope.processing = false;
       .then(res => {
         $scope.processing = false;
         $scope.form = res.data[0];
+        $scope.form.config.access.users = $scope.form.config.access.users || []; 
 
           // eventEmitter.emit("formMessage", {action:"update", data:$scope.form});
           let usr = new APIUser(); 
@@ -345,15 +373,15 @@ $scope.processing = false;
           prepaireMetadata($scope.form.metadata);
           
 
-          $scope.team = [{name:$scope.form.owner.name+" (Author)", photo:$scope.form.owner.photo}]
-                        .concat(config.collaborations.map(item => {
-                            return{name:item.user.name, photo:item.user.photo}
-                        }))
+          // $scope.team = [{name:$scope.form.owner.name+" (Author)", photo:$scope.form.owner.photo}]
+          //               .concat(config.collaborations.map(item => {
+          //                   return{name:item.user.name, photo:item.user.photo}
+          //               }))
 
 
-          if($scope.form.project){              
-            $scope.projectMetadata = prepaireMetadata($scope.form.project)
-          }
+          // if($scope.form.project){              
+          //   $scope.projectMetadata = prepaireMetadata($scope.form.project)
+          // }
           $scope.widgetPanel.allowConfiguring = undefined;
           $scope.widgetPanel.allowCloning = undefined;
         })
@@ -401,13 +429,175 @@ $scope.processing = false;
     $scope.widget.questions[s.widget.ID] = {id: s.widget.ID, form: $scope.form, config:{}}
   }
 
+  $scope.validMetadata = () => {
+    if(!$scope.textFields.key) return false;
+    return $scope.metadata.map(item => item.key).indexOf($scope.textFields.key) < 0
+  }
+
+  $scope.addMetadata = (key, value) => {
+    $scope.metadata.push({
+        key: key,
+        value: value,
+        required: false,
+        editable: true
+    })
+    $scope.textFields.key = undefined;
+    $scope.textFields.value = undefined;
+  }
+
+  $scope.deleteMetadata = (key) => {
+    let index = $scope.metadata.map(item => item.key).indexOf(key);
+    $scope.metadata.splice(index,1)
+  }
+
+
+  $scope.setAccessType = (value) => {
+    $scope.form.config.access.type = value;
+    
+    if( value == "invited"){
+    
+      //$scope.form.config.access.users = [];
+      // $scope.form.config.access.invitationEnabled = false;
+      // $scope.form.config.access.notificationEnabled = false;
+      $scope.form.config.access.invitationTemplate =
+      $scope.form.config.access.invitationTemplate ||  "Dear ${user.name} !\nWe invite you for expert assessments  \"${metadata.title}\"\nSee ${ref(metadata.app_url)}";
+      
+      $scope.form.config.access.notificationTemplate =
+      $scope.form.config.access.notificationTemplate || "notification Template";
+    
+    } else {
+    
+      // $scope.form.config.access.users = undefined;
+      // $scope.form.config.access.invitationEnabled = undefined;
+      // $scope.form.config.access.notificationEnabled = undefined;
+      // $scope.form.config.access.invitationTemplate = undefined;
+      // $scope.form.config.access.notificationTemplate = undefined;
+    
+    }
+
+    $scope.markModified()
+  }
+
+  let updateConfig = () => {
+    if($scope.form){
+      $scope.widget.form = $scope.form.id;
+      $scope.form.metadata = {}
+      $scope.metadata.forEach((item) => {
+        $scope.form.metadata[item.key] = item
+      })
+    // TODO  
+    }
+  }
+
+  $scope.markModified = () => {
+    updateConfig()
+    app.markModified();
+  } 
+
+
+  $scope.getUsers = (filterValue) => {
+    // todo: add support for filterValue
+    return $http.get(appUrls.usersList).then(result =>
+        /* Hack: filters do not work in angular-foundation's typeahead view for some reason */
+        result.data
+          .filter(user =>
+            $scope.form.config.access.users.map(item => item.email).indexOf(user.email)<0
+          )
+          .filter(user =>
+            user.name.toLowerCase().includes(filterValue.toLowerCase()) ||
+            user.email.toLowerCase().includes(filterValue.toLowerCase())
+          )
+          .slice(0, 8)
+    );
+  }
+
+  $scope.invitedUserAdd = null;
+
+  $scope.alreadyInvited = (value) => {
+
+    if(!value){
+      $scope.userIsInvited = false;
+      return 
+    } 
+    
+    if (angular.isString(value)){
+      $scope.userIsInvited = $scope.form.config.access.users.map(item => item.email).indexOf(value) >= 0;      
+      return 
+    }
+    
+    if(angular.isDefined(value.email)){
+      $scope.userIsInvited = $scope.form.config.access.users.map(item => item.email).indexOf(value.email) >= 0;      
+      return 
+    }
+
+    $scope.userIsInvited = false;
+  } 
+
+  $scope.validInvitedUser = (value) => {
+    
+    $scope.alreadyInvited(value);
+
+    if(!value){
+      $scope.invitedUserIsValid = false;
+      return 
+    } 
+    
+    if (angular.isString(value)){
+      value = value.trim();
+      let t = emailRegex.test(value);
+      if(t){
+        $scope.invitedUserAdd = value
+      }
+      $scope.invitedUserIsValid = t;
+      return 
+    }
+    
+    if(angular.isDefined(value.email)){
+      $scope.invitedUserAdd = value;
+      $scope.invitedUserIsValid = true;
+      return 
+    }
+
+    $scope.invitedUserIsValid = false; 
+  }
+
+  $scope.addInvitedUser = () => {
+    $scope.form.config.access.users = $scope.form.config.access.users || [];
+    if(angular.isString($scope.invitedUserAdd)){
+      $scope.form.config.access.users.push({email:$scope.invitedUserAdd}) 
+    } else {
+      $scope.form.config.access.users.push($scope.invitedUserAdd)
+    }
+    $scope.invitedUserAdd = undefined;
+    $scope.invitedUser = undefined;
+    $scope.invitedUserIsValid = false; 
+  }
+
+  $scope.$watch("metadata", $scope.markModified, true);
+    
+
   new APIProvider($scope)
     .config(() => {
         updateWidget()  
     })
 
     .save(() => {
-      console.log("Save app event handler")
+      $scope.processing = true;
+      // TODO behevior for open access in presentation mode when user add alternatives
+
+      // TODO get all question config and add into $scope.form.config.questions array
+      // This is for design mode
+      
+      runDPS({
+              script: dps.updateForm,
+              state: {
+                form: $scope.form
+              }
+      })
+      .then(() => {
+        $scope.processing = false;
+      })
+      
     })
 
     .translate(updateWidget)

@@ -77,7 +77,7 @@
                               type="text" 
                               ng-model="m.key"
                               ng-value="m.key" 
-                              ng-disabled="m.required"
+                              ng-disabled="true"
                           >
   					
   				</div>
@@ -91,7 +91,8 @@
   					
   				</div>
   				<div class="column small-1" style="padding: 0.25em;">
-  					<button 
+  					<button ng-if="!m.required"
+                    ng-click="deleteMetadata(m.key)"
                     style=" color: #5f8ab9;
                             background: none;
                             font-size: xx-large;
@@ -99,7 +100,7 @@
                             margin: 0;
                             cursor: pointer;"
             >
-              <i class="fa fa-times-circle"/>
+              <i class="fa fa-times"/>
             </button>
   					<!-- <span ng-if="m.required">&nbsp;</span> -->	
   				</div>	
@@ -110,28 +111,34 @@
           <div class="column small-3 left">
             <input    style="margin-bottom: 0.25em;"  
                               type="text" 
-                              ng-model="m.key"
-                              ng-value="m.key" 
+                              ng-model="textFields.key"
+                              ng-value="textFields.key" 
                               
                           >
             
           </div>
           <div class="column small-8 left">
+
             <input    style="margin-bottom: 0.25em;"
                               type="text" 
-                              ng-model="m.value"
-                              ng-value="m.value" 
+                              ng-model="textFields.value"
+                              ng-value="textFields.value" 
                               
                           >
             
           </div>
           <div class="column small-1" style="padding: 0.25em;">
-            <button style=" color: #5f8ab9;
+            <button ng-click="addMetadata(textFields.key, textFields.value)"
+                    style=" color: #5f8ab9;
                             background: none;
                             font-size: xx-large;
                             padding: 0;
                             margin: 0;
-                            cursor: pointer;"
+                            cursor: pointer;
+                            border:none;
+                            outline:none;
+                            "
+                    ng-disabled="!validMetadata()"        
             >
               <i class="fa fa-plus-circle"/>
             </button>
@@ -146,36 +153,168 @@
       </h4>
 	    <div class="row">
         <div class="column small-12">
-          <div class="column small-2 left">
+          <div class="column small-3 left">
             <a 
                 class="button split tiny"  
                 style="   background-color: #5f8ab9;
                            color: #e7e7e7;
                           font-size: large;"
             >
-              For all
+              For {{form.config.access.type}}
               <span dropdown-toggle="{{'#'+widget.ID+'_access_type'}}"/>
             </a>
             <ul id="{{widget.ID+'_access_type'}}" class="f-dropdown">
-              <li><a>For any</a></li>
-              <li><a>For users</a></li>
-              <li><a>For invited</a></li>
+              <li><a ng-click="setAccessType('any')">For any</a></li>
+              <li><a ng-click="setAccessType('users')">For users</a></li>
+              <li><a ng-click="setAccessType('invited')">For invited</a></li>
             </ul>
           </div>
           <div class="column small-4 left" style="margin: 0.5em;">
             <label class="large left" style="margin-right: 1em;">Enable: </label>
             <div class="switch tiny radius left">
-              <input  type="checkbox"  
+              <input  type="checkbox"
+
                       id="{{widget.instanceName+'_access_enabled'}}"
-                      ng-model="config.options.accessEnabled"
+                      ng-model="form.config.access.enabled"
               >
               <label  for="{{widget.instanceName+'_access_enabled'}}"></label>
             </div>
           </div>  
         </div>
       </div>
-      <hr/>  
-		
+      
+      <div class="row" ng-if="form.config.access.type == 'invited'">
+        <div class="column small-12">
+          <div class="column small-3 left">
+            <label class="large left" style="margin-right: 1em;">Invite users when form first starts: </label>
+            <div class="switch tiny radius left">
+              <input  type="checkbox"
+                      ng-disabled = "form.config.access.enabled"
+                      id="{{widget.instanceName+'_invU_enabled'}}"
+                      ng-model="form.config.access.invitationEnabled"
+              >
+              <label  for="{{widget.instanceName+'_invU_enabled'}}"></label>
+            </div>
+          </div>
+          <div ng-if="form.config.access.invitationEnabled" class="column small-9">
+            <label class="large">Invitation template </label>
+            <textarea   class="text" 
+                        rows=5 
+                        ng-model="form.config.access.invitationTemplate"
+                        ng-disabled = "form.config.access.enabled"
+            ></textarea>
+          </div>
+        </div>
+      </div>
+
+      <div class="row" ng-if="form.config.access.type == 'invited'">
+        <div class="column small-12">
+          <div class="column small-3 left">
+            <label class="large left" style="margin-right: 1em;">Notificate users when form will change status: </label>
+            <div class="switch tiny radius left">
+              <input  type="checkbox"
+                      ng-disabled = "form.config.access.enabled"
+                      id="{{widget.instanceName+'_notU_enabled'}}"
+                      ng-model="form.config.access.notificationEnabled"
+              >
+              <label  for="{{widget.instanceName+'_notU_enabled'}}"></label>
+            </div>
+          </div>
+          <div ng-if="form.config.access.notificationEnabled" class="column small-9">
+            <label class="large">Notification template </label>
+            <textarea   class="text" 
+                        rows=5 
+                        ng-model="form.config.access.notificationTemplate"
+                        ng-disabled = "form.config.access.enabled"
+            ></textarea>
+          </div>
+        </div>
+      </div>
+
+      <hr/>
+      <div ng-if="form.config.access.type == 'invited'">  
+  		  <h4>Invited users</h4>
+        <div class="row" ng-repeat="u in form.config.access.users">
+          <div class="column small-12">
+            <i>
+              <span   style=" 
+                  background-image: url({{u.photo}});
+                  background-size: 2em 2em;
+                  border-radius: 50%;
+                  display: block;
+                  overflow: hidden;
+                  position: relative;
+                  height: 2em;
+                  width: 2em;
+                  float: left;
+                  "
+                  ng-if="u.photo"></span>
+              <span ng-if="!u.photo" style="float: left;">
+                    <i  class="fa fa-envelope-square"
+                        style="   font-size: 2em;
+                                  padding: 0 0 0 0.1em;
+                                  color: #5f8ab9;"
+                    >
+                      
+                    </i>
+              </span>
+                  
+               <span 
+                    style="float: left; font-size: smaller; margin: 0.5em;"
+                >
+                {{(u.name)? u.name : u.email}}
+               </span>
+            </i>
+          </div>  
+        </div>  
+        <div class="row" style="margin-top: 1em;">
+          <div class="column small-12">
+            <div ng-if="userIsInvited" style="font-size: smaller; color: #f08a24;">
+              <i class="fa fa-exclamation-triangle" style="margin:0 0.5em;"/>already invited
+            </div>
+            <div ng-if="!userIsInvited">
+              &nbsp;
+            </div>   
+          </div>  
+        </div>  
+        <div class="row">
+          <div class="column small-12">
+            <div class="column small-5 left">
+              <input   type="text" 
+                  ng-model="invitedUser"
+                  ng-change="validInvitedUser(invitedUser)" 
+                  placeholder="Enter user email" 
+                  typeahead="cu as cu.email for cu in getUsers($viewValue)"
+                  typeahead-template-url="/widgets/v2.form/userShortInfo.html" class="form-control"
+                  typeahead-loading="UserListLoading"
+                  typeahead-on-select = "validInvitedUser(invitedUser)"
+              >
+              <i ng-show="UserListLoading" class="fa fa-spin fa-pulse"></i>
+            </div>
+            
+            <div class="column small-2 left">
+              <button ng-click="addInvitedUser()"
+                          style=" color: #5f8ab9;
+                                  background: none;
+                                  font-size: xx-large;
+                                  padding: 0;
+                                  margin: 0;
+                                  cursor: pointer;
+                                  border:none;
+                                  outline:none;
+                                  "
+                          ng-disabled="!invitedUserIsValid || userIsInvited"        
+                  >
+                    <i class="fa fa-plus-circle"/>
+              </button>
+            </div>
+          </div>
+        </div>      
+        
+        
+        
+        <hr/>  
+      </div>  
 		
 	<!-- 	<h4 class="sectionHeader" ng-if="!disabled && form">
 				Experts 
@@ -183,7 +322,7 @@
 		</h4>
 	</div> -->
 
-<pre> {{ pageConfig | json }} </pre>		
-
+<!-- <pre> {{ form | json }} </pre>		
+ -->
 </div>
 

@@ -1,0 +1,21 @@
+
+<a>
+	 <i>
+      <span   style=" 
+          background-image: url({{match.model.photo}});
+          background-size: 2em 2em;
+          border-radius: 50%;
+          display: block;
+          overflow: hidden;
+          position: relative;
+          height: 2em;
+          width: 2em;
+          float: left;
+          "></span>
+       <span 
+       			style="float: left; font-size: smaller; margin: 0.5em;"
+       			bind-html-unsafe="match.label | typeaheadHighlight:query"
+       	>
+       </span>
+    </i>
+</a>	
