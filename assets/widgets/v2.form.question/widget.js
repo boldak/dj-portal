@@ -550,11 +550,7 @@ $scope.defaultQuestionConfig = {
         required: false,
         title:"", 
         note:"",
-        entities:{
-          e1: {title:"Entity 1"},
-          e2: {title:"Entity 2"},
-          e3: {title:"Entity 3"}
-        },
+        entities:{},
         ordinals:{
           range:{ min:1, max:7 },
           "undefined":{title:"undefined", value:0},
@@ -629,6 +625,10 @@ $scope.defaultQuestionConfig = {
         updateConfig: () => {
           //  transform helped data structures into config
           // $scope.config.options.nominals = {};
+          $scope.config.options.entities = {};
+          for(let item of $scope.entities){
+            $scope.config.options.entities[item.id] = {title: item.title, user:item.user}; 
+          }
         }
       } 
   },
