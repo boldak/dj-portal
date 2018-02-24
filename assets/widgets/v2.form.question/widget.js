@@ -39,7 +39,8 @@ m.controller('FormQuestionController', function(
   d3,
   $ocLazyLoad,
   user,
-  globalConfig
+  globalConfig,
+  APIUser
   
 ) {
 
@@ -259,17 +260,16 @@ $scope.defaultQuestionConfig = {
                                     }
                                   })
           $scope.answer = {
+            valid: false,
             question: $scope.widget.ID,
-            user: user,
             type:"radio",
             value:[]
           }
         },
 
         setValue: (value) => {
-          if(!globalConfig.designMode) app.markModified();
-
-          $scope.answerCompleted = (angular.isDefined($scope.answer.value[0])) 
+          // if(!globalConfig.designMode) app.markModified();
+          $scope.answer.valid = (angular.isDefined($scope.answer.value[0]))
         },
 
         updateConfig: () => {
@@ -340,20 +340,21 @@ $scope.defaultQuestionConfig = {
           }   
 
           $scope.answer = {
+            valid: false,
             question: $scope.widget.ID,
-            user: user,
             type: "check",
             value: []
           }
         },
 
         setValue: (value) => {
-          if(!globalConfig.designMode) app.markModified();
+          // if(!globalConfig.designMode) app.markModified();
           
           $scope.answer.value = _.toPairs($scope.checkboxes)
                                   .filter(item => item[1])
                                   .map(item => item[0]);
-          $scope.answerCompleted = $scope.answer.value.length > 0;                         
+          $scope.answer.valid = $scope.answer.value.length > 0;
+          // $scope.answerCompleted = $scope.answer.value.length > 0;                         
         },
 
         updateConfig: () => {
@@ -414,18 +415,19 @@ $scope.defaultQuestionConfig = {
                                     }
                                   })
           $scope.answer = {
+            valid: false,
             question: $scope.widget.ID,
-            user: user,
             type:"dropdown",
             value:[]
           }
         },
 
         setValue: (value) => {
-          if(!globalConfig.designMode) $scope.markModified(); 
+          // if(!globalConfig.designMode) $scope.markModified(); 
           
           $scope.answer.value[0] = value.id;
-          $scope.answerCompleted = (angular.isDefined($scope.answer.value[0])) 
+          $scope.answer.valid = (angular.isDefined($scope.answer.value[0]))
+          // $scope.answerCompleted = (angular.isDefined($scope.answer.value[0])) 
         },
 
         updateConfig: () => {
@@ -486,8 +488,8 @@ $scope.defaultQuestionConfig = {
         prepare: () => {
 
           $scope.answer = {
+            valid: false,
             question: $scope.widget.ID,
-            user: user,
             type:"scale",
             value:[]
           }
@@ -495,10 +497,11 @@ $scope.defaultQuestionConfig = {
         },
 
         setValue: (value) => {
-          if(!globalConfig.designMode) $scope.markModified(); 
+          // if(!globalConfig.designMode) $scope.markModified(); 
           
           $scope.answer.value[0] = value;
-          $scope.answerCompleted = (angular.isDefined($scope.answer.value[0])) 
+          $scope.answer.valid = (angular.isDefined($scope.answer.value[0]))
+          // $scope.answerCompleted = (angular.isDefined($scope.answer.value[0])) 
         },
 
         updateConfig: () => {
@@ -598,8 +601,8 @@ $scope.defaultQuestionConfig = {
 
           
           $scope.answer = {
+            valid: false,
             question: $scope.widget.ID,
-            user: user,
             type:"scales",
             value: [] // angular.copy($scope.config.options.entities)
           }
@@ -607,7 +610,7 @@ $scope.defaultQuestionConfig = {
         },
 
         setValue: (entity, value) => {
-          if(!globalConfig.designMode) $scope.markModified(); 
+          // if(!globalConfig.designMode) $scope.markModified(); 
           
           let index = $scope.answer.value
                       .map(item => item.entity)
@@ -619,7 +622,8 @@ $scope.defaultQuestionConfig = {
             $scope.answer.value[index].value = value;
           }
           
-          $scope.answerCompleted = $scope.entities.length == $scope.answer.value.length; 
+          $scope.answer.valid = $scope.entities.length == $scope.answer.value.length;
+          // $scope.answerCompleted = $scope.entities.length == $scope.answer.value.length; 
         },
 
         updateConfig: () => {
@@ -741,8 +745,8 @@ $scope.defaultQuestionConfig = {
                                   
           
           $scope.answer = {
+            valid: false,
             question: $scope.widget.ID,
-            user: user,
             type:"influences",
             value: [] // angular.copy($scope.config.options.entities)
           }
@@ -750,7 +754,7 @@ $scope.defaultQuestionConfig = {
         },
 
         setValue: (factor, effect, value) => {
-          if(!globalConfig.designMode) $scope.markModified(); 
+          // if(!globalConfig.designMode) $scope.markModified(); 
           
           
           
@@ -765,14 +769,22 @@ $scope.defaultQuestionConfig = {
           } else {
             $scope.answer.value[index].value = value;
           }
-           
-          $scope.answerCompleted = 
+          
+          $scope.answer.valid = 
           (
             ( $scope.factors.length * $scope.effects.length ) 
             - 
             ( $scope.answer.value.length + $scope.config.options.disables.length )
           )
           < Number.EPSILON; 
+
+          // $scope.answerCompleted = 
+          // (
+          //   ( $scope.factors.length * $scope.effects.length ) 
+          //   - 
+          //   ( $scope.answer.value.length + $scope.config.options.disables.length )
+          // )
+          // < Number.EPSILON; 
         },
 
         getValue: (factor, effect) => {
@@ -1021,8 +1033,10 @@ $scope.m = true;
     if(!$scope.config) return;
     if( $scope.config.callback && $scope.config.callback.updateConfig ) {
         $scope.config.callback.updateConfig();
-      }  
-        $scope.widget.config = $scope.config;
+      }
+    $scope.config.id = $scope.widget.ID;    
+    $scope.widget.config = $scope.config;
+    (new APIUser()).invokeAll("questionMessage", {action:"update-config", data:$scope.widget.config})
   }
   
   $scope.$watch("config", (oldConf, newConf) => {
@@ -1041,6 +1055,9 @@ $scope.m = true;
   $scope.$watch("factors", updateConfig, true);
   $scope.$watch("effects", updateConfig, true);
 
+  $scope.$watch("answer", (oldV, newV) => {
+    (new APIUser()).invokeAll("questionMessage", {action:"change-answer", data:$scope.answer})
+  }, true);
 
 
   let updateWidget = () => {
@@ -1056,11 +1073,13 @@ $scope.m = true;
         if ($scope.config.callback && $scope.config.callback.prepare) $scope.config.callback.prepare(); 
       }
     }
+    
   }
 
   $scope.$watch("widget.ID", ( oldValue, newValue) => {
     if(oldValue != newValue) updateWidget();
   })
+
   
   new APIProvider($scope)
     .config(updateWidget)
@@ -1091,7 +1110,7 @@ $scope.m = true;
     // .translate(updateWidget)
     
     .provide('formMessage', (e, context) => {
-        console.log($scope.widget.instanceName, 'formMessage handler', context)
+        console.log("HANDLE MESSAGE FROM FORM", context)
         
         if(context.action == "remove" && context.data.widget.instanceName == $scope.widget.formWidget){
             $scope.widget.ID = undefined;
@@ -1110,16 +1129,22 @@ $scope.m = true;
                 }
             );
 
-            const eventEmitter = new EventEmitter($scope);   
-            eventEmitter.emit("questionMessage",{action:"init", data:$scope})
+            (new APIUser()).invokeAll("questionMessage",{action:"init", data:$scope})
             return
-        }    
+        } 
+
+        if(context.action == "update" && $scope.widget.ID){
+          let newConf = context.data.config.questions[$scope.widget.ID];
+          console.log("UPDATE AFTER LOAD", $scope.widget.ID, newConf)
+          
+          $scope.widget.config = $scope.widget.config || newConf; 
+          updateWidget();
+        }   
     })    
 
     .removal(() => {
       console.log('Form question widget is destroyed');
-      const eventEmitter = new EventEmitter($scope);   
-      eventEmitter.emit("questionMessage",{action:"remove", data:$scope})
+      // (new APIUser()).invokeAll("questionMessage",{action:"remove", data:$scope})
     });
 })
 

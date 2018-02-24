@@ -4,6 +4,11 @@
               margin: 0;"
 >   
 
+  <div class="row">
+    <div class="column small-12">
+      <pre> {{widget | json}}
+    </div>  
+  </div>  
 
   <h3 ng-if="disabled" style="color: #f08a24;" class="fi-alert"> Question is disabled. You canot use 'v2.form-question' widgets without "v2.form" widget.</h3>
 
@@ -100,7 +105,7 @@
         >
           <h5   ng-if="config.options.required" 
                 style=" padding: 0 3em;
-                        color: {{(answerCompleted)?'#adf15f':'#f0b77e'}};
+                        color: {{(answer.valid)?'#adf15f':'#f0b77e'}};
                         text-align: right;
                         font-size: small;
                         font-style: italic;
@@ -108,7 +113,7 @@
                         padding: 0;"
           >
             <i class="fa fa-asterisk"></i>
-            <i>{{(answerCompleted) ? 'completed': 'required'}}</i>
+            <i>{{(answer.valid) ? 'completed': 'required'}}</i>
           </h5>
 
           <h3   style=" color:#e7e7e7; 
@@ -133,30 +138,9 @@
       </div>      
     
       <div class="row" ng-include="config.view || config.widget.view"></div>
-      
-      <div class="row">
-        <div class="column small-10 small-centered">
-          <button class="large right"
-            ng-click = "submit()"
-            ng-disabled="!answerCompleted"
-            style=" /*color: #5f8ab9;*/
-                    background: #5f8ab9;
-                    margin-top: 0.16em;
-                    /* font-size: larger; */
-                    /*border: 1px solid #5f8ab9;*/
-                    border-radius: 6px;
-                    padding: 0.2em 0.5em 0.2em 0.5em;"
-          >
-            <i class="fa fa-check"/> 
-            <widget-translate>Submit</widget-translate>
-          </button>
-        </div>
-      </div>
       <hr/>      
     </div>   
   </div>
-  
-
 </div>
 
 

@@ -513,6 +513,7 @@ widgetApi.factory('parentHolder', function (app) {
   };
 });
 
+
 widgetApi.directive('widgetTranslate', function (translateDirective) {
   const directive = translateDirective[0];
   return {

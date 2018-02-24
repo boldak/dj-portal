@@ -1,136 +1,134 @@
 <style>
+.action {
+  font-size: medium;
+  color: #008cba;
+  font-weight: bold;
+}
 
-	.action {
-    	font-size: medium;
-	    color: #008cba;
-	    font-weight:bold;
-	}
-	.sectionHeader {
-		margin-top: 1em;
-	    border-bottom: 2px solid #999999;
-	    padding-left: 1em;
-	}
+.sectionHeader {
+  margin-top: 1em;
+  border-bottom: 2px solid #999999;
+  padding-left: 1em;
+}
 
 </style>
+<div class="row" ng-controller="FormController" style="padding: 0.5rem; margin: 0;">
+  <div class="row" style="font-size: small;">
+      <div class="column small-12">
+          <div class="column small-6">
+            <h4>Form</h4>
+            <pre> {{ widget.form | json }} </pre>
+          </div>
+          <div class="column small-6">
+            <h4>Answer</h4>
+            <pre> {{ answer | json }} </pre>
+          </div>
+      </div>  
+  </div>  
+  <hr/>
+    
 
-<div class="row" ng-controller="FormController"
-     ng-show = "globalConfig.designMode"  
-     style="padding: 0.5rem; margin: 0;"
->
 
-<pre ng-show="false"> {{ form | json }} </pre>   
+  <div  class="fan-btn top fade" 
+        ng-if="!globalConfig.designMode && fanButton._state"
+        tooltip-html-unsafe = "{{fanButton._state.tooltip}}"
+        tooltip-placement="left"
+        tooltip-popup-delay='500'
+        class="has-tip"
+  >
 
-  	<h3 	ng-if="isDisabled()" 
-  			style="	color: #f08a24;" 
-  					class="fi-alert"
-  	> 
-  		DJ-Form is disabled. You can use only single instance of DJ-Form per page.
-  	</h3>
-  	
-  	<div ng-if="!disabled() && processing" class="row">
-  		<div 	class="column small-2 small-centered" 
-  				style="	text-align:center;
-  						color:#999;
-  						font-size:xx-large"
-  		>
-  			<i class="fa fa-spinner fa-pulse"/>
-  		</div>	
-  	</div>
-
-  	<div ng-if="!disabled() && !processing" class="row" style="margin: 0.5em 0 0 0; height:auto;">
-		<h3> 
-			DJ-Form <span style="font-size: smaller;">#{{form.id}}</span>
-		</h3>
-		<div class="row">
-			<div ng-if="form.cloned" class="column small-12" style="font-size: small;">
-				Cloned from: #{{form.cloned}}
-			</div>
-		</div>
-		<div class="row">
-			<div class="column small-12" style="font-size: small;">
-				Created at: {{formatDate(form.createdAt)}}
-			</div>
-		</div>
-		<div class="row">
-			<div class="column small-12" style="font-size: small;">
-				Last update: {{formatDate(form.updatedAt)}}
-			</div>
-		</div>
-			
-		<hr/>
-		
-		<h4>
-			Metadata	
-		</h4>
+    <span   style="   color: white;
+                      background: {{fanButton._state.color}};
+                   "
+            ng-click="saveAnswers()"
+            class="fade"
+            
+    >
+        <i ng-class="fanButton._state.class"/>  
+    </span>
+  </div>    
+  
+  <div ng-show="globalConfig.designMode">
+    <h3 ng-if="isDisabled()" style="  color: #f08a24;" class="fi-alert"> 
+      DJ-Form is disabled. You can use only single instance of DJ-Form per page.
+    </h3>
+    <div ng-if="!isDisabled() && processing" class="row">
+      <div class="column small-2 small-centered" style="  text-align:center;
+              color:#999;
+              font-size:xx-large">
+        <i class="fa fa-spinner fa-pulse" />
+      </div>
+    </div>
+    <div ng-if="!isDisabled() && !processing" class="row" style="margin: 0.5em 0 0 0; height:auto;">
+      <h3> 
+      DJ-Form <span style="font-size: smaller;">#{{widget.form.id}}</span>
+    </h3>
+    <div class="row">
+      <div class="column small-12">
+        <button class="tiny button" ng-click="openImportDialog()">
+          Import
+        </button>  
+      </div>  
+    </div>  
+      <div class="row">
+        <div ng-if="form.cloned" class="column small-12" style="font-size: small;">
+          Cloned from: #{{widget.form.cloned}}
+        </div>
+      </div>
+      <div class="row">
+        <div class="column small-12" style="font-size: small;">
+          Created at: {{formatDate(widget.form.createdAt)}}
+        </div>
+      </div>
+      <div class="row">
+        <div class="column small-12" style="font-size: small;">
+          Last update: {{formatDate(widget.form.updatedAt)}}
+        </div>
+      </div>
+      <hr/>
+      <h4>
+      Metadata  
+    </h4>
       <div class="row">
         <div class="column small-12">
           <div class="column small-3 left">
             <label class="large">Key</label>
           </div>
           <div class="column small-8 left">
-            <label class="large">Value</label> 
+            <label class="large">Value</label>
           </div>
         </div>
-      </div>	
-  		<div ng-repeat="m in metadata" class="row">
-  			<div class="column small-12">
-  				<div class="column small-3 left">
-  					<input 	  style="margin-bottom: 0.25em;"	
-                              type="text" 
-                              ng-model="m.key"
-                              ng-value="m.key" 
-                              ng-disabled="true"
-                          >
-  					
-  				</div>
-  				<div class="column small-8 left">
-  					<input    style="margin-bottom: 0.25em;"
-                              type="text" 
-                              ng-model="m.value"
-                              ng-value="m.value" 
-                              ng-disabled="!m.editable"
-                          >
-  					
-  				</div>
-  				<div class="column small-1" style="padding: 0.25em;">
-  					<button ng-if="!m.required"
-                    ng-click="deleteMetadata(m.key)"
-                    style=" color: #5f8ab9;
+      </div>
+      <div ng-repeat="m in metadataTools.metadata" class="row">
+        <div class="column small-12">
+          <div class="column small-3 left">
+            <input style="margin-bottom: 0.25em;" type="text" ng-model="m.key" ng-value="m.key" ng-disabled="true">
+          </div>
+          <div class="column small-8 left">
+            <input style="margin-bottom: 0.25em;" type="text" ng-model="m.value" ng-value="m.value" ng-disabled="!m.editable">
+          </div>
+          <div class="column small-1" style="padding: 0.25em;">
+            <button ng-if="!m.required" ng-click="metadataTools.delete(m.key)" style=" color: #5f8ab9;
                             background: none;
                             font-size: xx-large;
                             padding: 0;
                             margin: 0;
-                            cursor: pointer;"
-            >
-              <i class="fa fa-times"/>
+                            cursor: pointer;">
+              <i class="fa fa-times" />
             </button>
-  					<!-- <span ng-if="m.required">&nbsp;</span> -->	
-  				</div>	
-  			</div>
-  		</div>
+          </div>
+        </div>
+      </div>
       <div class="row">
         <div class="column small-12">
           <div class="column small-3 left">
-            <input    style="margin-bottom: 0.25em;"  
-                              type="text" 
-                              ng-model="textFields.key"
-                              ng-value="textFields.key" 
-                              
-                          >
-            
+            <input style="margin-bottom: 0.25em;" type="text" ng-model="textFields.key" ng-value="textFields.key">
           </div>
           <div class="column small-8 left">
-
-            <input    style="margin-bottom: 0.25em;"
-                              type="text" 
-                              ng-model="textFields.value"
-                              ng-value="textFields.value" 
-                              
-                          >
-            
+            <input style="margin-bottom: 0.25em;" type="text" ng-model="textFields.value" ng-value="textFields.value">
           </div>
           <div class="column small-1" style="padding: 0.25em;">
-            <button ng-click="addMetadata(textFields.key, textFields.value)"
+            <button ng-click="metadataTools.add(textFields.key, textFields.value)" 
                     style=" color: #5f8ab9;
                             background: none;
                             font-size: xx-large;
@@ -138,31 +136,27 @@
                             margin: 0;
                             cursor: pointer;
                             border:none;
-                            outline:none;
-                            "
-                    ng-disabled="!validMetadata()"        
+                            outline:none;" 
+                    ng-disabled="!metadataTools.valid()"
             >
-              <i class="fa fa-plus-circle"/>
+              <i class="fa fa-plus-circle" />
             </button>
-              
-          </div>  
+          </div>
         </div>
       </div>
-  		
-  		<hr/>
-	  	<h4>
+      <hr/>
+      <h4>
         Access   
       </h4>
-	    <div class="row">
+      <div class="row">
         <div class="column small-12">
           <div class="column small-3 left">
-            <a 
-                class="button split tiny"  
+            <a  class="button split tiny" 
                 style="   background-color: #5f8ab9;
-                           color: #e7e7e7;
+                          color: #e7e7e7;
                           font-size: large;"
             >
-              For {{form.config.access.type}}
+              For {{widget.form.config.access.type}}
               <span dropdown-toggle="{{'#'+widget.ID+'_access_type'}}"/>
             </a>
             <ul id="{{widget.ID+'_access_type'}}" class="f-dropdown">
@@ -174,157 +168,130 @@
           <div class="column small-4 left" style="margin: 0.5em;">
             <label class="large left" style="margin-right: 1em;">Enable: </label>
             <div class="switch tiny radius left">
-              <input  type="checkbox"
-
-                      id="{{widget.instanceName+'_access_enabled'}}"
-                      ng-model="form.config.access.enabled"
+              <input  type="checkbox" 
+                      id="{{widget.instanceName+'_access_enabled'}}" 
+                      ng-model="widget.form.config.access.enabled"
               >
-              <label  for="{{widget.instanceName+'_access_enabled'}}"></label>
+              <label for="{{widget.instanceName+'_access_enabled'}}"></label>
             </div>
-          </div>  
+          </div>
         </div>
       </div>
-      
-      <div class="row" ng-if="form.config.access.type == 'invited'">
+      <div class="row" ng-if="widget.form.config.access.type == 'invited'">
         <div class="column small-12">
           <div class="column small-3 left">
             <label class="large left" style="margin-right: 1em;">Invite users when form first starts: </label>
             <div class="switch tiny radius left">
-              <input  type="checkbox"
-                      ng-disabled = "form.config.access.enabled"
-                      id="{{widget.instanceName+'_invU_enabled'}}"
-                      ng-model="form.config.access.invitationEnabled"
-              >
-              <label  for="{{widget.instanceName+'_invU_enabled'}}"></label>
+              <input type="checkbox" ng-disabled="widget.form.config.access.enabled" id="{{widget.instanceName+'_invU_enabled'}}" ng-model="widget.form.config.access.invitationEnabled">
+              <label for="{{widget.instanceName+'_invU_enabled'}}"></label>
             </div>
           </div>
-          <div ng-if="form.config.access.invitationEnabled" class="column small-9">
+          <div ng-if="widget.form.config.access.invitationEnabled" class="column small-9">
             <label class="large">Invitation template </label>
             <textarea   class="text" 
                         rows=5 
-                        ng-model="form.config.access.invitationTemplate"
-                        ng-disabled = "form.config.access.enabled"
+                        ng-model="widget.form.config.access.invitationTemplate" 
+                        ng-disabled="widget.form.config.access.enabled"
             ></textarea>
           </div>
         </div>
       </div>
-
-      <div class="row" ng-if="form.config.access.type == 'invited'">
+      <div class="row" ng-if="widget.form.config.access.type == 'invited'">
         <div class="column small-12">
           <div class="column small-3 left">
             <label class="large left" style="margin-right: 1em;">Notificate users when form will change status: </label>
             <div class="switch tiny radius left">
-              <input  type="checkbox"
-                      ng-disabled = "form.config.access.enabled"
-                      id="{{widget.instanceName+'_notU_enabled'}}"
-                      ng-model="form.config.access.notificationEnabled"
+              <input  type="checkbox" 
+                      ng-disabled="widget.form.config.access.enabled" 
+                      id="{{widget.instanceName+'_notU_enabled'}}" 
+                      ng-model="widget.form.config.access.notificationEnabled"
               >
-              <label  for="{{widget.instanceName+'_notU_enabled'}}"></label>
+              <label for="{{widget.instanceName+'_notU_enabled'}}"></label>
             </div>
           </div>
-          <div ng-if="form.config.access.notificationEnabled" class="column small-9">
+          <div ng-if="widget.form.config.access.notificationEnabled" class="column small-9">
             <label class="large">Notification template </label>
             <textarea   class="text" 
                         rows=5 
-                        ng-model="form.config.access.notificationTemplate"
-                        ng-disabled = "form.config.access.enabled"
+                        ng-model="widget.form.config.access.notificationTemplate" 
+                        ng-disabled="widget.form.config.access.enabled"
             ></textarea>
           </div>
         </div>
       </div>
-
       <hr/>
-      <div ng-if="form.config.access.type == 'invited'">  
-  		  <h4>Invited users</h4>
-        <div class="row" ng-repeat="u in form.config.access.users">
-          <div class="column small-12">
-            <i>
-              <span   style=" 
-                  background-image: url({{u.photo}});
-                  background-size: 2em 2em;
-                  border-radius: 50%;
-                  display: block;
-                  overflow: hidden;
-                  position: relative;
-                  height: 2em;
-                  width: 2em;
-                  float: left;
-                  "
-                  ng-if="u.photo"></span>
-              <span ng-if="!u.photo" style="float: left;">
-                    <i  class="fa fa-envelope-square"
-                        style="   font-size: 2em;
-                                  padding: 0 0 0 0.1em;
-                                  color: #5f8ab9;"
-                    >
-                      
-                    </i>
-              </span>
-                  
-               <span 
-                    style="float: left; font-size: smaller; margin: 0.5em;"
-                >
-                {{(u.name)? u.name : u.email}}
-               </span>
-            </i>
-          </div>  
-        </div>  
-        <div class="row" style="margin-top: 1em;">
-          <div class="column small-12">
-            <div ng-if="userIsInvited" style="font-size: smaller; color: #f08a24;">
-              <i class="fa fa-exclamation-triangle" style="margin:0 0.5em;"/>already invited
-            </div>
-            <div ng-if="!userIsInvited">
-              &nbsp;
-            </div>   
-          </div>  
-        </div>  
-        <div class="row">
-          <div class="column small-12">
-            <div class="column small-5 left">
-              <input   type="text" 
-                  ng-model="invitedUser"
-                  ng-change="validInvitedUser(invitedUser)" 
-                  placeholder="Enter user email" 
-                  typeahead="cu as cu.email for cu in getUsers($viewValue)"
-                  typeahead-template-url="/widgets/v2.form/userShortInfo.html" class="form-control"
-                  typeahead-loading="UserListLoading"
-                  typeahead-on-select = "validInvitedUser(invitedUser)"
-              >
-              <i ng-show="UserListLoading" class="fa fa-spin fa-pulse"></i>
-            </div>
+      <div ng-if="widget.form.config.access.type == 'invited'">
+        <h4>Invited users</h4>
             
-            <div class="column small-2 left">
-              <button ng-click="addInvitedUser()"
-                          style=" color: #5f8ab9;
-                                  background: none;
-                                  font-size: xx-large;
-                                  padding: 0;
-                                  margin: 0;
-                                  cursor: pointer;
-                                  border:none;
-                                  outline:none;
-                                  "
-                          ng-disabled="!invitedUserIsValid || userIsInvited"        
-                  >
-                    <i class="fa fa-plus-circle"/>
-              </button>
-            </div>
-          </div>
-        </div>      
-        
-        
-        
-        <hr/>  
-      </div>  
-		
-	<!-- 	<h4 class="sectionHeader" ng-if="!disabled && form">
-				Experts 
-				<a class="action">[Edit...]</a>
-		</h4>
-	</div> -->
-
-<!-- <pre> {{ form | json }} </pre>		
- -->
+        <table style="border:none;">
+          <tr ng-repeat="u in widget.form.config.access.users">
+            <td style="border:none;">
+                <i>
+                  <span   style=" 
+                      background-image: url({{u.photo}});
+                      background-size: 3em 3em;
+                      border-radius: 50%;
+                      display: block;
+                      overflow: hidden;
+                      position: relative;
+                      height: 3em;
+                      width: 3em;
+                      float: left;
+                      "
+                      ng-if="u.photo"></span>
+                  <span ng-if="!u.photo" style="float: left;">
+                        <i  class="fa fa-user"
+                            style="     font-size: 2.75em;
+                                        padding: 0 0 0 0.16em;
+                                        color: #cedded;"
+                        >
+                          
+                        </i></span>
+                </i>
+            </td>
+            <td style="border:none;">
+                <a href="mailto:{{u.email}}" target="blank" style="font-size: large;">  
+                  {{(u.name)? u.name : u.email}}
+                </a>  
+            </td>
+            <td style="border:none; font-size: large; color:#5f8ab9; cursor:pointer;"
+                ng-click="deleteInvitedUser(u.email)"  
+            >
+                <i class="fa fa-times"/>
+            </td>
+          </tr>
+          <tr style="border:none;">
+            <td style="border:none;" colspan="2">
+              <div class="row" style="padding: 0; margin:2em 0 0 0;">
+                  <div ng-if="userIsInvited" style="font-size: smaller; color: #f08a24; margin:-1.5em 1em;">
+                    <i class="fa fa-exclamation-triangle" style="margin:0 0.5em;" />already invited
+                  </div>
+                  <div ng-if="!userIsInvited" style="font-size: smaller; color: #f08a24; margin:-1.5em 1em;">
+                    &nbsp;
+                  </div>
+                  <div class="column small-12 left" style="padding:0;">
+                     <input type="text" ng-model="invitedUser" ng-change="validInvitedUser(invitedUser)" placeholder="Enter user email" typeahead="cu as cu.email for cu in getUsers($viewValue)" typeahead-template-url="/widgets/v2.form/userShortInfo.html" class="form-control"  typeahead-on-select="validInvitedUser(invitedUser)">
+                  </div>
+              </div>    
+            </td>
+            <td style="border:none;">
+                    <button ng-click="addInvitedUser()" style="     color: #5f8ab9;
+                                                                    background: none;
+                                                                    font-size: xx-large;
+                                                                    padding: 1em 0 0.5em 0;
+                                                                    margin: 0;
+                                                                    cursor: pointer;
+                                                                    border: none;
+                                                                    outline: none;
+                                        " ng-disabled="!invitedUserIsValid || userIsInvited">
+                      <i class="fa fa-user-plus" />
+                    </button>
+                  
+            </td>  
+          </tr>  
+        </table>
+        <hr/>
+      </div>
+    </div>
+  </div>
 </div>
-

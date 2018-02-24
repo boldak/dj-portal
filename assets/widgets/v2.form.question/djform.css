@@ -313,4 +313,79 @@ div.bordered {
   border-bottom: 1px solid #999;
 }
 
+.fixed-action-btn {
+    position: fixed;
+    right: 23px;
+    bottom: 23px;
+    padding-top: 15px;
+    margin-bottom: 0;
+    z-index: 997;
+}
+
+.fan-btn {
+    position: fixed;
+    margin-bottom: 0;
+    bottom: 23px;
+    right: 23px;
+    width:3em;
+    height: 3em;
+    z-index: 997;
+}
+
+
+.fan-btn.top {
+    top:65px;
+}
+
+.fan-btn.bottom {
+    bottom: 23px;
+}
+
+.fan-btn.left {
+    left: 23px;
+}
+
+.fan-btn.right {
+    right: 23px;
+}
+
+.fan-btn span {
+    border-radius: 50%;
+    display: block;
+    height: 3em;
+    width: 3em;
+    text-align:center;
+    box-shadow: 0 0.1em 0.5em 0 #607D8B;
+    cursor:pointer;
+}
+
+.fan-btn span i{
+    font-size:2em; 
+    padding:0.25em 0;
+}
+
+.fan-btn span i.fa-list{
+    font-size:1.9em; 
+    padding:0.35em 0;
+}
+
+.fan-btn.tiny {
+    width:1.5em;
+    height:1.5em;
+}
+
+.fan-btn.tiny span {
+    border-radius: 50%;
+    display: block;
+    height: 1.5em;
+    width: 1.5em;
+    text-align:center;
+    box-shadow: 0 0.05em 0.25em 0 #607D8B;
+    cursor:pointer;
+}
+
+.fan-btn.tiny span i{
+    font-size:1em; 
+    padding:0.12em 0;
+}
 
