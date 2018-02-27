@@ -327,7 +327,7 @@ div.bordered {
     margin-bottom: 0;
     bottom: 23px;
     right: 23px;
-    width:3em;
+    /*width:3em;*/
     height: 3em;
     z-index: 997;
 }
@@ -349,7 +349,7 @@ div.bordered {
     right: 23px;
 }
 
-.fan-btn span {
+.fan-btn div span {
     border-radius: 50%;
     display: block;
     height: 3em;
@@ -359,12 +359,12 @@ div.bordered {
     cursor:pointer;
 }
 
-.fan-btn span i{
+.fan-btn div span i{
     font-size:2em; 
     padding:0.25em 0;
 }
 
-.fan-btn span i.fa-list{
+.fan-btn div span i.fa-list{
     font-size:1.9em; 
     padding:0.35em 0;
 }
@@ -374,7 +374,7 @@ div.bordered {
     height:1.5em;
 }
 
-.fan-btn.tiny span {
+.fan-btn.tiny div span {
     border-radius: 50%;
     display: block;
     height: 1.5em;
@@ -384,8 +384,45 @@ div.bordered {
     cursor:pointer;
 }
 
-.fan-btn.tiny span i{
+.fan-btn.tiny div span i{
     font-size:1em; 
     padding:0.12em 0;
 }
 
+.fan-btn div {
+  float:right;
+}
+
+.fan-btn div.fantip{
+    margin: -0.75em 0.25em;
+    padding: 1em;
+    font-size: larger;
+    border-radius: 0.5em;
+    max-width: 75%;
+    box-shadow: 0 0.1em 0.5em 0 #607D8B;
+}
+
+
+.fade.ng-enter {
+   transition:0.2s ease-in all;
+   opacity:0;
+}
+ 
+.fade.ng-enter.ng-enter-active {
+    opacity:0.75;
+}
+
+.fade.ng-leave {
+   animation: my_fade_animation 0.5s ease-out;
+   -webkit-animation: my_fade_animation 0.5s ease-out;
+ }
+
+ @keyframes my_fade_animation {
+   from { opacity:0.75; }
+   to { opacity:0; }
+ }
+
+ @-webkit-keyframes my_fade_animation {
+   from { opacity:0.75; }
+   to { opacity:0; }
+ }

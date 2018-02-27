@@ -75,12 +75,13 @@ info.factory('confirm', function($modal) {
 });
 
 info.factory('$info', function($modal) {
-    return text => $modal.open({
+    return (text, title) => $modal.open({
         templateUrl: '/partials/info.html',
         controller: 'InfoController',
         windowClass: 'dialog-modal',
         resolve: {
-            text: () => text
+            text: () => text,
+            title:() => title
         }
     }).result;
 });
@@ -612,8 +613,9 @@ info.controller('ConfirmController', function($scope, $modalInstance, text) {
     };
 });
 
-info.controller('InfoController', function($scope, $modalInstance, text) {
+info.controller('InfoController', function($scope, $modalInstance, text, title) {
     $scope.text = text;
+    $scope.title = title || "INFORMATION";
     $scope.close = () => {
             $modalInstance.close(true);
     }

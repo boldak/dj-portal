@@ -540,7 +540,7 @@ app.service('app', function ($http, $state, $stateParams, $log, config, $rootSco
       }).result.then((newSettings) => {
         // console.log(newSettings);
         angular.extend(config, newSettings);
-        console.log("INVOKE APP RECONFIG")
+        // console.log("INVOKE APP RECONFIG")
         let user = new APIUser();
         user.invokeAll("APP_RECONFIG_SLOT",config);
         this.markModified(true);
@@ -756,7 +756,7 @@ app.service('widgetLoader', function ($q, $ocLazyLoad, widgetTypesPromise, appUr
     
     widgets = angular.isArray(widgets) ? widgets : [widgets];
     
-    console.log("widgetLoader", widgets)
+    // console.log("widgetLoader", widgets)
 
     return widgetTypesPromise.then((widgetTypesHTTP) => {
       const widgetControllers = [];
@@ -1175,9 +1175,9 @@ app.directive('widget', function ($rootScope, $translate, $window, appUrls,
       });
 
       updateEventsOnNameChange(scope.widget);
-      console.log("CALL widgetLoader")
+      // console.log("CALL widgetLoader")
       widgetLoader.load(scope.type).then(() => {
-        console.log("Loaded ")
+        // console.log("Loaded ")
         scope.widgetCodeLoaded = true;
 
         

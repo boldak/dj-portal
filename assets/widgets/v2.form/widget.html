@@ -13,6 +13,7 @@
 
 </style>
 <div class="row" ng-controller="FormController" style="padding: 0.5rem; margin: 0;">
+  <!-- 
   <div class="row" style="font-size: small;">
       <div class="column small-12">
           <div class="column small-6">
@@ -26,26 +27,40 @@
       </div>  
   </div>  
   <hr/>
-    
-
-
+ 
+    <div ng-if="bool" class="fade">
+    Show and hide me
+  </div>-->
+ <!--  <button ng-click="reload()">REload</button>
+ <pre> {{widget.form.config.access | json}} </pre> -->
   <div  class="fan-btn top fade" 
         ng-if="!globalConfig.designMode && fanButton._state"
-        tooltip-html-unsafe = "{{fanButton._state.tooltip}}"
-        tooltip-placement="left"
-        tooltip-popup-delay='500'
-        class="has-tip"
-  >
 
-    <span   style="   color: white;
-                      background: {{fanButton._state.color}};
-                   "
-            ng-click="saveAnswers()"
-            class="fade"
+  >
+    
+        <div>
+           <span   style="   color: white;
+                              background: {{fanButton._state.color}};
+                           "
+                    ng-mouseenter="fanButton.showTooltip()"
+                    ng-mouseleave="fanButton.hideTooltip()"
+                    ng-click="saveAnswers()"
+                   
+                    
+            >
+                <i ng-class="fanButton._state.class"/>  
+            </span>
+        </div>
+
+          <div  class="fantip fade"
+                ng-if="fanButton._showFantip" 
+                style=" background: #ffffff;
+                        color: {{fanButton._state.color}};"
+          >
+            {{fanButton._state.tooltip}}
             
-    >
-        <i ng-class="fanButton._state.class"/>  
-    </span>
+          </div>  
+    
   </div>    
   
   <div ng-show="globalConfig.designMode">
@@ -240,7 +255,7 @@
                       "
                       ng-if="u.photo"></span>
                   <span ng-if="!u.photo" style="float: left;">
-                        <i  class="fa fa-user"
+                        <i  class="fa fa-user-circle"
                             style="     font-size: 2.75em;
                                         padding: 0 0 0 0.16em;
                                         color: #cedded;"
@@ -255,7 +270,7 @@
                 </a>  
             </td>
             <td style="border:none; font-size: large; color:#5f8ab9; cursor:pointer;"
-                ng-click="deleteInvitedUser(u.email)"  
+                ng-click="userUtils.deleteInvitedUser(u.email)"  
             >
                 <i class="fa fa-times"/>
             </td>
@@ -263,27 +278,40 @@
           <tr style="border:none;">
             <td style="border:none;" colspan="2">
               <div class="row" style="padding: 0; margin:2em 0 0 0;">
-                  <div ng-if="userIsInvited" style="font-size: smaller; color: #f08a24; margin:-1.5em 1em;">
+                  <div  ng-if="userUtils.userIsInvited" 
+                        style="font-size: smaller; color: #f08a24; margin:-1.5em 1em;"
+                  >
                     <i class="fa fa-exclamation-triangle" style="margin:0 0.5em;" />already invited
                   </div>
-                  <div ng-if="!userIsInvited" style="font-size: smaller; color: #f08a24; margin:-1.5em 1em;">
+                  <div  ng-if="!userUtils.userIsInvited" 
+                        style="font-size: smaller; color: #f08a24; margin:-1.5em 1em;"
+                  >
                     &nbsp;
                   </div>
                   <div class="column small-12 left" style="padding:0;">
-                     <input type="text" ng-model="invitedUser" ng-change="validInvitedUser(invitedUser)" placeholder="Enter user email" typeahead="cu as cu.email for cu in getUsers($viewValue)" typeahead-template-url="/widgets/v2.form/userShortInfo.html" class="form-control"  typeahead-on-select="validInvitedUser(invitedUser)">
+                     <input   type="text" 
+                              ng-model="invitedUser" 
+                              ng-change="userUtils.validInvitedUser(invitedUser)" 
+                              placeholder="Enter user email" 
+                              typeahead="cu as cu.email for cu in userUtils.getUsers($viewValue)" typeahead-template-url="/widgets/v2.form/userShortInfo.html" 
+                              class="form-control"  
+                              typeahead-on-select="userUtils.validInvitedUser(invitedUser)"
+                    >
                   </div>
               </div>    
             </td>
             <td style="border:none;">
-                    <button ng-click="addInvitedUser()" style="     color: #5f8ab9;
-                                                                    background: none;
-                                                                    font-size: xx-large;
-                                                                    padding: 1em 0 0.5em 0;
-                                                                    margin: 0;
-                                                                    cursor: pointer;
-                                                                    border: none;
-                                                                    outline: none;
-                                        " ng-disabled="!invitedUserIsValid || userIsInvited">
+                    <button   ng-click="userUtils.addInvitedUser()" 
+                              style="     color: #5f8ab9;
+                                          background: none;
+                                          font-size: xx-large;
+                                          padding: 1em 0 0.5em 0;
+                                          margin: 0;
+                                          cursor: pointer;
+                                          border: none;
+                                          outline: none;""
+                              ng-disabled="!userUtils.invitedUserIsValid || userUtils.userIsInvited"
+                    >
                       <i class="fa fa-user-plus" />
                     </button>
                   

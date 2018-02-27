@@ -1,7 +1,10 @@
 import angular from 'angular';
+import "./utility/index.js";
+
+
 
 let m = angular.module('app.widgets.v2.form', [
-  'app.dps', "oc.lazyLoad", "ngAnimate"
+  'app.dps', "oc.lazyLoad", "ngAnimate", "formUtility"
 ])
 
 
@@ -24,210 +27,117 @@ m.controller('FormController', function(
   appUrls,
   user,
   dialog,
-  parentHolder
+  parentHolder,
+  $info,
+  $filter,
+  formMetadata,
+  formFanButton,
+  formIO,
+  formUserUtils,
+  formAnswerUtils,
+  objectsIsEqual,
+  truncString,
+  testMessage
 ) {
 
 
 
 
 
-let emailRegex = /^([A-Z|a-z|0-9](\.|_){0,1})+[A-Z|a-z|0-9]\@([A-Z|a-z|0-9])+((\.){0,1}[A-Z|a-z|0-9]){2}\.[a-z]{2,3}$/;
 
 $ocLazyLoad.load({files:["/widgets/v2.form.question/djform.css"]}); 
 
+angular.extend($scope, {
+  
+  pageWidgets: pageWidgets,
 
-$scope.pageConfig = app.pageConfig();
+  user: user,
 
-$scope.formatDate = (date) => i18n.formatDate(date);
+  $filter: $filter,
 
-$scope.modified = {
-  form:false,
-  answer:false
-} 
+  pageConfig: app.pageConfig(),
+  
+  formatDate: (date) => i18n.formatDate(date),
+  
+  modified: {
+      form:false,
+      answer:false
+  },
+  
+  textFields: {
+    key:undefined,
+    value:undefined,
+    userEmail:undefined
+  },
 
-$scope.textFields = {
-  key:undefined,
-  value:undefined,
-  userEmail:undefined
-}
+  processing: false,
+  blockMessages: false,
+
+  isDisabled: () => {
+    let forms = pageWidgets().filter((item) => item.type === "v2.form");
+    return (forms.length > 1) && (!$scope.widget.form);
+  },
+
+  markModified: () => {
+    updateConfig();
+    app.markModified();
+  }, 
+
+  metadataTools: formMetadata($scope),
+
+  fanButton: formFanButton($scope),
+
+  transport: formIO($scope,$dps),
+
+  answerUtils: formAnswerUtils($scope)
+
+})
+
 
 let scopeFor = widgetInstanceName => instanceNameToScope.get(widgetInstanceName);
 
-// operation process indicator
-
-$scope.processing = false;
-
-  let dps = {
-
-    createForm: `
-            // createForm 
-            client();
-            set("owner")
-            <?javascript
-                $scope.form = {
-                    metadata: $scope.form.metadata,
-                    config: $scope.form.config,
-                    owner:$scope.owner.client.user,
-                    history:[
-                        {
-                            state:"created",
-                            message:"Create form via "+$scope.owner.client.app,
-                            user: $scope.owner.client.user,
-                            date: new Date()
-                        }
-                    ]
-                }
-            ?>
-            dml.insert(into:"form", values:{{form}})
-        `,
-
-    updateForm: `
-        // updateForm
-            client();
-            set("owner")
-
-            <?javascript
-
-                $scope.updatedForm = (item) => item.id == $scope.form.id;
-                $scope.update = (item) => {
-                    
-                    // $scope.form.history.push({
-                    //     date: new Date(),
-                    //     message:"Update form",
-                    //     state:"updated",
-                    //     user: $scope.owner.client.user
-                    // });
-                    
-                    return $scope.form;
-                };
-
-            ?>
-
-            dml.update(for:"form", as:{{update}}, where:{{updatedForm}})
-        `,
-
-    getForm: `
-            // getForm
-            <?javascript
-                $scope.filter = (item) => item.id == $scope.form;
-            ?>
-
-            dml.select(from:"form", where:{{filter}}, populate:"project")
-        `,
-
-    deleteForm:`
-            // deleteForm
-            <?javascript
-                $scope.filter = (item) => item.id == $scope.form;
-            ?>
-
-            dml.delete(from:"form", where:{{filter}})
-    `,
-
-    updateAnswer:`
-            // updateAnswer
-            dml.insertOrUpdate(into:"answer", value:{{answer}})
-    `
-
-
-  }
-
-  let runDPS = (params) => {
-
-    let script = params.script;
-    let storage = params.state;
-
-    let state = {
-      storage: storage,
-      locale: i18n.locale()
-    }
-
-    return $dps.post("/api/script", {
-        "script": script,
-        "state": state
-      })
-      .then(function(response) {
-        return {
-          type: response.data.type,
-          data: response.data.data
-        }
-      })
-  }
-
-  let runDPSwithFile = (file, params) => {
-
-    let script = params.script;
-    let storage = params.state;
-
-    let state = {
-      storage: storage,
-      locale: i18n.locale()
-    }
-
-    return $dps.postWithFile("/api/script", file, {
-        "script": script,
-        "state": state
-      })
-      .then(function(response) {
-        return {
-          type: response.data.type,
-          data: response.data.data
-        }
-      })
-  }
-
-  let loadLocalFile = (file) => {
-    console.log("READ ", file)
-    return $q((resolve,reject) => {
-      let fr = new FileReader();
-      fr.onload = (e) => {
-        resolve(e.target.result)
-      }
-      fr.readAsText(file);  
-    })
-  }
 
   $scope.openImportDialog = () => {
 // --------------           NO DELETE this code !!! -----------------------------
 
-    let w ={
-      "type": "v2.form.question",
-      "instanceName": "ugikzklbrq__________",
-      "initPhase": false,
-      "icon": "/widgets/v2.form.question/icon.png",
-      "disabled": false,
-      "ID": "h9rnwb1eb6d___",
-      "formWidget": "5uwtc89q6gm",
-      "config": {
-        "type": {
-          "value": "check",
-          "title": "Many of many"
-        },
-        "widget": {
-          "css": "fa fa-check-square",
-          "view": "./widgets/v2.form.question/partitions/check.view.html",
-          "options": "./widgets/v2.form.question/partitions/check.options.html"
-        },
-        "options": {
-          "required": false,
-          "addEnabled": true,
-          "showUserInfo": true,
-          "title": "Many of many",
-          "note": "Many of many",
-          "nominals": {
-            "sqla9ua6kzh": {
-              "title": "New item"
-            },
-            "cqxqyr2k4bu": {
-              "title": "New item"
-            }
-          }
-        },
-        "callback": {},
-        "id": "h9rnwb1eb6d___"
-      }
-    }
-     parentHolder($scope.widget).widgets.push(w)
+    // let w ={
+    //   "type": "v2.form.question",
+    //   "instanceName": "ugikzklbrq__________",
+    //   "initPhase": false,
+    //   "icon": "/widgets/v2.form.question/icon.png",
+    //   "disabled": false,
+    //   "ID": "h9rnwb1eb6d___",
+    //   "formWidget": "5uwtc89q6gm",
+    //   "config": {
+    //     "type": {
+    //       "value": "check",
+    //       "title": "Many of many"
+    //     },
+    //     "widget": {
+    //       "css": "fa fa-check-square",
+    //       "view": "./widgets/v2.form.question/partitions/check.view.html",
+    //       "options": "./widgets/v2.form.question/partitions/check.options.html"
+    //     },
+    //     "options": {
+    //       "required": false,
+    //       "addEnabled": true,
+    //       "showUserInfo": true,
+    //       "title": "Many of many",
+    //       "note": "Many of many",
+    //       "nominals": {
+    //         "sqla9ua6kzh": {
+    //           "title": "New item"
+    //         },
+    //         "cqxqyr2k4bu": {
+    //           "title": "New item"
+    //         }
+    //       }
+    //     },
+    //     "callback": {},
+    //     "id": "h9rnwb1eb6d___"
+    //   }
+    // }
+    //  parentHolder($scope.widget).widgets.push(w)
 
     // dialog({
     //     title:"Import form (OSA format)",
@@ -289,13 +199,8 @@ $scope.processing = false;
       }  
       
       
-
-      runDPS({
-        script: dps.createForm,
-        state: {
-          form: f
-        }
-      })
+      $scope.transport
+      .createForm(f)
       .then((res) => {
         $scope.widget.form = res.data[0];
         (new APIUser()).invokeAll("formMessage", {action:"configure", data:$scope});
@@ -303,15 +208,13 @@ $scope.processing = false;
       })
     }
 
-    let loadForm = () => {
-      runDPS({
-        script: dps.getForm,
-        state: {
-          form: $scope.widget.form.id
-        }  
-      })
+    let loadForm = $scope.reload = () => {
+
+      $scope.blockMessages = true;
+      $scope.transport
+      .loadForm($scope.widget.form.id)    
       .then(res => {
-        $scope.processing = false;
+        
         $scope.formLoaded = true;
         $scope.widget.form = res.data[0];
         $scope.widget.form.config.access.users = $scope.widget.form.config.access.users || []; 
@@ -323,27 +226,30 @@ $scope.processing = false;
         $scope.widgetPanel.allowConfiguring = undefined;
         $scope.widgetPanel.allowCloning = undefined;
 
-          // todo for all modes
-          $scope.answer = {
-            form: $scope.widget.form.id,
-            user: user,
-            data: {}
+// TODO diff modes
+
+        $scope.transport
+        .loadAnswer(user,$scope.widget.form.id)
+        .then( res => {
+          console.log("LOADED ANSWER", res)  
+          if(res.data){
+            $scope.answer = ( res.data.length == 0)
+              ? $scope.answerUtils.create()
+              : $scope.answerUtils.normalize(res.data[0]);
+            (new APIUser()).invokeAll("formMessage", {action:"set-answer", data:$scope.answer});
+            
+          } else {
+               $scope.answer = $scope.answerUtils.create();
           }
-
-          _.toPairs($scope.widget.form.config.questions)
-            .forEach(item => {
-              $scope.answer.data[item[0]] = {valid: false}
-            })
-
-
+          
+          $scope.processing = false;
+          $scope.blockMessages = false;
+          $scope.fanButton.state("none")
         })
+      })
     }
 
 
-  $scope.isDisabled = () => {
-    let forms = pageWidgets().filter((item) => item.type === "v2.form");
-    return (forms.length > 1) && (!$scope.widget.form);
-  }
 
   let updateWidget = () => {
     if($scope.isDisabled()) return;
@@ -366,54 +272,6 @@ $scope.processing = false;
     }
   }
 
- 
-  $scope.metadataTools = {
-    
-    metadata:[],
-
-    prepaire: () => {
-      $scope.metadataTools.metadata = _.toPairs($scope.widget.form.metadata)
-                          .map(item => {
-                            return {
-                              key:item[0],
-                              value:item[1].value,
-                              required:item[1].required,
-                              editable: item[1].editable
-                            }
-                          })
-    },
-
-    valid: () => {
-      if(!$scope.textFields.key) return false;
-      return $scope.metadataTools.metadata.map(item => item.key).indexOf($scope.textFields.key) < 0
-    },
-
-    add: (key, value) => {
-      $scope.metadataTools.metadata.push({
-          key: key,
-          value: value,
-          required: false,
-          editable: true
-      })
-      $scope.textFields.key = undefined;
-      $scope.textFields.value = undefined;
-    },
-
-    delete: (key) => {
-      let index = $scope.metadataTools.metadata.map(item => item.key).indexOf(key);
-      $scope.metadataTools.metadata.splice(index,1)
-    },
-
-    update: () => {
-      if($scope.widget.form){
-        $scope.widget.form.metadata = {}
-        $scope.metadataTools.metadata.forEach((item) => {
-          $scope.widget.form.metadata[item.key] = item
-        })  
-      }
-    }
-
-  }
 
   $scope.$watch("metadataTools.metadata", () => {
     $scope.metadataTools.update()
@@ -442,323 +300,101 @@ $scope.processing = false;
     }
   }
 
-  $scope.markModified = () => {
-    updateConfig();
-    app.markModified();
-  } 
 
-    $http
+  $http
       .get(appUrls.usersList)
-      .then(result => { $scope.userList = result.data})
+      .then(result => { $scope.userUtils = formUserUtils($scope,result.data) })
     
-    $scope.getUsers = (filterValue) => {
-     
-      return $q((resolve,reject) => {
-          let result = $scope.userList
-            .filter(user =>
-              $scope.widget.form.config.access.users.map(item => item.email).indexOf(user.email)<0
-            )
-            .filter(user =>
-              user.name.toLowerCase().includes(filterValue.toLowerCase()) ||
-              user.email.toLowerCase().includes(filterValue.toLowerCase())
-            )
-            .slice(0, 8)
-          resolve(result)  
-      })    
-    };
-
-
-  $scope.invitedUserAdd = null;
-
-  $scope.alreadyInvited = (value) => {
-
-    if(!value){
-      $scope.userIsInvited = false;
-      return 
-    } 
-    
-    if (angular.isString(value)){
-      $scope.userIsInvited = $scope.widget.form.config.access.users.map(item => item.email).indexOf(value) >= 0;      
-      return 
-    }
-    
-    if(angular.isDefined(value.email)){
-      $scope.userIsInvited = $scope.widget.form.config.access.users.map(item => item.email).indexOf(value.email) >= 0;      
-      return 
-    }
-
-    $scope.userIsInvited = false;
-  } 
-
-  $scope.validInvitedUser = (value) => {
-    
-    $scope.alreadyInvited(value);
-
-    if(!value){
-      $scope.invitedUserIsValid = false;
-      return 
-    } 
-    
-    if (angular.isString(value)){
-      value = value.trim();
-      let t = emailRegex.test(value);
-      if(t){
-        $scope.invitedUserAdd = value
-      }
-      $scope.invitedUserIsValid = t;
-      return 
-    }
-    
-    if(angular.isDefined(value.email)){
-      $scope.invitedUserAdd = value;
-      $scope.invitedUserIsValid = true;
-      return 
-    }
-
-    $scope.invitedUserIsValid = false; 
-  }
-
-  $scope.addInvitedUser = () => {
-    $scope.widget.form.config.access.users = $scope.widget.form.config.access.users || [];
-    if(angular.isString($scope.invitedUserAdd)){
-      $scope.widget.form.config.access.users.push({email:$scope.invitedUserAdd}) 
-    } else {
-      $scope.widget.form.config.access.users.push($scope.invitedUserAdd)
-    }
-    $scope.invitedUserAdd = undefined;
-    $scope.invitedUser = undefined;
-    $scope.invitedUserIsValid = false; 
-  }
-
-  $scope.deleteInvitedUser = email => {
-    let index = $scope.widget.form.config.access.users.map(item => item.email).indexOf(email)
-    if( index >= 0 ){
-      $scope.widget.form.config.access.users.splice(index,1)
-    }
-  }
-
   $scope.$watch("metadata", $scope.markModified, true);
 
   $scope.saveAnswers = () => {
-    if($scope.modified.form){
-      $scope.fanButton.state("process")
-      console.log("SAVE FORM", $scope.widget.form)
-      $scope.modified.form = false;
-      runDPS({
-              script: dps.updateForm,
-              state: {
-                form: $scope.widget.form
-              }
-      })
-      .then(() => {
-         runDPS({
-          script: dps.getForm,
-          state: {
-            form: $scope.widget.form.id
-          }  
-        })
-        .then(res => {
-          $scope.fanButton.state("none");
-          $scope.processing = false;
-          $scope.formLoaded = true;
-          $scope.widget.form = res.data[0];
-          // $scope.widget.form.config.access.users = $scope.widget.form.config.access.users || []; 
-          
-          (new APIUser()).invokeAll("formMessage", {action:"update", data:$scope.widget.form});
-          
-          $scope.metadataTools.prepaire();
 
-          // $scope.widgetPanel.allowConfiguring = undefined;
-          // $scope.widgetPanel.allowCloning = undefined;
-
-          //   // todo for all modes
-          //   $scope.answer = {
-          //     form: $scope.widget.form.id,
-          //     user: user,
-          //     data: {}
-          //   }
-
-          //   _.toPairs($scope.widget.form.config.questions)
-          //     .forEach(item => {
-          //       $scope.answer.data[item[0]] = {valid: false}
-          //     })
-
-
-          })
-      })
-    }
+    $scope.fanButton.state("process")
     
-    if($scope.modified.answer){
-      $scope.fanButton.state("process")
-      console.log("SAVE answer", $scope.answer)
-      $scope.modified.answer = false;
-      runDPS({
-              script: dps.updateAnswer,
-              state: {
-                answer: $scope.answer
-              }
+    if(!$scope.widget.form.config.access.enabled){
+      
+      $info(testMessage($scope), "TEST MODE")
+      .then(()=> {
+        $scope.fanButton.state("none");    
       })
-      .then((res) => {
-        let newAnswer = (angular.isArray(res.data))? res.data[0] : res.data;
-        $scope.answer = newAnswer;
-        $scope.fanButton.state("none")
-      })
-    }    
-  }
 
-  
-  $scope.fanButton = {
-    availableStates: {
-      process:{
-        identity:"process",
-        color:"#5f8ab9",
-        class:"fa fa-spinner fa-pulse",
-        tooltip:`
-          <div style="background:#5f8ab9; color:#ffffff; padding:0.5em;margin:-0.6em; font-size:large;">
-            Answer's save processed...
-          </div>
-        `
-    },
-      disabled:{
-        identity:"disabled",
-        color:"#e7e7e7",
-        class:"fa fa-times"
-      },
-      alert:{
-        identity:"alert",
-        color:"#f44336",
-        class:"fa fa-exclamation"
-      },
-      warning:{
-        identity:"warning",
-        color:"#ff9800",
-        class:"fa fa-exclamation",
-        tooltip:""
-      },
-
-      list:{
-        identity:"list",
-        color:"#ff9800",
-        class:"fa fa-pencil",
-        tooltip:""
-      },
-      success:{
-        identity:"success",
-        color:"#ff9800",
-        class:"fa fa-check",
-        tooltip:`
-          <div style="
-                background: #f9f9f7;
-                color: #ff9800;
-                padding: 1em;
-                margin: -1em;
-                font-size: larger;
-                border-radius: 0.5em;
-                box-shadow: 0 0.1em 0.5em 0 #607D8B;"
-          >
-            Forms is completed. Click for save. 
-          </div>`
-      }  
-    },
-
-    _state: undefined,
-    
-    state: (value, params) => {
-      if(value){
-          if($scope.fanButton.availableStates[value]){
-            $scope.fanButton._state = $scope.fanButton._state || {}
-            angular.copy($scope.fanButton.availableStates[value], $scope.fanButton._state)
-            // angular.extend($scope.fanButton._state, params)  
-          } else {
-            $scope.fanButton._state = undefined
-          }
-      } else {
-        return $scope.fanButton._state;
-      }
-    }  
-  }  
-
-  let validateAnswers = () => {
-    let a = _.toPairs($scope.answer.data)
-    let nvc = a.filter((item) => !item[1].valid).length;
-    let vc = a.length-nvc;
-    if(nvc == 0) {
-      $scope.fanButton.state("success")
     } else {
-      if((a.length-nvc)>0){
-        $scope.fanButton.state("warning");
-        $scope.fanButton._state.tooltip =
-        `
-        <div style="
-                background: #f9f9f7;
-                color: #ff9800;
-                padding: 1em;
-                margin: -1em;
-                font-size: larger;
-                border-radius: 0.5em;
-                box-shadow: 0 0.1em 0.5em 0 #607D8B;"
-          >
-          You can save answers.<br/>  
-          But 
-          ${nvc} 
-          from 
-          ${a.length} 
-          is not completed.<br/> 
-          Click for save if need.
-        <div>`
-        // $scope.fanButton._state.tooltip = `You can save answers.  
-        // But ${nvc} from ${a.length} is not completed. 
-        // Click for save if need.`
+
+
+      $scope.blockMessages = true;
+    
+      let saveFormPromise, saveAnswerPromise;
+
+      if($scope.modified.form){
+        saveFormPromise = $q(( resolve, reject ) => {
+    
+          $scope.modified.form = false;
+          $scope.transport
+          .extendForm($scope.widget.form)
+          .then(() => {
+            $scope.transport
+            .loadForm($scope.widget.form.id)  
+            .then(res => {
+              console.log("invokeAll update")
+              $scope.formLoaded = true;
+              $scope.widget.form = res.data[0];
+              
+              (new APIUser()).invokeAll("formMessage", {action:"update", data:$scope.widget.form});
+              
+              $scope.metadataTools.prepaire();
+
+              (new APIUser()).invokeAll("formMessage", {action:"set-answer", data:$scope.answer});
+              
+              resolve(true)
+            
+            })
+          })
+        })        
       } else {
-        $scope.fanButton.state("none");
+        saveFormPromise = $q(( resolve, reject) => { resolve(true)})
       }
+      
+      if($scope.modified.answer){
+        saveAnswerPromise = $q(( resolve, reject) => {
+          $scope.modified.answer = false;
+          $scope.transport
+          .updateAnswer($scope.answer)
+          .then((res) => {
+            $scope.answer = $scope.answerUtils.normalize((angular.isArray(res.data))? res.data[0] : res.data);
+            (new APIUser()).invokeAll("formMessage", {action:"set-answer", data:$scope.answer});
+            resolve(true)
+          })  
+        })
+      } else {
+        saveAnswerPromise = $q(( resolve, reject ) => { resolve(true)})
+      }
+
+      $q.all([saveFormPromise, saveAnswerPromise])
+        .then(() => {
+          $scope.$evalAsync(() => {
+            $scope.fanButton.state("completed")
+            $scope.blockMessages = false;  
+          },100)
+        })    
     }
-    $scope.modified.answer = true;
   }
+
 
   let validateFormConfig = (data) => {
+    console.log("VALIDATE")
     $scope.fanButton.state("list");
     $scope.fanButton._state.tooltip = 
-        `
-          <div style="
-                background: #f9f9f7;
-                color: #ff9800;
-                padding: 1em;
-                margin: -1em;
-                font-size: larger;
-                border-radius: 0.5em;
-                box-shadow: 0 0.1em 0.5em 0 #607D8B;"
-          >  
-            You add new alternative into "
-            ${trunc(data.options.title)}
-            " question.
-            Click for save your changes.
-          </div>
-        `
-    // $scope.fanButton._state.tooltip =`You add new alternative into "${trunc(data.options.title)}" question.
-    //         Click for save your changes.`
+        `You add new alternative into "${truncString(data.options.title)}" question. Click for save your changes.`
     $scope.modified.form = true;        
   }          
 
-  $scope.fanButton.state("none")
-
-  let trunc = (value, length) => {
-    length = length || 20;
-    return ( value.toString().length <= length )
-      ? value.toString()
-      : ( (value.toString().length - length) > 10 )
-        ? value.toString().substring(0,length)+'...'
-        : value.toString()
-  }
-
-
+  $scope.fanButton.state("process")
 
 
 
   new APIProvider($scope)
     .config(() => {
-      console.log("config", $scope.widget)
-        updateWidget()  
+      updateWidget()  
     })
 
     .save(() => {
@@ -769,7 +405,6 @@ $scope.processing = false;
       pageWidgets()
         .filter((item) => item.type === "v2.form.question")
         .forEach((item) => {
-          console.log("save ", item)
           $scope.widget.form.config.questions[item.config.id] = item.config;
         })
 
@@ -777,17 +412,9 @@ $scope.processing = false;
 
       // TODO get all question config and add into $scope.form.config.questions array
       // This is for design mode
-
-      runDPS({
-              script: dps.updateForm,
-              state: {
-                form: $scope.widget.form
-              }
-      })
-      .then(() => {
-        $scope.processing = false;
-      })
-      
+      $scope.transport
+      .updateForm($scope.widget.form)
+      .then(() => {$scope.processing = false;})
     })
 
     .translate(updateWidget)
@@ -795,7 +422,6 @@ $scope.processing = false;
     .create((event, widget) => {
         
         if( widget.instanceName == $scope.widget.instanceName){
-          console.log("create", widget)
           let forms = pageWidgets().filter((item) => item.type === "v2.form");
           if(forms.length == 1) {
             if(!widget.form) createNewForm();
@@ -808,18 +434,22 @@ $scope.processing = false;
     })
 
     .appReconfig ((c) => {
-      console.log("APP reconfig")()
           // todo
           $scope.widget.form.metadata.app_name.value = config.name;
           $scope.widget.form.metadata.app_title.value = config.title;
           $scope.widget.form.metadata.app_url.value = $window.location.href,
           $scope.widget.form.metadata.app_icon.value = config.icon;
           $scope.widget.form.metadata.page_title.value = app.pageConfig().shortTitle;
-          prepaireMetadata($scope.widget.form.metadata);
+          $scope.metadataTools.prepaire();
 
     })
 
     .provide('questionMessage', (e, context) => {
+      
+      if ($scope.blockMessages) {
+        console.log("Block MESSAGE FROM QUESTION")
+        return;
+      }  
       console.log("HANDLE MESSAGE FROM QUESTION", context)
       
         if(context.action == 'init'){
@@ -833,33 +463,32 @@ $scope.processing = false;
         }
 
         if(context.action == "change-answer") {
-          $scope.fanButton.state("none")
           if(context.data && context.data.question && $scope.widget.form){
-            if(!$scope.answer){
-              
-              $scope.answer = $scope.answer || {
-                              form: $scope.widget.form.id,
-                              user: user,
-                              data: {}
-                            }
-
-              _.toPairs($scope.widget.form.config.questions)
-              .forEach(item => {
-                $scope.answer.data[item[0]] = {valid: false}
-              })
-            }
-            
-           $scope.answer.data[context.data.question] = context.data;
-           validateAnswers();
+            $scope.answer = $scope.answer || $scope.answerUtils.create()   
+            $scope.answer.data[context.data.question] = context.data;
+            $scope.answerUtils.validateAnswers();
           }   
         }
 
         if(context.action == "update-config") {
           if(context.data && context.data.id && $scope.widget.form){
-            $scope.fanButton.state("none");
-            $scope.widget.form.config.questions = $scope.widget.form.config.questions || {};
-            $scope.widget.form.config.questions[context.data.id] = context.data;
-            validateFormConfig(context.data)
+            
+            if($scope.widget.form.config.questions){
+              
+              let newValue = JSON.parse(JSON.stringify(angular.copy(context.data,{})));
+              delete newValue.callback;
+              
+              let oldValue = $scope.widget.form.config.questions[context.data.id];
+              
+              if( !objectsIsEqual(newValue,oldValue) ){
+                $scope.widget.form.config.questions[context.data.id] = newValue;
+                validateFormConfig(newValue)  
+              }
+            } else {
+              $scope.widget.form.config.questions = {};
+              $scope.widget.form.config.questions[context.data.id] = context.data;
+              validateFormConfig(context.data)  
+            }
           }   
         }
     })  
@@ -875,17 +504,11 @@ $scope.processing = false;
       
       $scope.processing = true;
       if($scope.widget.form){
-        runDPS({
-            script: dps.deleteForm,
-            state: {
-              form: $scope.widget.form.id
-            }
-        })
-        .then(() => {
-          $scope.processing = false;
-        })  
+        $scope.transport
+        .deleteForm($scope.widget.form.id)
+        .then(() => {$scope.processing = false})  
       }
-   });
+    });
 })
 
 

@@ -8,7 +8,6 @@ import "angular-oclazyload";
 import "tinycolor";
 
 
-console.log("START QUESTION CONTROLLER")
 
 let m = angular.module('app.widgets.v2.form.question', [
   'app.dps','ui.tree',"custom-react-directives","oc.lazyLoad"
@@ -272,6 +271,10 @@ $scope.defaultQuestionConfig = {
           $scope.answer.valid = (angular.isDefined($scope.answer.value[0]))
         },
 
+        applyAnswer: () => {
+
+        },
+
         updateConfig: () => {
           //  transform helped data structures into config
           $scope.config.options.nominals = {};
@@ -355,6 +358,13 @@ $scope.defaultQuestionConfig = {
                                   .map(item => item[0]);
           $scope.answer.valid = $scope.answer.value.length > 0;
           // $scope.answerCompleted = $scope.answer.value.length > 0;                         
+        },
+
+        applyAnswer: () => {
+          $scope.checkboxes = {};
+          for(let item of $scope.alternatives){
+           $scope.checkboxes[item.id] = $scope.answer.value.indexOf(item.id) >= 0; 
+          }
         },
 
         updateConfig: () => {
@@ -1038,6 +1048,14 @@ $scope.m = true;
     $scope.widget.config = $scope.config;
     (new APIUser()).invokeAll("questionMessage", {action:"update-config", data:$scope.widget.config})
   }
+
+
+  let applyAnswer = () => {
+    if(!$scope.config) return;
+    if( $scope.config.callback && $scope.config.callback.applyAnswer ) {
+        $scope.config.callback.applyAnswer();
+      }
+  }
   
   $scope.$watch("config", (oldConf, newConf) => {
     if(oldConf != newConf) updateConfig()
@@ -1073,7 +1091,7 @@ $scope.m = true;
         if ($scope.config.callback && $scope.config.callback.prepare) $scope.config.callback.prepare(); 
       }
     }
-    
+
   }
 
   $scope.$watch("widget.ID", ( oldValue, newValue) => {
@@ -1135,11 +1153,19 @@ $scope.m = true;
 
         if(context.action == "update" && $scope.widget.ID){
           let newConf = context.data.config.questions[$scope.widget.ID];
-          console.log("UPDATE AFTER LOAD", $scope.widget.ID, newConf)
-          
-          $scope.widget.config = $scope.widget.config || newConf; 
+          $scope.selectQtype(newConf.type.value)
+          angular.extend($scope.widget.config,angular.copy(newConf)); 
           updateWidget();
-        }   
+          return
+        }  
+
+        if(context.action == "set-answer" && $scope.widget.ID){
+          let newAnswer = context.data.data[$scope.widget.ID];
+          angular.extend($scope.answer, angular.copy(newAnswer)); 
+          applyAnswer()
+          return
+        }  
+
     })    
 
     .removal(() => {
@@ -1148,5 +1174,3 @@ $scope.m = true;
     });
 })
 
-
-console.log("COMPLETE QUESTION CONTROLLER")

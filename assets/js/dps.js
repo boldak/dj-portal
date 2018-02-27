@@ -31,9 +31,9 @@ dps.service('$dps',
 				},
 				
 				post : function (url, config, timeout, dpsHost){
-					console.log("dpsHost1", dpsHost)
+					// console.log("dpsHost1", dpsHost)
 					dpsHost = dpsHost || dpsURL; 
-					console.log("dpsHost2", dpsHost)
+					// console.log("dpsHost2", dpsHost)
 										
 					config = config || {};
 					config.client = {user: user, app: appName};
@@ -43,7 +43,7 @@ dps.service('$dps',
 				},
 
 				postWithFile : function (url, file, config,  timeout, dpsHost){
-					console.log("postWithFile", dpsHost, url,config, file)
+					// console.log("postWithFile", dpsHost, url,config, file)
 					dpsHost = dpsHost || dpsURL; 
 					// console.log("dpsHost2", dpsHost)
 										

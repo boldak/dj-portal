@@ -609,7 +609,7 @@ modals.factory('addNewPageInModal', function (app, $modal) {
   }
 })
 
-modals.factory('openPageConfig', function (app, $modal) {
+modals.factory('openPageConfig', function (app, $modal,$state, APIUser,config) {
   return page => {
     const thisPage = app.pageConfig().href === page.href;
     $modal.open({
@@ -621,6 +621,8 @@ modals.factory('openPageConfig', function (app, $modal) {
       }
     }).result
       .then(() => {
+        let user = new APIUser();
+        user.invokeAll("APP_RECONFIG_SLOT",config);
         app.markModified(true);
         if (thisPage) {
           $state.go('page', {href: page.href}, {reload: true});
