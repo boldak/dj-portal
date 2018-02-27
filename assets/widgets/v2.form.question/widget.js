@@ -1152,10 +1152,12 @@ $scope.m = true;
         } 
 
         if(context.action == "update" && $scope.widget.ID){
-          let newConf = context.data.config.questions[$scope.widget.ID];
-          $scope.selectQtype(newConf.type.value)
-          angular.extend($scope.widget.config,angular.copy(newConf)); 
-          updateWidget();
+          if(context.data.config.questions[$scope.widget.ID]){
+            let newConf = context.data.config.questions[$scope.widget.ID];
+            $scope.selectQtype(newConf.type.value)
+            angular.extend($scope.widget.config,angular.copy(newConf)); 
+            updateWidget();
+          }  
           return
         }  
 

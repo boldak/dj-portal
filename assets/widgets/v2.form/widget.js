@@ -217,7 +217,8 @@ let scopeFor = widgetInstanceName => instanceNameToScope.get(widgetInstanceName)
         
         $scope.formLoaded = true;
         $scope.widget.form = res.data[0];
-        $scope.widget.form.config.access.users = $scope.widget.form.config.access.users || []; 
+        $scope.widget.form.config.access.users = $scope.widget.form.config.access.users || [];
+        $scope.widget.form.config.questions = $scope.widget.form.config.questions || {};  
         
         (new APIUser()).invokeAll("formMessage", {action:"update", data:$scope.widget.form});
         

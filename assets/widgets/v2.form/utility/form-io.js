@@ -199,7 +199,7 @@ let FormIO = class {
 
   deleteForm(formId) {
 
-    runDPS({
+    return this.runDPS({
       script: dps.deleteForm,
       state: { form: formId }
     })
