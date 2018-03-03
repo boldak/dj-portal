@@ -122,10 +122,11 @@ input.radio {
 input.checkbox + label,
 input.radio + label {
   display: inline-block;
-  line-height: 1.7;
+  /*line-height: 1.7;*/
   position: relative;
-  padding: calc(1.8rem - 1.8rem * 0.54) 0 0.5rem calc(1.8rem + 1rem);
-  min-height: 1.8rem;
+  padding: 0.2em 0 0.2em 2.5em;
+  /*padding: calc(1.8rem - 1.8rem * 0.54) 0 0.5rem calc(1.8rem + 1rem);*/
+  /*min-height: 1.8rem;*/
 }
 input.checkbox + label:hover,
 input.radio + label:hover {
@@ -138,8 +139,10 @@ input.radio + label:before {
   height: 1.8rem;
   width: 1.8rem;
   position: absolute;
-  left: 0.2rem;
-  top: 0.7rem;
+  left: 0;
+  top: 0;
+  /*left: 0.2rem;
+  top: 0.7rem;*/
   background-repeat: no-repeat;
 }
 

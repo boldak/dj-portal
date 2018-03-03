@@ -1,4 +1,105 @@
 <div class="row" style="margin:1em 0 0">
+  <div class="column small-12 small-centered">
+
+    <table style="border:none; margin: 0 auto;">
+      <tr>
+        <td   style=" border:none;
+                      border-bottom: 1px solid #999;
+                      border-right: 1px solid #999;"
+        >
+          <span style="margin:0 8em;">
+          </span>
+        </td>
+        <th   style=" border:none;
+                      border-bottom: 1px solid #999;
+                      text-align: center;" 
+              ng-repeat="p in properties">
+          {{p.title}}
+        </th>  
+      </tr>
+      <tr ng-repeat="e in entities">
+        <th   style=" border:none;
+                      border-right: 1px solid #999;"
+        >
+          {{e.title}}
+        </th>
+        <td ng-repeat="p in properties" style="border:none;">
+          <div  ng-if="!config.state.options.disables[e.id][p.id]" 
+                style="width: 2em;
+                      height: 2em;
+                      border: 3px solid;
+                      text-align: center;
+                      font-size: large;
+                      padding: 0.25em;
+                      border-radius: 0.3em;
+                      cursor: pointer;
+                      color: {{colorUtility.influenceColor(config.getValue(e.id, p.id))}};
+                      background-color: {{colorUtility.influenceBg(config.getValue(e.id, p.id))}};
+                      border-color: {{colorUtility.influenceBorder(config.getValue(e.id, p.id))}};
+                            "
+                dropdown-toggle = "{{'#'+widget.instanceName+'_v_'+e.id+'_'+p.id}}"            
+          >
+            {{ config.getValue(e.id, p.id) }}
+          </div>
+
+          <ul id="{{widget.instanceName+'_v_'+e.id+'_'+p.id}}" 
+              class="f-dropdown" 
+              style="width: max-content;"
+          >
+            <li ng-repeat="v in config.state.options.ordinals.values">
+              <a 
+                ng-click="config.setValue(e.id, p.id, v.value)" 
+                style=" font-size: large;
+                        background:{{colorUtility.influenceBg(v.value)}};
+                        color:{{colorUtility.influenceColor(v.value)}};
+                        border-bottom: 1px solid #999;"
+              >
+                {{v.value}} : {{v.title}}
+              </a>
+            </li>
+          </ul>  
+          <div  ng-if="config.state.options.disables[e.id][p.id]" 
+                style=" width: 1.8rem;
+                        height: 1.8rem;"
+          >
+            &nbsp;
+          </div>  
+        </td>  
+      </tr>  
+    </table>  
+
+  </div>  
+</div>
+
+    <!-- <pre>
+      {{answer | json}}
+    </pre>  
+
+ -->
+
+
+
+
+
+
+
+
+
+
+
+<!-- 
+
+
+
+
+
+
+
+
+
+
+
+<div class="row" style="margin:1em 0 0">
   <div class="column small-11 small-centered">
 
     <table style="width:100%">
@@ -88,5 +189,5 @@
 
   </div>  
 </div> 
-
+ -->
 <!-- <pre>{{answer | json}}</pre> -->

@@ -3,8 +3,11 @@
 <div class="row" style="margin:1em 0 0">
   <div class="column small-10 small-centered">
     
-      <div class="row" style="
-    border-bottom: 1px solid #e7e7e7;" ng-repeat="a in alternatives">
+      <div  class="row" 
+            style=" border-bottom: 1px solid #e7e7e7;
+                    margin:0.5em 0 0 0;" 
+            ng-repeat="a in alternatives"
+      >
         <div class="column small-12">
           <div class="column small-9">
             <input 
@@ -13,12 +16,15 @@
               type="checkbox" 
               name="{{'check_'+widget.ID}}"
               ng-model="checkboxes[a.id]"
-              ng-change="config.callback.setValue(a.id)"
+              ng-change="config.setValue(a.id)"
               value="{{a.id}}"
              > 
             <label for="{{a.id}}" style="font-size: large;">{{a.title}}</label>
           </div>
-          <div ng-if="config.options.showUserInfo && a.user" class="column small-3" style="margin-top: 1em;">
+          <div  ng-if="config.state.options.showUserInfo && a.user" 
+                class="column small-3" 
+                style="margin-top: 0;"
+          >
             <i>
               <span   style=" 
                   background-image: url({{a.user.photo}});
@@ -40,10 +46,10 @@
         </div>      
       </div>
           
-    <div class="row" style="margin-top: 1em;" ng-if="config.options.addEnabled">
+    <div class="row" style="margin-top: 1em;" ng-if="config.state.options.addEnabled">
       <div class="column small-11 small-centered" style="padding: 0 0.5em;">
         <div class="column small-7 left" style="padding:0 0;">
-          <input  ng-model="textFields.alternative" type="text" placeholder="Text">
+          <input  ng-model="textFields.alternative" type="text" placeholder="Your alternative...">
         </div>
         <div class="column small-3 left">  
           <button
@@ -59,7 +65,7 @@
                     padding: 0.2em 0.5em 0.2em 0.5em;"
           >
             <i class=" fa fa-plus-square"/> 
-              <widget-translate>Add new item</widget-translate>
+              <widget-translate>Add</widget-translate>
           </button>
          </div> 
       </div>  

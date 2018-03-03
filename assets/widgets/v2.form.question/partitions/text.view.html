@@ -1,5 +1,16 @@
 <div class="row" style="margin:1em 0 0">
   <div class="column small-10 small-centered">
-    <textarea placeholder="small-10.columns" class="text" rows=5></textarea>
+    <textarea 
+    	placeholder="{{config.state.options.placeholder}}" 
+    	ng-model="answer.value[0]"
+      	value="answer.value[0]"
+    	class="text" 
+    	rows="{{config.state.options.rows}}"
+    >
+   </textarea>
   </div>
 </div> 
+
+<!-- <pre>
+	{{answer | json}}
+</pre> -->

@@ -23,12 +23,12 @@ let AnswerUtils  = class {
   	let a = _.toPairs(answer.data)
   			 .map(item => item[0])  	
   	
-  	console.log("A", a)
+  	// console.log("A", a)
   	
   	let r = _.toPairs(this.scope.widget.form.config.questions)
   			 .map(item => item[0])	
     
-    console.log("R", r)
+    // console.log("R", r)
 
     a.forEach((item) => {
     	if(r.indexOf(item) < 0){
@@ -40,7 +40,7 @@ let AnswerUtils  = class {
     	answer.data[item] = answer.data[item] || { valid: false }  
     })  
 
-    console.log("NORMALIZED",answer)
+    // console.log("NORMALIZED",answer)
     return answer;
 
   }
@@ -56,9 +56,10 @@ let AnswerUtils  = class {
       if ((a.length - nvc) > 0) {
         this.scope.fanButton.state("warning");
         this.scope.fanButton._state.tooltip =
-          `You can save answers. 
-	           But ${nvc} from ${a.length} is not completed. 
-	           Click for save if need.`
+          `You can save the response. 
+           But ${nvc} out of ${a.length} responses are not completed.
+           Click to save changes.`
+          
       } else {
         this.scope.fanButton.state("none");
       }

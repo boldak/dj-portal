@@ -1,0 +1,35 @@
+import 	angular 		from 	'angular';
+import 	ManyToMany 		from 	"./many-to-many.js"
+import 	OneToMany 		from 	"./one-to-many.js"
+import 	Scale 			from 	"./scale.js"
+import 	Dropdown		from 	"./dropdown.js"
+import 	MScales 		from 	"./mscales.js"
+import 	Pairs 			from 	"./pairs.js"
+import 	Influences 		from 	"./influences.js"
+import 	Rate			from 	"./rate.js"
+import 	Range			from 	"./range.js"
+import 	Text			from 	"./text.js"
+import 	DateTime		from 	"./datetime.js"
+
+let factory = {
+	
+	check: 		(scope,previus) => new ManyToMany 	(scope, previus),
+	radio: 		(scope,previus) => new OneToMany 	(scope, previus),
+	scale: 		(scope,previus) => new Scale 		(scope, previus),
+	dropdown: 	(scope,previus) => new Dropdown 	(scope, previus),
+	scales: 	(scope,previus) => new MScales 		(scope, previus),
+	pairs: 		(scope,previus) => new Pairs 		(scope, previus),
+	influences: (scope,previus) => new Influences 	(scope, previus),
+	rate: 		(scope,previus) => new Rate 		(scope, previus),
+	range: 		(scope,previus) => new Range 		(scope, previus),
+	text: 		(scope,previus) => new Text 		(scope, previus),
+	datetime: 	(scope,previus) => new DateTime 	(scope, previus)
+
+}
+
+
+
+angular
+.module("v2.question.factory",[])
+.factory("questionFactory", [ () => factory])
+

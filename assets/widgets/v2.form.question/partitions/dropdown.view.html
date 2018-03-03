@@ -4,15 +4,15 @@
     <a 
         class="button split small-5"  
         style="   background-color: #5f8ab9;
-                   color: #e7e7e7;
+                  color: #e7e7e7;
                   font-size: large;"
     >
-      {{(answer.value[0])? config.options.nominals[answer.value[0]].title : 'Select...'}}
+      {{(answer.value[0])? config.state.options.nominals[answer.value[0]].title : 'Select...'}}
       <span dropdown-toggle="{{'#'+widget.ID+'_dd'}}"/>
     </a>
     <ul id="{{widget.ID+'_dd'}}" class="f-dropdown">
       <li ng-repeat = "a in alternatives">
-        <a ng-click="config.callback.setValue(a)">
+        <a ng-click="config.setValue(a)">
           {{a.title}}
         </a>
       </li>
@@ -20,4 +20,3 @@
   </div>
 </div>
 
-<pre>{{answer | json }}</pre>    

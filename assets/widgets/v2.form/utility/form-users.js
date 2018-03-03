@@ -2,6 +2,9 @@ import angular from 'angular';
 
 let emailRegex = /^([A-Z|a-z|0-9](\.|_){0,1})+[A-Z|a-z|0-9]\@([A-Z|a-z|0-9])+((\.){0,1}[A-Z|a-z|0-9]){2}\.[a-z]{2,3}$/;
 
+let apikey = () => {
+  return Math.random().toString(36).substring(2) + Math.random().toString(36).substring(2)
+};
 
 let UserList = class {
 
@@ -79,10 +82,16 @@ let UserList = class {
   addInvitedUser() {
     this.scope.widget.form.config.access.users = this.scope.widget.form.config.access.users || [];
     if (angular.isString(this.invitedUserAdd)) {
-      this.scope.widget.form.config.access.users.push({ email: this.invitedUserAdd })
+    
+        this.scope.widget.form.config.access.users.push({ 
+          email: this.invitedUserAdd,
+          apikey: apikey() 
+      })
+    
     } else {
       this.scope.widget.form.config.access.users.push(this.invitedUserAdd)
     }
+    console.log(this.scope.widget.form.config.access.users)
     this.invitedUserAdd = undefined;
     this.invitedUser = undefined;
     this.invitedUserIsValid = false;
@@ -94,6 +103,49 @@ let UserList = class {
       this.scope.widget.form.config.access.users.splice(index, 1)
     }
   }
+
+  editInvitedUser(user) {
+    this.scope.dialog({
+        title:"Edit user info",
+        fields:{
+          email:{
+            title:"E-mail", 
+            type:'text', 
+            value:user.email,
+            editable:false, 
+            required:false
+          },
+
+          apikey:{
+            title:"Apikey", 
+            type:'text', 
+            value:user.apikey,
+            editable:false, 
+            required:false
+          },
+
+          avatar:{
+            title:"Avatar",
+            type:"text",
+            value: user.photo,
+            editable:true, 
+            required:false
+          },
+
+          name:{
+            title:"Name",
+            type:"text",
+            value: user.name,
+            editable:true, 
+            required:false
+          }
+        }
+    })
+    .then(form => {
+      user.name = form.fields.name.value;
+      user.photo = form.fields.avatar.value;
+    })
+  }   
 
 }
 

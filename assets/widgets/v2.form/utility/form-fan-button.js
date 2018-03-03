@@ -11,19 +11,19 @@ let FanButton = class {
 		        identity:"process",
 		        color:"#5f8ab9",
 		        class:"fa fa-spinner fa-pulse",
-		        tooltip:`Answer's save processed...`
+		        tooltip:`Saving changes...`
 		      },
 
 		      completed:{
 		        identity:"completed",
 		        color:"#8bc34a",
 		        class:"fa fa-check",
-		        tooltip:`All data saves!`
+		        tooltip:`Changes saved successfully!`
 		      },
 		      
 		      disabled:{
 		        identity:"disabled",
-		        color:"#e7e7e7",
+		        color:"#f44336",
 		        class:"fa fa-times"
 		      },
 
@@ -51,7 +51,7 @@ let FanButton = class {
 		        identity:"success",
 		        color:"#ff9800",
 		        class:"fa fa-check",
-		        tooltip:`Forms is completed. Click for save.`
+		        tooltip:`The form is completed. Save changes.`
 		      }  
 		}
 		this._state = undefined;

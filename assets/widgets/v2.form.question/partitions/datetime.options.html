@@ -1,0 +1,34 @@
+<hr/>
+<h4>Format:
+		<span 	class="button"
+				style="padding:0.5em;"
+			   	dropdown-toggle="{{'#' + widget.ID + '_dfmt'}}"
+        >
+			{{(config.state.options.format)}}
+		</span>
+		<ul id="{{widget.ID + '_dfmt'}}" 
+	        class="f-dropdown"
+	    >
+	        <li class="large" 
+	        	ng-click="config.state.options.format = 'date'"
+	        	style="padding:0.5em 1em;"
+	        >
+	        		Date
+	        </li>	
+	        
+	        <li class="large" 
+	        	ng-click="config.state.options.format = 'month'"
+	        	style="padding:0.5em 1em;"
+	        >
+	        		Month
+	        </li>
+	        
+	        <li class="large" 
+	        	ng-click="config.state.options.format = 'time'"
+	        	style="padding:0.5em 1em;"
+	        >
+	        		Time
+	        </li>
+
+	    </ul>
+</h4>	       	

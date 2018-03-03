@@ -1,0 +1,337 @@
+
+
+
+<hr/>
+<div class="row">
+  <div class="column small-12">
+  	<div class="column small-6">
+	    <h4>Entities
+	    <span class="button tiny"
+	                style="margin:0 0.5em; padding:0.5em;"
+	                ng-click="config.swap()"
+	                ng-disabled="config.state.options.useOneList"
+	    >
+	       Swap 
+	    </span>
+	    </h4>
+	    <div class="row">
+	    	<div class="column small-12">
+	    	    <label  class="left" 
+			              
+			      > 
+			        Use only entities
+			        <div class="switch tiny radius right"  style="margin:0 0 0 0.5em;">
+			          <input  type="checkbox"  
+			                  id="{{widget.instanceName+'_uoe'}}"
+			                  ng-model="config.state.options.useOneList"
+			                  ng-change="config.setMode(config.state.options.useOneList)">
+			          <label  for="{{widget.instanceName+'_uoe'}}"></label>
+			        </div>
+			      </label>
+			</div>
+	    </div>	  
+	    <div class="row">
+	      <div ui-tree="treeOptions" class="column small-11 small-centered">
+	        <table ui-tree-nodes ng-model="entities" style="border: none;">
+	          <tr ui-tree-node ng-repeat="i in entities" ng-click="cselect(i.id)" style="display:table-row;">
+	            <td style=" border: none; 
+	                          font-size: initial;
+	                          text-align: center;">
+	              <i ui-tree-handle class="fa fa-ellipsis-v right"></i>
+	            </td>
+	            <td style="width: 100%;border:none">
+	              <input type="text" placeholder="Your entity..." ng-model="i.title" ng-disabled="_click != i.id" focused="_click != i.id" style="margin: 0.12em 0;">
+	            </td>
+	            <td style="border: none; font-size: x-large; text-align: center;">
+	              <a class="fa fa-times" ng-click="delete(entities,$index)" style="   color: #aaa;
+	                          font-size:1.2em;"></a>
+	            </td>
+	          </tr>
+	          <tr>
+	            <td colspan="2" style="border: none;">
+	              <input  ng-model="textFields.entity" 
+	                      type="text " 
+	                      placeholder="Your entity... "
+	                      style="width: 100%; padding: 0.3em;"
+	              >
+	            </td>
+	            <td style="border: none;  ">
+	              <button
+	                class="large left "
+	                ng-click="addPMAlternative(entities,'entity')"
+	                ng-disabled="!textFields.entity"
+	                style=" background: #5f8ab9; margin: 0; border-radius: 6px; padding: 0.12em 0.25em; "
+	              >
+	                <i class=" fa fa-plus-square "/> 
+	                
+	              </button>
+	            </td>  
+	          </tr> 
+	        </table>  
+	      </div>  
+	    </div>  
+  	</div>
+  	<div class="column small-6" ng-if="!config.state.options.useOneList">
+	    <h4>Properties</h4>
+	    <div class="row">
+	      <div ui-tree="treeOptions" class="column small-11 small-centered">
+	        <table ui-tree-nodes ng-model="properties" style="border: none;">
+	          <tr ui-tree-node ng-repeat="i in properties" ng-click="cselect(i.id)" style="display:table-row;">
+	            <td style=" border: none; 
+	                          font-size: initial;
+	                          text-align: center;">
+	              <i ui-tree-handle class="fa fa-ellipsis-v right"></i>
+	            </td>
+	            <td style="width: 100%;border:none">
+	              <input type="text" placeholder="Your property..." ng-model="i.title" ng-disabled="_click != i.id" focused="_click != i.id" style="margin: 0.12em 0;">
+	            </td>
+	            <td style="border: none; font-size: x-large; text-align: center;">
+	              <a class="fa fa-times" ng-click="delete(properties,$index)" style="   color: #aaa;
+	                          font-size:1.2em;"></a>
+	            </td>
+	          </tr>
+	          <tr>
+	            <td colspan="2" style="border: none;">
+	              <input  ng-model="textFields.alternative" 
+	                      type="text " 
+	                      placeholder="Your property... "
+	                      style="width: 100%; padding: 0.3em;"
+	              >
+	            </td>
+	            <td style="border: none;  ">
+	              <button
+	                class="large left "
+	                ng-click="addPMAlternative(properties,'alternative')"
+	                ng-disabled="!textFields.alternative"
+	                style=" background: #5f8ab9; margin: 0; border-radius: 6px; padding: 0.12em 0.25em; "
+	              >
+	                <i class=" fa fa-plus-square "/> 
+	                
+	              </button>
+	            </td>  
+	          </tr> 
+	        </table>  
+	      </div>  
+	    </div>  
+  	</div>
+  </div>  
+
+</div>
+
+<hr/>
+<div>
+	<h4 class="left" style="margin:0 0.5em 0 0;">Disables</h4>
+	<span class="button tiny left"
+                style="margin:0.5em; padding:0.5em;"
+                ng-click="config.setAllDisabled()"
+    >
+        All Disabled 
+    </span>
+    <span class="button tiny left"
+                style="margin:0.5em; padding:0.5em;"
+                ng-click="config.setAllEnabled()"
+    >
+        All Enabled 
+    </span>
+    <span class="button tiny left"
+                style="margin:0.5em; padding:0.5em;"
+                ng-click="config.setReverseDisabled()"
+    >
+        Reverse 
+    </span>
+    <span class="button tiny left"
+                style="margin:0.5em; padding:0.5em;"
+                ng-click="config.setDiagonalDisabled()"
+    >
+        Diagonal 
+    </span>
+</div>	
+<div class="row">
+	<div class="column small-12">
+		<table style="border:none; margin: 0 auto;">
+	      <tr>
+	        <td   style=" border:none;
+	                      border-bottom: 1px solid #999;
+	                      border-right: 1px solid #999;"
+	        >
+	          <span style="margin:0 8em;">
+	          </span>
+	        </td>
+	        <th   style=" border:none;
+	                      border-bottom: 1px solid #999;
+	                      text-align: center;" 
+	              ng-repeat="p in properties">
+	          {{p.title}}
+	        </th>  
+	      </tr>
+	      <tr ng-repeat="e in entities">
+	        <th   style=" border:none;
+	                      border-right: 1px solid #999;"
+	        >
+	          {{e.title}}
+	        </th>
+	        <td ng-repeat="p in properties" style="border:none;">
+	          <div ng-click="config.setDisable(e.id, p.id)"
+	          		style="    width: 2em;
+							    height: 2em;
+							    margin: 0.25em auto;
+							    border: 3px solid #9E9E9E;
+							    display: table-cell;
+							    text-align: center;
+							    cursor:pointer;"
+	          >
+	          	<i 	class="fa fa-times" 	
+	          		ng-if="config.state.options.disables[e.id][p.id]"
+	          		style=" font-size: x-large;
+    						color: #9E9E9E;"
+	          	/>
+	          </div>  
+	        </td>  
+	      </tr>  
+	    </table>  
+
+	</div>
+</div>		
+
+
+<hr/>
+<div class="row">
+  <div class="column small-12">
+    <h4>Scale</h4>
+    <div class="column small-3">
+    
+      <label class="large">
+        Min
+      </label> 
+      <input  type="number" 
+          ng-model="config.state.options.ordinals.range.min"
+          max={{config.state.options.ordinals.range.max}}
+          ng-change="config.generateValues()"
+      >
+  </div>
+  <div class="column small-3">
+        
+      <label class="large">
+        Max
+      </label> 
+      <input  type="number" 
+          ng-model="config.state.options.ordinals.range.max"
+          min={{config.state.options.ordinals.range.min}}
+          ng-change="config.generateValues()"
+      >
+    </div>
+    
+    <div class="column small-3">
+        
+      <label class="large">
+        Opacity
+      </label>
+      <input  type="range" 
+          name="range" 
+          ng-model="config.state.options.colors.opacity" 
+          ng-change="setOpacity(config.state.options.colors.opacity)" 
+          min=0  
+          max=100
+      >
+        <span   class="label right" 
+            ng-if="config.state.options.colors.opacity" 
+            style="background: #5f8ab9; color:#e7e7e7">
+          {{config.state.options.colors.opacity}}%
+        </span> 
+  </div>
+    
+    <div class="column small-3">
+      <label class="large">
+        Pallete
+        <span class="button tiny"
+                style="margin:0 0.5em; padding:0.5em;"
+                ng-click="reversePallete()"
+            >
+              Reverse
+        </span>
+        <!-- <span class="button tiny"
+                style="margin:0 0.5em; padding:0.5em;"
+                ng-click="colorUtility.darkPallete()"
+            >
+              Dark
+        </span>
+        <span class="button tiny"
+                style="margin:0 0.5em; padding:0.5em;"
+                ng-click="colorUtility.lightPallete()"
+            >
+              Light
+        </span> -->
+
+      </label>
+       <div class="column small-12" style="margin: 0.5em 0 0 0;">
+            
+                     
+            <a  class="small-12 left"  
+                style="font-size: large;"
+                dropdown-toggle="{{'#' + widget.ID + '_clp'}}"
+            >
+              <div class="columns small-12">
+                <div  
+                  ng-if="config.state.options.colors.pallete"
+                  class="left column small-1"
+                  ng-repeat="color in  config.state.options.colors.pallete"
+                  style="
+                      background-color: {{color}};
+                      /*width: 1em;*/
+                      display: inline-block;
+                      margin: 0px;
+                      padding: 0px 0.2rem;
+                      font-size: large;
+                      border: 1px solid rgb(175, 175, 175);"
+                >
+                  &nbsp;
+                </div>
+              </div>  
+              <div ng-if="!config.state.options.colors.pallete">
+                Select...
+              </div>    
+              <!-- <span dropdown-toggle="{{'#' + widget.ID + '_clp'}}"/> -->
+            </a>
+
+            <palette-peacker
+              pid = "'{{widget.ID + '_clp'}}'"
+              dest="config.state.options.colors.pallete" 
+              setter="setPallete" 
+              watch-depth="reference">
+            </palette-peacker>
+          </div>
+    </div>  
+  </div>
+</div>
+<hr/>
+<h4>Scale Values</h4>
+<div class="row">
+  <div class="column small-5 small-centered">
+    <table style="border:none;">
+      <tr ng-repeat="v in config.state.options.ordinals.values">
+        <td style="
+              border:none;
+              color: {{colorUtility.getColor(
+                    config.state.options.colors.pallete,
+                    config.state.options.colors.opacity,
+                    config.state.options.ordinals.range,
+                    v.value)}}"
+        >
+          <i style="font-size:xx-large; font-weight:bold;" class="fa fa-pause fa-rotate-90"></i>
+        </td>
+        <td style="border:none;">
+          <label class="large">
+            {{v.value}}
+          </label>  
+        </td>
+        
+        <td style="border:none;">
+          <input  type="text" 
+              ng-model="v.title"
+              style="margin:0;"
+          >
+        </td>
+      </tr> 
+    </table>  
+  </div>
+</div>      

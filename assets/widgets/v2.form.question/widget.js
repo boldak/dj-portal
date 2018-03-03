@@ -6,11 +6,16 @@ import "custom-react-directives";
 import "d3";
 import "angular-oclazyload";
 import "tinycolor";
+import "./js/config/index.js"
+import "./js/utility/index.js"
+
 
 
 
 let m = angular.module('app.widgets.v2.form.question', [
-  'app.dps','ui.tree',"custom-react-directives","oc.lazyLoad"
+  'app.dps','ui.tree',"custom-react-directives","oc.lazyLoad", 
+  "v2.question.factory",
+  "v2.question.utility"
   // ,
   // 'ngSanitize'
 ])
@@ -39,85 +44,73 @@ m.controller('FormQuestionController', function(
   $ocLazyLoad,
   user,
   globalConfig,
-  APIUser
+  APIUser,
+  questionFactory,
+  listEditor,
+  colorUtility
   
 ) {
+
 
 // Load css
 $ocLazyLoad.load({files:["/widgets/v2.form.question/djform.css"]}); 
 
-// Call it when app config was modified
-$scope.markModified = () => {
-  app.markModified();
-}  
 
-// for template urls
-const prefix = "./widgets/v2.form.question/partitions/";
+angular.extend($scope, {
+  markModified : app.markModified
+})
 
-
-// initial state for helped data structures
-$scope.alternatives = [];
-$scope.entities = [];
-$scope.properties = [];
-$scope.factors = [];
-$scope.effects = [];
+let listEditorTools = listEditor($scope)
 
 
-// default configure implementation
-let defaultConfigure = conf => {
-  conf.options.title = $scope.config.options.title;
-  conf.options.note = $scope.config.options.note;
-  conf.options.required = $scope.config.options.required;
-  return conf;
-}
+angular.extend($scope,{
 
-// list editor tools
-$scope._click = null;
+    colorUtility: colorUtility($scope),
 
-$scope.delete = (object,index) => {
-    object.splice(index,1);
-    // updateConfig()
-    $scope.markModified();
-}
-$scope.add = (object) => {
-    object.push({id:randomID(), title:"New item",$djItemType:"embeded"});
-    // updateConfig()
-    $scope.markModified();
-}
+    treeOptions: listEditorTools.treeOptions(),
 
-$scope.cselect = (value) => {
-    $scope._click = value
-}
+    _click: null,
+    delete:(object,index) => { listEditorTools.delete(object,index) },
+    add: (object) => { listEditorTools.add(object) },
+    cselect: (value) => { listEditorTools.cselect(value) },
+   
+    alternatives : [],
+    
+    entities : [],
+    
+    properties : [],
+    
+    factors : [],
+    
+    effects : [],
+    
+    textFields : {
+      alternative: "",
+      entity:"",
+      object: "",
+      property:"",
+      effect:"",
+      factor:""
+    },
+
+    hidden: true,
+
+    setOpacity: (value) => { $scope.config.state.options.colors.opacity = value },
+
+    setPallete: (pallete) => { $scope.config.state.options.colors.pallete = pallete },
+
+    reversePallete:() => {
+      $scope.config.state.options.colors.pallete = $scope.config.state.options.colors.pallete.reverse()
+    }  
+
+})
 
 
-// drag&drop options
 
-let dest = null;
-let startDest = null;
-$scope.treeOptions = {
-  dropped:(event) => {
-  //   console.log("DROP", event.source.index+" -> "+event.dest.index)
-  //   // event.source.nodeScope.$$childHead.drag = false;
-  //   // selectHolder(null);
-    $scope.markModified()
-  },
-  dragStart:(event) => {
-        dest = event.dest.nodesScope;
-        startDest = event.dest.nodesScope;
-      // console.log("DRAGSTART", event)
-      // event.source.nodeScope.$$childHead.drag = true;
-  },
-  accept: (sourceNodeScope, destNodesScope, destIndex) => {
-    if(dest != destNodesScope){
-        dest = destNodesScope;
-    }
-    return startDest == dest;
-  }
-}
 
 
   
-  
+ let prefix = "" 
 // default question configuration
 $scope.defaultQuestionConfig = {
   text: {
@@ -823,30 +816,22 @@ $scope.defaultQuestionConfig = {
   }
 }
 
-$scope.questionTypes = _.toPairs($scope.defaultQuestionConfig).map(item => item[0]);
+// $scope.questionTypes = _.toPairs($scope.defaultQuestionConfig).map(item => item[0]);
+
+$scope.questionTypes = _.toPairs(questionFactory).map(item => item[0]);
+
 
 
 $scope.selectQtype = (type) => {
   
-  if($scope.config && $scope.config.type.value == type) return;
+  if($scope.config && $scope.config.type && $scope.config.type.value == type) return;
   
   $scope.qtype = type;
-    
-  $scope.config = 
-  ($scope.defaultQuestionConfig[type].callback && $scope.defaultQuestionConfig[type].callback.configure)
-    ? $scope.defaultQuestionConfig[type].callback.configure()
-    : $scope.defaultQuestionConfig[type]; 
-    
-    if ($scope.config.callback && $scope.config.callback.prepare) $scope.config.callback.prepare(); 
+  $scope.config = questionFactory[type]($scope, $scope.config)
+  $scope.config.prepare();
 }
 
-$scope.textFields = {
-  alternative: "",
-  object: "",
-  property:"",
-  effect:"",
-  factor:""
-}  
+
 
 $scope.submit = () => {
 // TODO save answer on server
@@ -854,30 +839,26 @@ $scope.submit = () => {
   $scope.answerCompleted = false;
 }
 
-$scope.addPMAlternative = (collection) => {
- 
+$scope.addPMAlternative = (collection, field) => {
+  console.log("ADD", field)
+  
   collection.push({
       id:randomID(), 
-      title: $scope.textFields.alternative,
+      title: $scope.textFields[(field || 'alternative')],
       user:user, 
       $djItemType:"embeded"
   })
   
-  $scope.textFields.alternative = undefined;
+  $scope.textFields[(field || 'alternative')] = undefined;
+
+  if(!globalConfig.designMode){ 
+    (new APIUser()).invokeAll("questionMessage", {action:"add-alternative", data:$scope.widget.config})
+  }
 }
 
 
 
-$scope.setOpacity = (value) => {$scope.influenceOpacity = value}
 
-
-$scope.setPallete = (pallete) => {
-    $scope.influencePallete = pallete;
-}
-
-$scope.reversePallete = () => {
-    $scope.influencePallete = $scope.influencePallete.reverse();
-}
 
 
 $scope.getColor = (p,o,r,value,invert) => {
@@ -1027,9 +1008,6 @@ $scope.scaleStyle = (value) => {
     }
 }
 
-// $scope.labelStyle = (i,j) => {
-//     return {color: $scope.getInvColor($scope.influenceData[i][j]), textAlign:"center"}
-// }
 
 
 $scope.m = true;
@@ -1041,32 +1019,21 @@ $scope.m = true;
   let updateConfig = () => {
 
     if(!$scope.config) return;
-    if( $scope.config.callback && $scope.config.callback.updateConfig ) {
-        $scope.config.callback.updateConfig();
-      }
-    $scope.config.id = $scope.widget.ID;    
-    $scope.widget.config = $scope.config;
-    (new APIUser()).invokeAll("questionMessage", {action:"update-config", data:$scope.widget.config})
+      $scope.config.updateConfig();
+      $scope.config.state.id = $scope.widget.ID;    
+      $scope.widget.config = $scope.config.state;
+      (new APIUser()).invokeAll("questionMessage", {action:"update-config", data:$scope.widget.config})
+  
   }
 
 
   let applyAnswer = () => {
     if(!$scope.config) return;
-    if( $scope.config.callback && $scope.config.callback.applyAnswer ) {
-        $scope.config.callback.applyAnswer();
-      }
+    $scope.config.applyAnswer()
   }
   
-  $scope.$watch("config", (oldConf, newConf) => {
-    if(oldConf != newConf) updateConfig()
-  },true)
-
-  // $scope.$watchCollection("alternatives", updateConfig);
-  // $scope.$watchCollection("entities", updateConfig);
-  // $scope.$watchCollection("properties", updateConfig);
-  // $scope.$watchCollection("factors", updateConfig);
-  // $scope.$watchCollection("effects", updateConfig);
-
+  $scope.$watch("widget.ID", updateWidget)
+  $scope.$watch("config.state", updateConfig,true);
   $scope.$watch("alternatives", updateConfig, true);
   $scope.$watch("entities", updateConfig, true);
   $scope.$watch("properties", updateConfig, true);
@@ -1074,6 +1041,7 @@ $scope.m = true;
   $scope.$watch("effects", updateConfig, true);
 
   $scope.$watch("answer", (oldV, newV) => {
+    if($scope.config.validateAnswer) $scope.config.validateAnswer();
     (new APIUser()).invokeAll("questionMessage", {action:"change-answer", data:$scope.answer})
   }, true);
 
@@ -1084,48 +1052,38 @@ $scope.m = true;
     $scope.disabled = $scope.widget.disabled = angular.isUndefined($scope.widget.ID);
     
     if(!$scope.disabled){
-      if($scope.widget && $scope.widget.config){
-        $scope.config = $scope.widget.config;
-        if($scope.config.type) $scope.qtype = $scope.config.type.value;
-        $scope.config.callback = $scope.defaultQuestionConfig[$scope.config.type.value].callback;
-        if ($scope.config.callback && $scope.config.callback.prepare) $scope.config.callback.prepare(); 
+      if($scope.widget && $scope.widget.config && $scope){
+        
+        $scope.config = $scope.config 
+          || questionFactory[$scope.widget.config.type.value]($scope, $scope.config); 
+        
+        angular.extend($scope.config.state, $scope.widget.config);
+  
+        if($scope.config.state.type) $scope.qtype = $scope.config.state.type.value;
+
+        $scope.config.prepare();
       }
     }
 
   }
 
-  $scope.$watch("widget.ID", ( oldValue, newValue) => {
-    if(oldValue != newValue) updateWidget();
-  })
-
+  
   
   new APIProvider($scope)
     .config(updateWidget)
 
-    .beforePresentationMode(() => {
-      if( $scope.config.callback && $scope.config.callback.updateConfig ) {
-        $scope.config.callback.updateConfig();
-      }  
-        $scope.widget.config = $scope.config;
-    })
+    .beforePresentationMode(updateConfig)
 
-    .beforeDesignMode(() => {
-      if( $scope.config ) {
-        $scope.qtype = $scope.config.type.value;
-        if( $scope.config.callback && $scope.config.callback.updateConfig ) {
-          $scope.config.callback.updateConfig();
-        } 
-      }  
-    })
+    .beforeDesignMode(updateConfig)
 
-   .save(updateConfig)
+    .save(updateConfig)
 
-   .create((event, widget) => {
+    .create((event, widget) => {
         console.log("Question handle create widget", widget)
 
     })
 
-    // .translate(updateWidget)
+    .translate(updateWidget)
     
     .provide('formMessage', (e, context) => {
         console.log("HANDLE MESSAGE FROM FORM", context)
@@ -1138,15 +1096,6 @@ $scope.m = true;
         
         if(context.action == "configure"){
             
-            pageSubscriptions().addListener(
-                {
-                    emitter: $scope.widget.instanceName,
-                    receiver: context.data.widget.instanceName,
-                    signal: "questionMessage",
-                    slot: "questionMessage"
-                }
-            );
-
             (new APIUser()).invokeAll("questionMessage",{action:"init", data:$scope})
             return
         } 
@@ -1155,7 +1104,7 @@ $scope.m = true;
           if(context.data.config.questions[$scope.widget.ID]){
             let newConf = context.data.config.questions[$scope.widget.ID];
             $scope.selectQtype(newConf.type.value)
-            angular.extend($scope.widget.config,angular.copy(newConf)); 
+            angular.extend($scope.widget.config, newConf); 
             updateWidget();
           }  
           return
@@ -1166,7 +1115,17 @@ $scope.m = true;
           angular.extend($scope.answer, angular.copy(newAnswer)); 
           applyAnswer()
           return
-        }  
+        } 
+
+        if(context.action == "show"){
+          $scope.hidden = false;
+          return
+        }
+
+        if(context.action == "hide"){
+          $scope.hidden = true;
+          return
+        }   
 
     })    
 

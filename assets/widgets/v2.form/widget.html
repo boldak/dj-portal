@@ -13,12 +13,17 @@
 
 </style>
 <div class="row" ng-controller="FormController" style="padding: 0.5rem; margin: 0;">
-  <!-- 
-  <div class="row" style="font-size: small;">
+
+    
+
+
+<!-- <pre>{{user | json}}</pre> -->
+   
+  <!-- <div class="row" style="font-size: small;">
       <div class="column small-12">
           <div class="column small-6">
             <h4>Form</h4>
-            <pre> {{ widget.form | json }} </pre>
+            <pre> {{ widget | json }} </pre>
           </div>
           <div class="column small-6">
             <h4>Answer</h4>
@@ -30,7 +35,7 @@
  
     <div ng-if="bool" class="fade">
     Show and hide me
-  </div>-->
+  </div> -->
  <!--  <button ng-click="reload()">REload</button>
  <pre> {{widget.form.config.access | json}} </pre> -->
   <div  class="fan-btn top fade" 
@@ -52,13 +57,53 @@
             </span>
         </div>
 
+
+
           <div  class="fantip fade"
                 ng-if="fanButton._showFantip" 
                 style=" background: #ffffff;
                         color: {{fanButton._state.color}};"
           >
-            {{fanButton._state.tooltip}}
             
+            <table style="border:none; margin: 0;" 
+                  ng-if="widget.form.config.access.type == 'invited' || widget.form.config.access.type == 'users'"
+            >
+              <tr>
+                
+                <td style="border:none;">
+                  <div  class="left"
+                        style=" 
+                          background-image: url({{user.photo}});
+                          background-size: 3em 3em;
+                          border:1px solid #5b6d81;
+                          border-radius: 50%;
+                          display: block;
+                          overflow: hidden;
+                          position: relative;
+                          height: 3em;
+                          width: 3em;
+                          "
+                        ng-if="user.photo"
+                  >
+                  </div>
+                  <i    ng-if="!user.photo"
+                        class="fa fa-user-circle"
+                        style="     font-size: 2.75em;
+                                      padding: 0 0 0 0.16em;
+                                      color: #cedded;"
+                  />
+                </td>
+                <td style="border:none;">
+                  <label class="large">
+                    {{user.name || user.email}}!
+                  </label>  
+                </td>
+              </tr>  
+            </table>  
+              
+            <div style="margin:0 1em;">
+              {{fanButton._state.tooltip}}
+            </div>
           </div>  
     
   </div>    
@@ -85,9 +130,23 @@
         </button>  
       </div>  
     </div>  
+    <div class="row" ng-if="pageLocation != widget.form.metadata.app_url.value">
+      <div class="column small-12">
+        <div style="  color: rgb(240, 138, 36);">
+          <i class="fa fa-exclamation-triangle" style="margin:0 0.5em;"/>
+          <span style="margin:0 0.5em;"> Page and Form mismatch.</span>
+          <span class="button tiny"
+                style="margin:0 0.5em; padding:0.5em;"
+                ng-click="cloneForm()"
+          >
+            Clone 
+          </span>
+        </div>
+      </div>  
+    </div>  
       <div class="row">
-        <div ng-if="form.cloned" class="column small-12" style="font-size: small;">
-          Cloned from: #{{widget.form.cloned}}
+        <div ng-if="widget.form.config.cloned" class="column small-12" style="font-size: small;">
+          Cloned from: #{{widget.form.config.cloned}}
         </div>
       </div>
       <div class="row">
@@ -181,7 +240,9 @@
             </ul>
           </div>
           <div class="column small-4 left" style="margin: 0.5em;">
-            <label class="large left" style="margin-right: 1em;">Enable: </label>
+            <label class="large left" style="margin-right: 1em;">
+              Access is open 
+            </label>
             <div class="switch tiny radius left">
               <input  type="checkbox" 
                       id="{{widget.instanceName+'_access_enabled'}}" 
@@ -195,7 +256,9 @@
       <div class="row" ng-if="widget.form.config.access.type == 'invited'">
         <div class="column small-12">
           <div class="column small-3 left">
-            <label class="large left" style="margin-right: 1em;">Invite users when form first starts: </label>
+            <label class="large left" style="margin-right: 1em;">
+              Invite respondents when the form starts for the first time 
+            </label>
             <div class="switch tiny radius left">
               <input type="checkbox" ng-disabled="widget.form.config.access.enabled" id="{{widget.instanceName+'_invU_enabled'}}" ng-model="widget.form.config.access.invitationEnabled">
               <label for="{{widget.instanceName+'_invU_enabled'}}"></label>
@@ -214,7 +277,9 @@
       <div class="row" ng-if="widget.form.config.access.type == 'invited'">
         <div class="column small-12">
           <div class="column small-3 left">
-            <label class="large left" style="margin-right: 1em;">Notificate users when form will change status: </label>
+            <label class="large left" style="margin-right: 1em;">
+              Notify respondents when the form changes state
+            </label>
             <div class="switch tiny radius left">
               <input  type="checkbox" 
                       ng-disabled="widget.form.config.access.enabled" 
@@ -236,7 +301,7 @@
       </div>
       <hr/>
       <div ng-if="widget.form.config.access.type == 'invited'">
-        <h4>Invited users</h4>
+        <h4>Invited respondents</h4>
             
         <table style="border:none;">
           <tr ng-repeat="u in widget.form.config.access.users">
@@ -268,6 +333,20 @@
                 <a href="mailto:{{u.email}}" target="blank" style="font-size: large;">  
                   {{(u.name)? u.name : u.email}}
                 </a>  
+            </td>
+
+            <td style="border:none; font-size:x-small">
+              {{u.apikey}}
+            </td>  
+            
+            <td   style=" border:none; 
+                          font-size: large; 
+                          color:#5f8ab9; 
+                          cursor:pointer;"
+            >
+                <i  ng-click="userUtils.editInvitedUser(u)"  
+                    ng-if="!u.id" class="fa fa-edit"/>
+                <i ng-if="u.id">&nbsp;</i>
             </td>
             <td style="border:none; font-size: large; color:#5f8ab9; cursor:pointer;"
                 ng-click="userUtils.deleteInvitedUser(u.email)"  
@@ -323,3 +402,32 @@
     </div>
   </div>
 </div>
+
+<!-- Notify users when the form changes state
+Invite users when the form starts for the first time
+Users can add alternatives
+access is open
+other
+the form is completed. save changes
+You can save the answer. But 2 out of 3 answers are not completed
+You added an alternative to the question. Click to save changes.
+Changes saved successfully
+saving changes...
+the form is started in test mode
+your alternative
+
+notification template
+invitation template
+
+process responses for this form
+
+
+page and form mismatch
+leave as is
+
+
+Requires sign in:
+Limit to 1 response
+Respondents can:
+Edit after submit
+See summary charts and text responses -->

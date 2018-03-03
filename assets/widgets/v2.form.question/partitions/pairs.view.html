@@ -1,33 +1,57 @@
 <div class="row" style="margin:1em 0 0">
-  <div class="column small-10 small-centered">
+  <div class="column small-12 small-centered">
 
-    <div class="row header bordered">
-      <div class="column small-2">
-          &nbsp;
-      </div> 
-      <div class="column small-1" ng-repeat="j in [1,2,3,4,5,6,7,8,9,10]" style="padding-bottom: 0.3em;
-    padding-top: 0.5em; text-align: center;
-    padding-left: 1.4em;">
-        Property {{j}} for object
-      </div>
-    </div>  
-  
-
-    <div class="row bordered" ng-repeat="i in [1,2,3,4,5,6,7,8,9]">
-      <div class="column small-2 header" style="padding: 0.75em 0.5em;">
-          Object {{i}}
-      </div> 
-      <div class="column small-1" ng-repeat="j in [1,2,3,4,5,6,7,8,9,10]">
-        <input 
-          type="checkbox" 
-          class="checkbox" 
-          name="{{'gt'+j}}" 
-          value="{{'gc'+i+'r'+j}}" 
-          id="{{'gc'+i+'r'+j}}"
+    <table style="border:none; margin: 0 auto;">
+      <tr>
+        <td   style=" border:none;
+                      border-bottom: 1px solid #999;
+                      border-right: 1px solid #999;"
         >
-        <label for="{{'gc'+i+'r'+j}}"/>
-      </div>
-    </div>  
-  
+          <span style="margin:0 8em;">
+          </span>
+        </td>
+        <th   style=" border:none;
+                      border-bottom: 1px solid #999;
+                      text-align: center;" 
+              ng-repeat="p in properties">
+          {{p.title}}
+        </th>  
+      </tr>
+      <tr ng-repeat="e in entities">
+        <th   style=" border:none;
+                      border-right: 1px solid #999;"
+        >
+          {{e.title}}
+        </th>
+        <td ng-repeat="p in properties" style="border:none;">
+          <div 
+              style="width:60%; margin: 0.25em auto;" 
+              ng-if="!config.state.options.disables[e.id][p.id]"
+          >
+          <input 
+            type="checkbox" 
+            class="checkbox"
+            ng-checked="config.getValue(e.id,p.id)" 
+            id="{{widget.ID+'_'+e.id+'_'+p.id+'_ch'}}"
+            ng-click="config.setValue(e.id,p.id)"
+          >
+          <label for="{{widget.ID+'_'+e.id+'_'+p.id+'_ch'}}" style="color:white;">.</label>
+          </div>
+          <div  ng-if="config.state.options.disables[e.id][p.id]" 
+                style=" width: 1.8rem;
+                        height: 1.8rem;"
+          >
+            &nbsp;
+          </div>  
+        </td>  
+      </tr>  
+    </table>  
+
   </div>  
 </div>
+
+    <!-- <pre>
+      {{answer | json}}
+    </pre>  
+
+ -->

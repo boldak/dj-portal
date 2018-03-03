@@ -1,0 +1,128 @@
+<hr/>
+<div class="row">
+  <div class="column small-12">
+  	<h4>Scale</h4>
+    <div class="column small-3">
+    
+	    <label class="large">
+	    	Min
+	   	</label> 
+	   	<input 	type="number" 
+	   			ng-model="config.state.options.ordinals.range.min"
+	   			max={{config.state.options.ordinals.range.max}}
+	   			ng-change="config.generateValues()"
+	   	>
+	</div>
+	<div class="column small-3">
+       	
+	   	<label class="large">
+	    	Max
+	   	</label> 
+	   	<input 	type="number" 
+	   			ng-model="config.state.options.ordinals.range.max"
+	   			min={{config.state.options.ordinals.range.min}}
+	   			ng-change="config.generateValues()"
+	   	>
+   	</div>
+   	
+   	<div class="column small-3">
+       	
+	   	<label class="large">
+	    	Opacity
+	   	</label>
+	   	<input 	type="range" 
+	   			name="range" 
+	   			ng-model="config.state.options.colors.opacity" 
+	   			ng-change="setOpacity(config.state.options.colors.opacity)" 
+	   			min=0  
+	   			max=100
+	   	>
+        <span 	class="label right" 
+        		ng-if="config.state.options.colors.opacity" 
+        		style="background: #5f8ab9; color:#e7e7e7">
+        	{{config.state.options.colors.opacity}}%
+        </span> 
+	</div>
+   	
+   	<div class="column small-3">
+    	<label class="large">
+    		Pallete
+    		<span class="button tiny"
+                style="margin:0 0.5em; padding:0.5em;"
+                ng-click="reversePallete()"
+          	>
+          		Reverse
+          	</span>	
+    	</label>
+    	 <div class="column small-12" style="margin: 0.5em 0 0 0;">
+            
+                     
+            <a  class="small-12 left"  
+                style="font-size: large;"
+                dropdown-toggle="{{'#' + widget.ID + '_clp'}}"
+            >
+              <div class="columns small-12">
+                <div  
+                  ng-if="config.state.options.colors.pallete"
+                  class="left column small-1"
+                  ng-repeat="color in  config.state.options.colors.pallete"
+                  style="
+                      background-color: {{color}};
+                      /*width: 1em;*/
+                      display: inline-block;
+                      margin: 0px;
+                      padding: 0px 0.2rem;
+                      font-size: large;
+                      border: 1px solid rgb(175, 175, 175);"
+                >
+                  &nbsp;
+                </div>
+              </div>  
+              <div ng-if="!config.state.options.colors.pallete">
+                Select...
+              </div>    
+              <!-- <span dropdown-toggle="{{'#' + widget.ID + '_clp'}}"/> -->
+            </a>
+
+            <palette-peacker
+              pid = "'{{widget.ID + '_clp'}}'"
+              dest="config.state.options.colors.pallete" 
+              setter="setPallete" 
+              watch-depth="reference">
+            </palette-peacker>
+          </div>
+    </div>	
+  </div>
+</div>
+<hr/>
+<h4>Scale Values</h4>
+<div class="row">
+	<div class="column small-5 small-centered">
+		<table style="border:none;">
+			<tr ng-repeat="v in config.state.options.ordinals.values">
+				<td style="
+							border:none;
+							color: {{colorUtility.getColor(
+										config.state.options.colors.pallete,
+										config.state.options.colors.opacity,
+										config.state.options.ordinals.range,
+										v.value)}}"
+				>
+					<i style="font-size:xx-large; font-weight:bold;" class="fa fa-pause fa-rotate-90"></i>
+				</td>
+				<td style="border:none;">
+					<label class="large">
+						{{v.value}}
+					</label>	
+				</td>
+				
+				<td style="border:none;">
+					<input 	type="text" 
+							ng-model="v.title"
+							style="margin:0;"
+					>
+				</td>
+			</tr>	
+		</table>	
+	</div>
+</div>	    

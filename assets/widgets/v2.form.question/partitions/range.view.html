@@ -1,8 +1,22 @@
 <div class="row" style="margin:1em 0 0">
   <div class="column small-10 small-centered">
     <div class="column small-5">
-      <input type="range" name="range" ng-model="range" min="{{0}}"  max="{{100}}" step="{{1}}">
-      <span class="label right" style="background: #5f8ab9; color:#e7e7e7" ng-if="range">{{range}}</span>
+      <input 	type="range" 
+      			ng-model="answer.value[0]" 
+      			min="{{config.state.options.range.min}}"  
+      			max="{{config.state.options.range.max}}" 
+      			step="{{config.state.options.step}}"
+      >
+      <span 	class="label right" 
+      			style="background: #5f8ab9; color:#e7e7e7" 
+      			ng-if="answer.value[0]"
+      >
+  		{{answer.value[0]}}
+  		</span>
     </div>  
   </div>
 </div> 
+
+<!-- <pre>
+	{{ answer | json}}
+</pre>	 -->

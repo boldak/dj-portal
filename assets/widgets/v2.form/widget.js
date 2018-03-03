@@ -37,7 +37,9 @@ m.controller('FormController', function(
   formAnswerUtils,
   objectsIsEqual,
   truncString,
-  testMessage
+  testMessage,
+  queryString,
+  confirm
 ) {
 
 
@@ -47,7 +49,15 @@ m.controller('FormController', function(
 
 $ocLazyLoad.load({files:["/widgets/v2.form.question/djform.css"]}); 
 
+user.apikey = queryString($window.location.href).apikey 
+
 angular.extend($scope, {
+
+  dialog: dialog,
+
+  pageLocation: $window.location.href,
+
+  queryParams: queryString($window.location.href),
   
   pageWidgets: pageWidgets,
 
@@ -171,7 +181,15 @@ let scopeFor = widgetInstanceName => instanceNameToScope.get(widgetInstanceName)
   }
 
   
-
+  let cloneForm = $scope.cloneForm = () => {
+    $scope.transport
+      .cloneForm($scope.widget.form)
+      .then((res) => {
+        $scope.widget.form = res.data[0];
+        (new APIUser()).invokeAll("formMessage", {action:"configure", data:$scope});
+        loadForm()
+      })
+  }
 
 
   let createNewForm = () => {
@@ -214,9 +232,54 @@ let scopeFor = widgetInstanceName => instanceNameToScope.get(widgetInstanceName)
       $scope.transport
       .loadForm($scope.widget.form.id)    
       .then(res => {
+
+
+        if(!user.id){
+          let index = $scope.widget.form.config.access.users.map(item => item.apikey).indexOf(user.apikey)
+          if(index >= 0){
+            angular.extend(user,$scope.widget.form.config.access.users[index]) 
+          }  
+        }
+
         
+        if( $scope.widget.form.config.access.enabled && $scope.widget.form.config.access.type == "users"){
+          if(!user.id){
+            $scope.fanButton.state("disabled");
+            $scope.fanButton._state.tooltip = "Only users."
+            return;
+          }
+        }
+
+
+        if( $scope.widget.form.config.access.enabled && $scope.widget.form.config.access.type == "invited"){
+          let u = $scope.widget.form.config.access.users.filter(item => {
+            if(item.id && user.id ) return item.id == user.id;
+            if(item.apikey && user.apikey ) return item.apikey == user.apikey;
+            return false
+          })
+          if(u.length == 0){
+            $scope.fanButton.state("disabled");
+            $scope.fanButton._state.tooltip = "Only invited respondents."
+            return;
+          }
+        }
+
+        if( !$scope.widget.form.config.access.enabled && !user.isOwner && !user.isCollaborator ){
+            $scope.fanButton.state("disabled");
+            $scope.fanButton._state.tooltip = "The form is closed."
+            return;
+        }
+
+        (new APIUser()).invokeAll("formMessage", {action:"show"})
+
         $scope.formLoaded = true;
         $scope.widget.form = res.data[0];
+        
+        // if( $scope.globalConfig.designMode && $scope.widget.form.metadata.app_url != $window.location.href ){
+        //   confirm("Page and Form mismatch. Clone Form?")
+        //     .then(() => {cloneForm()})
+        // }
+        
         $scope.widget.form.config.access.users = $scope.widget.form.config.access.users || [];
         $scope.widget.form.config.questions = $scope.widget.form.config.questions || {};  
         
@@ -227,26 +290,42 @@ let scopeFor = widgetInstanceName => instanceNameToScope.get(widgetInstanceName)
         $scope.widgetPanel.allowConfiguring = undefined;
         $scope.widgetPanel.allowCloning = undefined;
 
-// TODO diff modes
 
-        $scope.transport
-        .loadAnswer(user,$scope.widget.form.id)
-        .then( res => {
-          console.log("LOADED ANSWER", res)  
-          if(res.data){
-            $scope.answer = ( res.data.length == 0)
-              ? $scope.answerUtils.create()
-              : $scope.answerUtils.normalize(res.data[0]);
-            (new APIUser()).invokeAll("formMessage", {action:"set-answer", data:$scope.answer});
-            
-          } else {
-               $scope.answer = $scope.answerUtils.create();
-          }
-          
+        if ($scope.widget.form.config.access.type == "any") {
+          $scope.answer = $scope.answerUtils.create()
           $scope.processing = false;
           $scope.blockMessages = false;
           $scope.fanButton.state("none")
-        })
+        } else {
+            if (      $scope.widget.form.config.access.type == "users" 
+                  ||  $scope.widget.form.config.access.type == "invited") {
+              $scope.transport
+                .loadAnswer(user,$scope.widget.form.id)
+                .then( res => {
+                  // console.log("LOADED ANSWER", res)  
+                  if(res.data){
+                    $scope.answer = ( res.data.length == 0)
+                      ? $scope.answerUtils.create()
+                      : $scope.answerUtils.normalize(res.data[0]);
+                    (new APIUser()).invokeAll("formMessage", {action:"set-answer", data:$scope.answer});
+                    
+                  } else {
+                       $scope.answer = $scope.answerUtils.create();
+                  }
+
+                  $scope.processing = false;
+                  $scope.blockMessages = false;
+                  $scope.fanButton.state("none")
+              })
+            }
+        }        
+
+
+
+        
+          
+          
+       
       })
     }
 
@@ -297,7 +376,6 @@ let scopeFor = widgetInstanceName => instanceNameToScope.get(widgetInstanceName)
   let updateConfig = () => {
     if($scope.widget.form){
       $scope.metadataTools.update();
-    // TODO  
     }
   }
 
@@ -310,11 +388,13 @@ let scopeFor = widgetInstanceName => instanceNameToScope.get(widgetInstanceName)
 
   $scope.saveAnswers = () => {
 
+    if($scope.fanButton._state.identity == "disabled") return;
+
     $scope.fanButton.state("process")
     
     if(!$scope.widget.form.config.access.enabled){
       
-      $info(testMessage($scope), "TEST MODE")
+      $info(testMessage($scope), "The form is started in test mode")
       .then(()=> {
         $scope.fanButton.state("none");    
       })
@@ -352,22 +432,51 @@ let scopeFor = widgetInstanceName => instanceNameToScope.get(widgetInstanceName)
           })
         })        
       } else {
-        saveFormPromise = $q(( resolve, reject) => { resolve(true)})
+        saveFormPromise = $q(( resolve, reject) => { 
+          $scope.transport
+            .loadForm($scope.widget.form.id)  
+            .then(res => {
+              $scope.widget.form = res.data[0];
+              (new APIUser()).invokeAll("formMessage", {action:"update", data:$scope.widget.form});
+              $scope.metadataTools.prepaire();
+              (new APIUser()).invokeAll("formMessage", {action:"set-answer", data:$scope.answer});
+              resolve(true)
+            })
+          resolve(true)
+        })
       }
       
       if($scope.modified.answer){
         saveAnswerPromise = $q(( resolve, reject) => {
           $scope.modified.answer = false;
           $scope.transport
-          .updateAnswer($scope.answer)
-          .then((res) => {
-            $scope.answer = $scope.answerUtils.normalize((angular.isArray(res.data))? res.data[0] : res.data);
-            (new APIUser()).invokeAll("formMessage", {action:"set-answer", data:$scope.answer});
-            resolve(true)
-          })  
+            .loadForm($scope.widget.form.id)  
+            .then(res => {
+              $scope.widget.form = res.data[0];
+              (new APIUser()).invokeAll("formMessage", {action:"update", data:$scope.widget.form});
+              $scope.metadataTools.prepaire();
+              (new APIUser()).invokeAll("formMessage", {action:"set-answer", data:$scope.answer});
+              $scope.transport
+              .updateAnswer($scope.answer)
+              .then((res) => {
+                $scope.answer = $scope.answerUtils.normalize((angular.isArray(res.data))? res.data[0] : res.data);
+                (new APIUser()).invokeAll("formMessage", {action:"set-answer", data:$scope.answer});
+                resolve(true)
+              })
+            })    
         })
       } else {
-        saveAnswerPromise = $q(( resolve, reject ) => { resolve(true)})
+        saveAnswerPromise = $q(( resolve, reject ) => { 
+          $scope.transport
+            .loadForm($scope.widget.form.id)  
+            .then(res => {
+              $scope.widget.form = res.data[0];
+              (new APIUser()).invokeAll("formMessage", {action:"update", data:$scope.widget.form});
+              $scope.metadataTools.prepaire();
+              (new APIUser()).invokeAll("formMessage", {action:"set-answer", data:$scope.answer});
+              resolve(true)
+            })  
+        })
       }
 
       $q.all([saveFormPromise, saveAnswerPromise])
@@ -375,6 +484,7 @@ let scopeFor = widgetInstanceName => instanceNameToScope.get(widgetInstanceName)
           $scope.$evalAsync(() => {
             $scope.fanButton.state("completed")
             $scope.blockMessages = false;  
+            app.unmarkModified();
           },100)
         })    
     }
@@ -382,10 +492,10 @@ let scopeFor = widgetInstanceName => instanceNameToScope.get(widgetInstanceName)
 
 
   let validateFormConfig = (data) => {
-    console.log("VALIDATE")
+    // console.log("VALIDATE")
     $scope.fanButton.state("list");
-    $scope.fanButton._state.tooltip = 
-        `You add new alternative into "${truncString(data.options.title)}" question. Click for save your changes.`
+    $scope.fanButton._state.tooltip =
+    `You added an alternative to the "${truncString(data.options.title)}" question. Click to save changes.` 
     $scope.modified.form = true;        
   }          
 
@@ -450,7 +560,8 @@ let scopeFor = widgetInstanceName => instanceNameToScope.get(widgetInstanceName)
       if ($scope.blockMessages) {
         console.log("Block MESSAGE FROM QUESTION")
         return;
-      }  
+      } 
+
       console.log("HANDLE MESSAGE FROM QUESTION", context)
       
         if(context.action == 'init'){
@@ -468,17 +579,24 @@ let scopeFor = widgetInstanceName => instanceNameToScope.get(widgetInstanceName)
             $scope.answer = $scope.answer || $scope.answerUtils.create()   
             $scope.answer.data[context.data.question] = context.data;
             $scope.answerUtils.validateAnswers();
-          }   
+          }  
+          return 
         }
+
+        if(context.action == "add-alternative") {
+          if(context.data){
+            validateFormConfig(context.data)  
+          }
+          return
+        }
+
 
         if(context.action == "update-config") {
           if(context.data && context.data.id && $scope.widget.form){
             
             if($scope.widget.form.config.questions){
               
-              let newValue = JSON.parse(JSON.stringify(angular.copy(context.data,{})));
-              delete newValue.callback;
-              
+              let newValue = angular.extend({},context.data);
               let oldValue = $scope.widget.form.config.questions[context.data.id];
               
               if( !objectsIsEqual(newValue,oldValue) ){

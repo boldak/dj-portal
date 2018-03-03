@@ -2,19 +2,22 @@
 <div class="row" ng-controller="FormQuestionController"
      style="  padding: 0.5rem; 
               margin: 0;"
+
 >   
 
-  <!-- <div class="row">
+<!--   <div class="row">
     <div class="column small-12">
       <pre> {{widget | json}}
     </div>  
   </div>   -->
   <!-- #{{widget.ID}} -->
 
-  <h3 ng-if="disabled" style="color: #f08a24;" class="fi-alert"> Question is disabled. You canot use 'v2.form-question' widgets without "v2.form" widget.</h3>
+  <h3   ng-if="disabled" 
+        style="color: #f08a24;" 
+        class="fi-alert"> 
+      Question is disabled. You canot use 'v2.form-question' widgets without "v2.form" widget.
+  </h3>
 
-
- 
 
   <div ng-if="globalConfig.designMode && !disabled" class="row">
     
@@ -29,10 +32,10 @@
             <textarea 
               placeholder="Title" 
               class="text" 
-              rows=5 
-              ng-model="config.options.title"
+              rows=2 
+              ng-model="config.state.options.title"
               ng-change="markModified()" 
-              value="config.options.title"
+              value="config.state.options.title"
             >
             </textarea>
           </label>
@@ -40,50 +43,82 @@
             <textarea 
               placeholder="Note" 
               class="text" 
-              rows=5 
-              ng-model="config.options.note"
+              rows=2 
+              ng-model="config.state.options.note"
               ng-change="markModified()" 
-              value="config.options.note"
+              value="config.state.options.note"
             >
             </textarea>
           </label>
         </div>
         <div class='column small-4'>
-          <label class="large">Type</label>
-            <a  class="button split small-12"  
-                style="font-size: large;"
-            >
-              <i ng-if="qtype"> 
-                <i class="{{defaultQuestionConfig[qtype].widget.css}}" style="padding-right: 1em;"/>
-                <i>{{defaultQuestionConfig[qtype].type.title}}</i>
-              </i>
-              <i ng-if="!qtype">Select...</i>
-              <span dropdown-toggle="{{'#'+widget.instanceName+'_q_type'}}"/>
-            </a>
-            <ul id="{{widget.instanceName+'_q_type'}}" class="f-dropdown">
-              <li>
-                <a ng-click="selectQtype(i)" ng-repeat="i in questionTypes" style="font-size: large;">
-                  <i class="{{defaultQuestionConfig[i].widget.css}}" style="padding-right: 1em;"/>
-                  <i>{{defaultQuestionConfig[i].type.title}}</i>
+          <table style="border:none;">
+            <tr>
+              <td style="border:none;">
+                <label class="large">Type:</label>
+              </td>
+              <td style="border:none;">
+                <a  class="button tiny"  
+                    style=" font-size: x-large;
+                            border-radius:1em;
+                            padding:0.2em 0.35em;
+                            margin:0"
+                    dropdown-toggle="{{'#'+widget.instanceName+'_q_type'}}"
+                >
+                  <i ng-if="qtype"> 
+                    <i class="{{defaultQuestionConfig[qtype].widget.css}}"/>
+                    <!-- <i>{{defaultQuestionConfig[qtype].type.title}}</i> -->
+                  </i>
+                  <i ng-if="!qtype" class="fa fa-question-circle"></i>
+                 <!--  <span dropdown-toggle="{{'#'+widget.instanceName+'_q_type'}}"/> -->
                 </a>
-              </li>
-            </ul>
-          <label class="large" style="color:{{(config.options.required)?'#008CBA':'';}}"> Required
-            <div class="switch tiny radius">
-              <input  type="checkbox"  
-                      id="{{widget.instanceName+'_required'}}"
-                      ng-model="config.options.required"
-                      ng-change="markModified()">
-              <label  for="{{widget.instanceName+'_required'}}"></label>
-            </div>
-          </label>    
+                <ul id="{{widget.instanceName+'_q_type'}}" class="f-dropdown">
+                  <li>
+                    <a ng-click="selectQtype(i)" ng-repeat="i in questionTypes" style="font-size: inherit;">
+                      <i class="{{defaultQuestionConfig[i].widget.css}}" style="padding-right: 1em;"/>
+                      <i>{{defaultQuestionConfig[i].type.title}}</i>
+                    </a>
+                  </li>
+                </ul>
+              </td>
+              <td style="border:none;">
+                  <label class="large" style="color:#008CBA;">
+                    {{defaultQuestionConfig[qtype].type.title}}
+                  </label>
+              </td>  
+            </tr> 
+            <tr>
+              <td style="border:none;">
+                <label class="large" style="color:{{(config.state.options.required)?'#008CBA':'';}}"> 
+                  Required:
+                </label>  
+              </td>
+              <td colspan="2" style="border:none;>
+                <label class="large" style="color:{{(config.state.options.required)?'#008CBA':'';}}"> 
+                  <div  class="switch tiny radius left" 
+                        style=" margin: 0;
+                                padding: 0;
+                                line-height: 1;"
+                  >
+                    <input  type="checkbox"  
+                            id="{{widget.instanceName+'_required'}}"
+                            ng-model="config.state.options.required"
+                            ng-change="markModified()">
+                    <label  for="{{widget.instanceName+'_required'}}"></label>
+                  </div>
+                </label>
+              </td>  
+            </tr> 
+          </table>  
+
+
         </div>
       </div>
 
       <!-- <pre>{{config | json}}</pre>  -->
       
       <div class="row">
-        <div class="column small-12" ng-include="config.widget.options"></div>
+        <div class="column small-12" ng-include="config.state.widget.options"></div>
       </div>
       
      
@@ -97,14 +132,17 @@
 
 
 
-  <div class="row" style="margin:0 -0.6em;">
+  <div 
+      class="row" 
+      style="margin:0 -0.6em;"
+      ng-if="!hidden">
     <div class="column small-12 small-centered">
       <div class="row">
         <div  class="column small-12" 
               style="     background: #5b6d81;
                           padding: 1em;"
         >
-          <h5   ng-if="config.options.required" 
+          <h5   ng-if="config.state.options.required" 
                 style=" padding: 0 3em;
                         color: {{(answer.valid)?'#adf15f':'#f0b77e'}};
                         text-align: right;
@@ -123,22 +161,24 @@
                         margin:0;"
           >
             <i class="fa fa-question-circle" style="font-size:xx-large; color:#e7e7e7;"></i> 
-            {{config.options.title}} 
+            {{config.state.options.title}} 
           </h3>
-          <h4   ng-if="config.options.note" 
+          <h4   ng-if="config.state.options.note" 
                 style=" padding: 0 2em;
                         font-size: inherit;
                         color:#e7e7e7;
                         font-style: italic;"
           > 
-            <i  class="fa fa-info-circle" style="font-size: larger; color:#e7e7e7;"></i> 
-            {{config.options.note}}
+            <!-- <i  class="fa fa-info-circle" style="font-size: larger; color:#e7e7e7;"></i>  -->
+            <pre>
+              {{config.state.options.note}}
+            </pre>  
           </h4>
 
         </div>
       </div>      
     
-      <div class="row" ng-include="config.view || config.widget.view"></div>
+      <div class="row" ng-include="config.view || config.state.widget.view"></div>
       <hr/>      
     </div>   
   </div>

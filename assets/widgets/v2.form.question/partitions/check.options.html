@@ -1,100 +1,117 @@
-
+<hr/>
 <div class="row">
   <div class="column small-12">
+    <h4>Alternatives</h4>
+
     <div class="row">
-      <div class="column small-12">
-        <label class="large">Alternatives</label>
-        <div class="row">
-          <div class="column small-12">
-            <div class="column small-6">
-              <label class="large" style="color:{{(config.options.addEnabled)?'#008CBA':'';}}">   Add new items in presentation mode
-                  <div class="switch tiny radius">
+      <div ui-tree="treeOptions" class="column small-11 small-centered">
+        <table ui-tree-nodes ng-model="alternatives" style="border: none;">
+          <tr   ui-tree-node 
+                ng-repeat="i in alternatives" 
+                ng-click="cselect(i.id)"
+                style="display:table-row;"
+          >
+            <td   style=" border: none; 
+                          font-size: initial;
+                          text-align: center;"
+            >
+                <i ui-tree-handle 
+                    class="fa fa-ellipsis-v right" 
+                ></i>
+            </td>
+            <td style="width: 100%;border:none">
+                <input 
+                    type="text" 
+                    placeholder="Your alternative..." 
+                    ng-model="i.title" 
+                    ng-disabled="_click != i.id" 
+                    focused="_click != i.id"
+                    style="margin: 0.12em 0;"
+                >
+            </td>
+            <td  style="border: none; font-size: x-large; text-align: center;">
+              <a 
+                class="fa fa-times" 
+                ng-click="delete(alternatives,$index)"
+                style="   color: #aaa;
+                          font-size:1.2em;"
+              ></a>
+            </td>  
+          </tr>  
+          <tr>
+            <td colspan="2" style="border: none;style="width: 75%;">
+              <input  class="left" ng-model="textFields.alternative" type="text" placeholder="Your alternative...">
+            </td>
+            <td style="border: none;">
+              <button
+                class="large left"
+                ng-click="addPMAlternative(alternatives)"
+                ng-disabled="!textFields.alternative"
+                style=" background: #5f8ab9;
+                        margin-top: 0.16em;
+                        border-radius: 6px;
+                        padding: 0.12em 0.25em;"
+              >
+                <i class=" fa fa-plus-square"/> 
+                
+              </button>
+            </td>  
+          </tr> 
+          <tr>
+            <td style="border:none;">
+              
+              <label class="left" style="color:{{(config.state.options.addEnabled)?'#008CBA':'';}}">       
+                  <!-- Respondent can add alternatives -->
+                  <div class="switch tiny radius right" style="margin:0 0 0 0.5em;">
                     <input  type="checkbox"  
                             id="{{widget.instanceName+'_add'}}"
-                            ng-model="config.options.addEnabled"
-                            ng-change="markModified()">
+                            ng-model="config.state.options.addEnabled"
+                            ng-change="markModified()"
+                    >
                     <label  for="{{widget.instanceName+'_add'}}"></label>
                   </div>
               </label>
-            </div>
-            <div class="column small-6">
-              <label  class="large" 
-                      style="color:{{(config.options.showUserInfo)?'#008CBA':'';}}"
+            </td>  
+            <td   style=" cursor:pointer; 
+                          border:none; 
+                          color:{{(config.state.options.addEnabled)?'#008CBA':'';}}"
+                  ng-click = "config.state.options.addEnabled = !config.state.options.addEnabled"        
+            >
+              Respondent can add alternatives
+            </td>  
+          </tr> 
+          <tr ng-show="config.state.options.addEnabled">
+            <td style="border:none;">
+              <label  class="left" 
+                      style="color:{{(config.state.options.showUserInfo)?'#008CBA':'';}}"
               > 
-                Show user information
-                <div class="switch tiny radius">
+                <!-- Show respondent information -->
+                <div class="switch tiny radius right"  style="margin:0 0 0 0.5em;">
                   <input  type="checkbox"  
                           id="{{widget.instanceName+'_showUser'}}"
-                          ng-model="config.options.showUserInfo"
+                          ng-model="config.state.options.showUserInfo"
                           ng-change="markModified()">
                   <label  for="{{widget.instanceName+'_showUser'}}"></label>
                 </div>
               </label>
-            </div>
-          </div>
-        </div>    
-              
-          
-        
+
+            </td>  
+            
+            <td   style=" cursor:pointer;
+                          border:none;  
+                          color:{{(config.state.options.showUserInfo)?'#008CBA':'';}}"
+                  ng-click = "config.state.options.showUserInfo = !config.state.options.showUserInfo"
+            >
+              Show respondent information
+            </td>  
+          </tr> 
+        </table>  
       </div>  
     </div>  
-    <!-- list start-->
-    <div class="row">
-      <div ui-tree="treeOptions" class="column small-10 small-centered">
-        <ol ui-tree-nodes ng-model="alternatives">
-          <li ui-tree-node ng-repeat="i in alternatives" ng-click="cselect(i.id)">
-              <div class="row">
-                <div class="columns small-12">
-                  <div ui-tree-handle class="column small-1">
-                    <i  
-                        class="fa fa-ellipsis-v right" 
-                        style="padding:0.4em 0; font-size:1.2em; color:#aaa">
-                    </i>
-                    <!-- <i  
-                      class="fa fa-ellipsis-v right" 
-                      style="padding:0.4em 0.1em; font-size:1.2em; color:#aaa">
-                    </i> -->
-                  </div>
-                  <div class="column small-10">
-                    <input 
-                              type="text" 
-                              ng-model="i.title" 
-                              ng-disabled="_click != i.id" 
-                              focused="_click != i.id"
-                          >
-                  </div>
-                  <div class="column small-1">
-                    <a 
-                      class="fa fa-times-circle" 
-                      ng-click="delete(alternatives,$index)"
-                      style="   color: #aaa;
-                                font-size: 24px;
-                                margin: 0.35em 0 0 -1em;"
-                    ></a>
-                  </div>
-                </div>  
-              </div>  
-          </li>  
-        </ol>  
-      </div>
-
-      <div class="row">
-        <div class="column small-10 small-centered">
-          <a 
-            class="large right"
-            ng-click="add(alternatives)"
-          >
-            <i class=" fa fa-plus-square"/> 
-              Add new item
-          </a>
-        </div>  
-      </div>
-
-    </div>    
-    <!-- list end -->
-      
-  </div> 
-
+  
+  </div>  
 
 </div>
+
+<hr/>
 

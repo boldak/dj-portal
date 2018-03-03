@@ -316,4 +316,43 @@ m.directive( 'fastPalettePeacker', function( reactDirective ) {
 });
 
 
+let PalAlt = React.createClass({
+    propTypes : {
+      setter: React.PropTypes.func.isRequired,
+      dest: React.PropTypes.array.isRequired,
+      pid: React.PropTypes.string.isRequired,
+      classes: React.PropTypes.string.isRequired
+      
+     },
+
+    getDefaultProps: function() {
+      return {
+        setter :  (data) => {console.log(data)},
+        dest : [],
+        pid: "fast_color_peaker",
+        classes : "f-dropdown tiny"
+      };
+    },
+    
+    render:function(){
+     let setter = this.props.setter;
+     let dest = this.props.dest;
+     let id = this.props.pid;
+     let cls = this.props.classes;
+
+     return <ul className={cls} style={ulStyle} id={id}>
+          {Palettes.map((pal,index) => renderRow(pal, index, setter, dest)) }
+        </ul>
+    }    
+})
+
+m.value( "PalAlt",PalAlt);
+
+
+m.directive( 'palettePeacker', function( reactDirective ) {
+  return reactDirective( 'PalAlt' );
+});
+
+
+
 
