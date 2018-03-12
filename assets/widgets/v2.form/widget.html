@@ -75,7 +75,7 @@
                         style=" 
                           background-image: url({{user.photo}});
                           background-size: 3em 3em;
-                          border:1px solid #5b6d81;
+                          
                           border-radius: 50%;
                           display: block;
                           overflow: hidden;
@@ -230,30 +230,75 @@
                           color: #e7e7e7;
                           font-size: large;"
             >
-              For {{widget.form.config.access.type}}
+              {{accessTypes[widget.form.config.access.type]}}
               <span dropdown-toggle="{{'#'+widget.ID+'_access_type'}}"/>
             </a>
             <ul id="{{widget.ID+'_access_type'}}" class="f-dropdown">
-              <li><a ng-click="setAccessType('any')">For any</a></li>
-              <li><a ng-click="setAccessType('users')">For users</a></li>
-              <li><a ng-click="setAccessType('invited')">For invited</a></li>
+              <li><a ng-click="setAccessType('any')">For any respondents</a></li>
+              <li><a ng-click="setAccessType('users')">For logged users</a></li>
+              <li><a ng-click="setAccessType('invited')">For invited respondents</a></li>
             </ul>
           </div>
-          <div class="column small-4 left" style="margin: 0.5em;">
+          <div class="column small-4 left" style="margin: 0.5em;"
+
+          >
             <label class="large left" style="margin-right: 1em;">
-              Access is open 
+              Access {{(widget.form.config.access.enabled)? "was opened": "was closed" }} 
+              <span ng-if="widget.form.config.access.lastNotificatedAt">
+                ({{timeAgo(widget.form.config.access.lastNotificatedAt)}})
+              </span>  
             </label>
             <div class="switch tiny radius left">
               <input  type="checkbox" 
                       id="{{widget.instanceName+'_access_enabled'}}" 
                       ng-model="widget.form.config.access.enabled"
+                      ng-click = "userNotification()"
               >
-              <label for="{{widget.instanceName+'_access_enabled'}}"></label>
+              <label for="{{widget.instanceName+'_access_enabled'}}"
+                       
+              ></label>
+
             </div>
           </div>
         </div>
       </div>
-      <div class="row" ng-if="widget.form.config.access.type == 'invited'">
+
+      <hr/>
+      <h4>
+        Responses   
+      </h4>
+      <!-- <pre>{{responsesStat}}</pre> -->
+      <div class="row">
+        <div class="column small-12">
+          <table style="border:none">
+            <tr>
+              <td style="border:none;">
+                Starts: 
+              </td>
+              <td style="border:none;">
+                {{timeAgo(responsesStat[0].date)}}
+              </td> 
+            </tr>
+            <tr>
+              <td style="border:none;">
+                Last response: 
+              </td>
+              <td style="border:none;">
+                {{timeAgo(responsesStat[responsesStat.length-1].date)}}
+              </td> 
+            </tr>
+            <tr>
+              <td style="border:none;">
+                Total: 
+              </td>
+              <td style="border:none;">
+                {{responsesStat.length}} response(s)
+              </td> 
+            </tr> 
+          </table>
+        </div>
+      </div>    
+<!--       <div class="row" ng-if="widget.form.config.access.type == 'invited'">
         <div class="column small-12">
           <div class="column small-3 left">
             <label class="large left" style="margin-right: 1em;">
@@ -298,12 +343,20 @@
             ></textarea>
           </div>
         </div>
-      </div>
+      </div> -->
       <hr/>
       <div ng-if="widget.form.config.access.type == 'invited'">
         <h4>Invited respondents</h4>
             
         <table style="border:none;">
+          <tr style="background:#e7e7e7;">
+            <td colspan="3" style="border:none; font-size: x-small;">
+              Respondent
+            </td>
+            <td colspan="2" style="border:none; font-size: x-small;">
+              Notified at
+            </td>  
+          </tr>  
           <tr ng-repeat="u in widget.form.config.access.users">
             <td style="border:none;">
                 <i>
@@ -319,7 +372,7 @@
                       float: left;
                       "
                       ng-if="u.photo"></span>
-                  <span ng-if="!u.photo" style="float: left;">
+                  <span ng-if="!u.photo" style="float: left; margin: 0 0 0 -0.4em;">
                         <i  class="fa fa-user-circle"
                             style="     font-size: 2.75em;
                                         padding: 0 0 0 0.16em;
@@ -335,9 +388,9 @@
                 </a>  
             </td>
 
-            <td style="border:none; font-size:x-small">
+            <!-- <td style="border:none; font-size:x-small">
               {{u.apikey}}
-            </td>  
+            </td>   -->
             
             <td   style=" border:none; 
                           font-size: large; 
@@ -345,14 +398,26 @@
                           cursor:pointer;"
             >
                 <i  ng-click="userUtils.editInvitedUser(u)"  
-                    ng-if="!u.id" class="fa fa-edit"/>
+                    ng-if="!u.id" class="fa fa-address-card"/>
                 <i ng-if="u.id">&nbsp;</i>
             </td>
+
+            <td style="border:none; font-size: x-small;" ng-if="u.notifiedAt">
+              <!-- <i class="fa fa-external-link"/> -->
+              {{timeAgo(u.notifiedAt)}}
+            </td>
+            <td style="border:none; font-size: x-small;" ng-if="!u.notifiedAt">
+              <!-- <i class="fa fa-external-link"/> -->
+              <!-- {{formatDate(u.notifiedAt)}} -->
+              &nbsp;
+            </td>  
+            
             <td style="border:none; font-size: large; color:#5f8ab9; cursor:pointer;"
                 ng-click="userUtils.deleteInvitedUser(u.email)"  
             >
                 <i class="fa fa-times"/>
             </td>
+            
           </tr>
           <tr style="border:none;">
             <td style="border:none;" colspan="2">

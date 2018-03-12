@@ -15,16 +15,29 @@
               ng-click="config.setValue(v.value)"
         > 
           
-           <span style="color:#5b6d81;font-size:small;">{{v.value}}</span><br/>
-           <i style="font-size:xx-large; font-weight:bold;" class="fa fa-pause"></i><br/>
-           <span style="color:#5b6d81; font-size:xx-small;">{{v.title}}</span>
+            <div style=" color:{{colorUtility.scaleFontColor(v.value)}};
+                        font-size:small;
+                        "
+            >{{v.value}}</div>
+            <div style="
+                  font-size:xx-large; 
+                  font-weight:bold;
+                  width:1em;
+                  height:0.5em;
+                  background: {{colorUtility.scaleColor(v.value)}};
+                  border:1px solid #999" 
+            >
+              &nbsp;
+            </div>
+           
+           <!-- <i style="font-size:xx-large; font-weight:bold;" class="fa fa-pause"></i><br/> -->
+           
+           <div style=" color:{{colorUtility.scaleFontColor(v.value)}}; 
+                        font-size:xx-small;">
+            {{v.title}}
+            </div>
         </div>
-        <span   class="label left" 
-                style="background: #5f8ab9; color:#e7e7e7; margin:5em 0 0 0;" 
-                ng-if="answer.value[0]"
-        >
-          {{answer.value[0]}}
-        </span>
+        
       </div>
    </div>  
 </div>  

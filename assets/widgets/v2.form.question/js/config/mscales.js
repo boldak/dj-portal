@@ -135,7 +135,12 @@ let MScales = class extends Question {
         }
 
         getValue(entity) {
-          return this.scope.answer.value[this.scope.answer.value.map(item => item.entity).indexOf(entity)].value
+          if(this.scope.answer.value.map(item => item.entity).indexOf(entity)>=0){
+            return 
+            this.scope.answer.value[
+              this.scope.answer.value.map(item => item.entity).indexOf(entity)
+            ].value  
+          }
         }
   
 }

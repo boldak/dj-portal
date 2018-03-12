@@ -16,12 +16,11 @@
                       font-size:large;" 
               ng-repeat="p in properties">
           {{p.title}}
-        </th>  
+        </td>  
       </tr>
       <tr ng-repeat="e in entities">
         <td   style=" border:none;
-                      border-right: 1px solid #999;
-                      font-size: large;"
+                      border-right: 1px solid #999; font-size:large;"
         >
           {{e.title}}
         </td>
@@ -31,11 +30,13 @@
               ng-if="!config.state.options.disables[e.id][p.id]"
           >
           <input 
-            type="checkbox" 
-            class="checkbox"
-            ng-checked="config.getValue(e.id,p.id)" 
+            type="radio" 
+            class="radio"
             id="{{widget.ID+'_'+e.id+'_'+p.id+'_ch'}}"
-            ng-click="config.setValue(e.id,p.id)"
+            name="{{'radio_'+widget.ID+'_'+e.id}}"
+            ng-change="config.setValue(e.id,p.id)"
+            ng-model="answerMap[e.id]"
+            value="{{p.id}}"
           >
           <label for="{{widget.ID+'_'+e.id+'_'+p.id+'_ch'}}" style="color:white;">.</label>
           </div>
@@ -52,8 +53,7 @@
   </div>  
 </div>
 
-    <!-- <pre>
+   <!--  <pre>
       {{answer | json}}
-    </pre>  
+    </pre>   -->
 
- -->

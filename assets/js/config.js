@@ -51,6 +51,11 @@ System.config({
     "d3": "components/d3/d3.js",
     "d3.layout.cloud": "components/d3.layout.cloud/build/d3.layout.cloud.js",
     "d3.timer": "components/d3.timer/index.js",
+
+    "javascript-time-ago": "components/javascript-time-ago/dist/timeago.min.js",
+    // "javascript-time-ago-locale.en":"components/javascript-time-ago/locale/en/index.js",
+    // "javascript-time-ago-locale.en":"components/javascript-time-ago/locale/uk/index.js",
+    
     "jsinq": "components/jsinq/source/jsinq.js",
     "jsinq-query": "components/jsinq/source/jsinq-query.js",
     "json-stat": "components/jsonstat/json-stat.max.js",
@@ -275,7 +280,17 @@ System.config({
       "deps": [
         "d3"
       ]
+    },
+
+    "javascript-time-ago": {
+      "exports": "timeago",
+      "deps": [
+        // "javascript-time-ago-locale.en",
+        // "javascript-time-ago-locale.uk"
+      ]
     }
+
+
   }
 });
 

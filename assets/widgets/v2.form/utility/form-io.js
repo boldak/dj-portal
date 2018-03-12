@@ -129,6 +129,18 @@ let dps = {
       sort({{byDate}})
       select("$[0]")
 
+    `,
+    loadResponseStat:
+    `
+        <?javascript
+          $scope.f = item => item.form == $scope.form;
+          $scope.map = (item,index) => {return {date:item.updatedAt,v:1}};
+          $scope.sort = _util.comparator.Date["A-Z"](item => item.date);
+        ?>
+
+        dml.select(from:"answer", where:{{f}}, as:{{map}})
+        json()
+        sort({{sort}})
     `
 }
 
@@ -169,14 +181,15 @@ let FormIO = class {
 
   }
 
-  loadLocalFile(file) {
+  loadLocalFile(file, encoding) {
 
     return new Promise((resolve, reject) => {
       let fr = new FileReader();
       fr.onload = (e) => {
         resolve(e.target.result)
       }
-      fr.readAsText(file);
+      fr.readAsText(file, encoding);
+      // reader.readAsText(file, 'CP866');
     })
 
   }
@@ -189,6 +202,9 @@ let FormIO = class {
     })
 
   }
+
+
+
 
   cloneForm(form) {
     let f = angular.extend({}, form);
@@ -255,6 +271,67 @@ let FormIO = class {
     return this.runDPS({
       script: dps.updateAnswer,
       state: { answer: answer }
+    })
+
+  }
+
+
+  loadResponseStat(form) {
+
+    return this.runDPS({
+      script: dps.loadResponseStat,
+      state: { form: form }
+    })
+
+  }
+
+
+  prepareContext(u) {
+    let metadata = {}
+    _.toPairs(this.scope.widget.form.metadata)
+      .map(item => item[1])
+      .forEach((item) => {
+        metadata[item.key] = item.value;
+      })
+
+    metadata.app_url +=(u.name)? "" : `?apikey=${u.apikey}`;
+    return {
+        metadata: metadata,
+        user: u
+      }
+  }
+
+  sendMails() {
+    
+    let templateStr = `sendmail({{o<%= index %>}});
+                      ` 
+    let state = {}
+    let script = "";
+   
+    this.scope.widget.form.config.access.users.forEach((u,index) => {
+      
+      script += _.template(templateStr)({index:index})
+      
+      state[("o"+index)] = {
+        from: this.scope.widget.form.config.access.notiificator,
+        to: u.email,
+        subject: this.scope.widget.form.config.access.notificationSubject,
+        html: _.template(this.scope.widget.form.config.access.notificationTemplate)
+                (this.prepareContext(u))
+      }
+    })
+  
+   
+// TODO Comments 3 lines below for production mode
+   return new Promise((resolve) => {
+    resolve({script:script, state:state})
+   }) 
+
+
+
+    return this.runDPS({
+      script: script,
+      state: state
     })
 
   }

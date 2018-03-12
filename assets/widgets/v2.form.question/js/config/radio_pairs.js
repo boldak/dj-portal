@@ -1,15 +1,15 @@
 import angular from 'angular';
 import Question from "./question.js"
 
-let Pairs = class extends Question {
+let RadioPairs = class extends Question {
   constructor(scope, previus) {
     super(scope, previus)
     this.state = {
-      type: { value: "pairs", title: "Matching pairs" },
+      type: { value: "radiopairs", title: "One for Each" },
       widget: {
         css: "fa fa-th",
-        view: this.prefix + "pairs.view.html",
-        options: this.prefix + "pairs.options.html"
+        view: this.prefix + "radio_pairs.view.html",
+        options: this.prefix + "radio_pairs.options.html"
       },
       options: {
         required: false,
@@ -52,6 +52,10 @@ let Pairs = class extends Question {
 
   applyAnswer() {
     this.normalizeAnswer();
+    this.scope.answerMap = {} 
+    for(let i in this.scope.answer.value){
+      this.scope.answerMap[this.scope.answer.value[i].entity] = this.scope.answer.value[i].property;
+    }
   }
 
   prepare() {
@@ -94,6 +98,11 @@ let Pairs = class extends Question {
       question: this.scope.widget.ID,
       type: "pairs",
       value: []
+    }
+
+    this.scope.answerMap = {} 
+    for(let i in this.entities){
+      this.scope.answerMap[this.entities[i].id] = null;
     }
 
   }
@@ -149,35 +158,27 @@ let Pairs = class extends Question {
   setValue(entity, property) {
 
     
-
-    let index = -1;
-    for (let i = 0; i < this.scope.answer.value.length; i++) {
-      let v = this.scope.answer.value[i]
-      if ((v.entity == entity) && (v.property == property)) {
-        index = i;
-        break;
-      }
-    }
+    let index = this.scope.answer.value.map(item => item.entity).indexOf(entity)
 
     if (index < 0) {
       this.scope.answer.value.push({ entity: entity, property: property })
     } else {
-      this.scope.answer.value.splice(index, 1)
+      this.scope.answer.value[index].property = property;
     }
 
-    this.scope.answer.valid = this.scope.answer.value.length > 0;
+    this.scope.answer.valid = this.scope.answer.value.length == this.scope.entities.length;
   }
 
   getValue(entity, property) {
-    let index = -1;
-    for (let i = 0; i < this.scope.answer.value.length; i++) {
-      let v = this.scope.answer.value[i]
-      if ((v.entity == entity) && (v.property == property)) {
-        index = i;
-        break;
-      }
-    }
-    return index >= 0    
+    // let index = -1;
+    // for (let i = 0; i < this.scope.answer.value.length; i++) {
+    //   let v = this.scope.answer.value[i]
+    //   if ((v.entity == entity) && (v.property == property)) {
+    //     index = i;
+    //     break;
+    //   }
+    // }
+    // return index >= 0    
   }
 
   updateConfig() {
@@ -208,12 +209,12 @@ let Pairs = class extends Question {
   normalizeAnswer() {
     if(this.scope.answer && this.scope.answer.value){
       
-      this.state.options.disables = this.state.options.disables || {};
+      // this.state.options.disables = this.state.options.disables || {};
 
-      this.scope.answer.value = this.scope.answer.value.filter(item => {
-        if(!this.state.options.disables[item.entity]) return true;
-        return !this.state.options.disables[item.entity][item.property]
-      })
+      // this.scope.answer.value = this.scope.answer.value.filter(item => {
+      //   if(!this.state.options.disables[item.entity]) return true;
+      //   return !this.state.options.disables[item.entity][item.property]
+      // })
 
       let e = this.state.options.entities;
       let p = (this.state.options.useOneList)
@@ -221,8 +222,10 @@ let Pairs = class extends Question {
                 : this.state.options.properties;
 
       this.scope.answer.value = this.scope.answer.value.filter(item => {
-        return ( angular.isDefined(e[item.entity]) && angular.isDefined(p[item.property]) )
+        return ( angular.isDefined(e[item.entity]) && angular.isDefined(p[item.property]))
       })
+      
+      this.scope.answer.valid = this.scope.answer.value.length == this.scope.entities.length;
 
     }
 
@@ -249,4 +252,4 @@ let Pairs = class extends Question {
 
 }
 
-module.exports = Pairs;
+module.exports = RadioPairs;

@@ -5,6 +5,7 @@ import FormIO from "./form-io.js";
 import UserUtils from "./form-users.js";
 import AnswerUtils from "./form-answer.js";
 
+
 angular
 .module("formUtility", [])
 
@@ -13,6 +14,7 @@ angular
 .factory("formAnswerUtils",[() => scope => new AnswerUtils(scope)])
 .factory("formIO",[() => (scope,transport) => new FormIO(scope, transport)])
 .factory("formUserUtils",[() => (scope,userList) => new UserUtils(scope,userList)])
+
 
 .factory("objectsIsEqual",[() => (oldValue, newValue) => {
 	return _.matches(oldValue)(newValue) && _.matches(newValue)(oldValue)
@@ -66,3 +68,19 @@ ${scope.$filter("json")(scope.answer)}
   return (param) ? queryString[param]: queryString
   
 })
+
+.factory("defaultNotificationTemplate", [() =>
+
+`
+<p>
+  Dear <%=user.name || 'Respondent'%>!
+</p> 
+<p>
+  We invite you to take part in the survey 
+  <a href="<%=metadata.app_url%>">
+    <%=metadata.app_title%>
+  <a>
+</p>
+
+`
+ ])

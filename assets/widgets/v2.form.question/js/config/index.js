@@ -10,6 +10,7 @@ import 	Rate			from 	"./rate.js"
 import 	Range			from 	"./range.js"
 import 	Text			from 	"./text.js"
 import 	DateTime		from 	"./datetime.js"
+import  RadioPairs		from	"./radio_pairs.js"
 
 let factory = {
 	
@@ -23,7 +24,8 @@ let factory = {
 	rate: 		(scope,previus) => new Rate 		(scope, previus),
 	range: 		(scope,previus) => new Range 		(scope, previus),
 	text: 		(scope,previus) => new Text 		(scope, previus),
-	datetime: 	(scope,previus) => new DateTime 	(scope, previus)
+	datetime: 	(scope,previus) => new DateTime 	(scope, previus),
+	radiopairs: (scope,previus) => new RadioPairs 	(scope, previus)
 
 }
 
@@ -32,4 +34,19 @@ let factory = {
 angular
 .module("v2.question.factory",[])
 .factory("questionFactory", [ () => factory])
+.factory("questionTypes", [()=> {
+	let list = _.toPairs(factory).map(item => {
+		return [item[0], item[1]()]
+	});
+	console.log(list)
+	let res = {};
+	for (let item of list){
+		// console.log(item)
+		res[item[0]] = {
+			type: item[1].state.type,
+			widget: item[1].state.widget
+		}
+	}
+	return res;
+}])
 

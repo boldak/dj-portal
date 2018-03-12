@@ -39,7 +39,8 @@ m.controller('FormController', function(
   truncString,
   testMessage,
   queryString,
-  confirm
+  confirm,
+  defaultNotificationTemplate
 ) {
 
 
@@ -67,7 +68,9 @@ angular.extend($scope, {
 
   pageConfig: app.pageConfig(),
   
-  formatDate: (date) => i18n.formatDate(date),
+  formatDate: (date) => i18n.formatDate(new Date(date)),
+
+  timeAgo: (date) => i18n.timeAgo(new Date(date)),
   
   modified: {
       form:false,
@@ -99,10 +102,20 @@ angular.extend($scope, {
 
   transport: formIO($scope,$dps),
 
-  answerUtils: formAnswerUtils($scope)
+  answerUtils: formAnswerUtils($scope),
+
+  defaultNotificationTemplate: defaultNotificationTemplate,
+
+  accessTypes:{
+    any: "For any respondents",
+    users: "For logged users",
+    invited: "For invited respondents"
+  }
 
 })
 
+$scope.widgetPanel.allowConfiguring = undefined;
+$scope.widgetPanel.allowCloning = undefined;
 
 let scopeFor = widgetInstanceName => instanceNameToScope.get(widgetInstanceName);
 
@@ -149,37 +162,96 @@ let scopeFor = widgetInstanceName => instanceNameToScope.get(widgetInstanceName)
     // }
     //  parentHolder($scope.widget).widgets.push(w)
 
-    // dialog({
-    //     title:"Import form (OSA format)",
-    //     fields:{
-    //       file:{
-    //         title:"File", 
-    //         type:'file', 
-    //         editable:true, 
-    //         required:true
-    //       },
-    //       script:{
-    //         title:"script",
-    //         type:"textarea",
-    //         editable:true, 
-    //         required:true
-    //       }
-    //     }
-    // })
-    // .then(form => {
-    //   loadLocalFile(form.fields.file.value)
-    //   .then(text => {
-    //     console.log("READ TEXT: ", text)
-    //   })
-    //   // runDPSwithFile(form.fields.file.value, {
-    //   //   script: form.fields.script.value,
-    //   //   state: {
-    //   //     format: "osa"
-    //   //   }
-    //   // })
-    // })
+    dialog({
+        title:"Import form (OSA format)",
+        fields:{
+          file:{
+            title:"File", 
+            type:'file', 
+            editable:true, 
+            required:true
+          },
+          encoding:{
+            title:"script",
+            type:"text",
+            editable:true, 
+            required:true
+          }
+        }
+    })
+    .then(form => {
+      console.log(form.fields.file.value,
+          form.fields.encoding.value)
+      $scope.transport.loadLocalFile(
+          form.fields.file.value,
+          form.fields.encoding.value
+      )
+      .then(text => {
+        console.log("READ TEXT: ", text)
+      })
+      // runDPSwithFile(form.fields.file.value, {
+      //   script: form.fields.script.value,
+      //   state: {
+      //     format: "osa"
+      //   }
+      // })
+    })
   }
 
+
+  $scope.userNotification = () => {
+    $scope.widget.form.config.access.lastNotificatedAt = new Date();
+    if($scope.widget.form.config.access.type != 'invited') return
+    dialog({
+      title:"Notify Respondents",
+      fields:{
+       
+        subject:{
+          title:"Subject",
+          type:"text",
+          value:$scope.widget.form.config.access.notificationSubject || "DJ-FORM",
+          editable:true,
+          required:true
+        },
+        template: {
+          title:"Template",
+          type:"textarea",
+          value:$scope.widget.form.config.access.notificationTemplate || $scope.defaultNotificationTemplate,
+          rows:5,
+          editable:true,
+          required:true
+        }
+        
+      }
+    })
+    .then(form => {
+      
+      $scope.widget.form.config.access.notificationTemplate = form.fields.template.value;
+      $scope.widget.form.config.access.notificationSubject = form.fields.subject.value;
+      $scope.widget.form.config.access.notiificator = "wdc.kpi.team@gmail.com";
+      $scope.widget.form.config.access.lastNotificatedAt = new Date();
+      $scope.widget.form.config.access.users = 
+        $scope.widget.form.config.access.users.map( item => 
+          angular.extend(item,{notifiedAt:new Date()})
+        )
+      
+      $scope.transport.sendMails()
+        .then(res => {
+          console.log(res)
+        }) 
+
+
+    })
+  }
+
+  $scope.changeAccess = () => {
+    // console.log("change access", $scope.widget.form.config.access.type)
+    $scope.widget.form.config.access.enabled = !$scope.widget.form.config.access.enabled;
+    if($scope.widget.form.config.access.type == 'invited') $scope.userNotification();
+    
+  }
+
+  // $scope.$watch(widget.config.access.enabled, userNotification)
   
   let cloneForm = $scope.cloneForm = () => {
     $scope.transport
@@ -226,6 +298,14 @@ let scopeFor = widgetInstanceName => instanceNameToScope.get(widgetInstanceName)
       })
     }
 
+    let loadResponseStat = (formId) => {
+      $scope.transport.loadResponseStat(formId)
+      .then(res => {
+        $scope.responsesStat = res.data
+        // console.log($scope.responsesStat)
+      })
+    }
+
     let loadForm = $scope.reload = () => {
 
       $scope.blockMessages = true;
@@ -233,13 +313,18 @@ let scopeFor = widgetInstanceName => instanceNameToScope.get(widgetInstanceName)
       .loadForm($scope.widget.form.id)    
       .then(res => {
 
+        // if($scope.globalConfig.designMode){
+         
+        // }
 
-        if(!user.id){
-          let index = $scope.widget.form.config.access.users.map(item => item.apikey).indexOf(user.apikey)
-          if(index >= 0){
-            angular.extend(user,$scope.widget.form.config.access.users[index]) 
-          }  
-        }
+        if($scope.widget.form.config.access.type != 'any'){
+          if(!user.id){
+            let index = $scope.widget.form.config.access.users.map(item => item.apikey).indexOf(user.apikey)
+            if(index >= 0){
+              angular.extend(user,$scope.widget.form.config.access.users[index]) 
+            }  
+          }
+        }  
 
         
         if( $scope.widget.form.config.access.enabled && $scope.widget.form.config.access.type == "users"){
@@ -336,6 +421,7 @@ let scopeFor = widgetInstanceName => instanceNameToScope.get(widgetInstanceName)
     if($scope.globalConfig.designMode){
       if($scope.widget.form){
         $scope.metadataTools.prepaire()
+        loadResponseStat($scope.widget.form.id)
         return  
       }  
     } else {
@@ -362,12 +448,12 @@ let scopeFor = widgetInstanceName => instanceNameToScope.get(widgetInstanceName)
     
     $scope.widget.form.config.access.type = value;
     
-    if( value == "invited"){
-      $scope.widget.form.config.access.invitationTemplate =
-      $scope.widget.form.config.access.invitationTemplate ||  "Dear ${user.name} !\nWe invite you for expert assessments  \"${metadata.title}\"\nSee ${ref(metadata.app_url)}";
-      $scope.widget.form.config.access.notificationTemplate =
-      $scope.widget.form.config.access.notificationTemplate || "notification Template";
-    }
+    // if( value == "invited"){
+    //   $scope.widget.form.config.access.invitationTemplate =
+    //   $scope.widget.form.config.access.invitationTemplate ||  "Dear ${user.name} !\nWe invite you for expert assessments  \"${metadata.title}\"\nSee ${ref(metadata.app_url)}";
+    //   $scope.widget.form.config.access.notificationTemplate =
+    //   $scope.widget.form.config.access.notificationTemplate || "notification Template";
+    // }
     
     $scope.markModified()
   
@@ -388,6 +474,7 @@ let scopeFor = widgetInstanceName => instanceNameToScope.get(widgetInstanceName)
 
   $scope.saveAnswers = () => {
 
+    if(!$scope.fanButton._state) return;
     if($scope.fanButton._state.identity == "disabled") return;
 
     $scope.fanButton.state("process")
@@ -617,6 +704,12 @@ let scopeFor = widgetInstanceName => instanceNameToScope.get(widgetInstanceName)
             updateWidget()
         }
     })  
+
+    .provide("formSubmit", () => {
+      // console.log("formSubmit")
+      $scope.saveAnswers()
+    })
+    
 
     .removal(() => {
       (new APIUser()).invokeAll("formMessage", {action:"remove", data:$scope});

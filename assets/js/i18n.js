@@ -4,6 +4,9 @@ import 'angular-translate-loader-static-files';
 import 'angular-translate-storage-cookie';
 import 'angular-translate-storage-local';
 import 'date-and-time';
+import 'javascript-time-ago';
+import timegoUkLocale from '../components/javascript-time-ago/locales/uk.js';
+
 
 const i18n = angular.module('app.i18n', ['app','pascalprecht.translate']);
 
@@ -35,6 +38,9 @@ i18n.constant('i18nTemp',{});
   
 i18n.service('i18n',function($translate,config, i18nTemp, APIProvider, APIUser){
   
+  this.timeago = timeago;
+  this.timeago.register('uk', timegoUkLocale);
+
   date.setLocales('ru', {
             MMMM: ['Января', 'Февраля', 'Марта', 'Апреля', 'Мая', 'Июня', 'Июля', 'Августа', 'Сентября', 'Октября', 'Ноября', 'Декабря'],
             MMM: ['янв', 'фев', 'мар', 'апр', 'мая', 'июня', 'июля', 'авг', 'сен', 'окт', 'ноя', 'дек'],
@@ -220,7 +226,7 @@ i18n.service('i18n',function($translate,config, i18nTemp, APIProvider, APIUser){
 
   angular.extend(this,{
 
-    locale : function(){
+    locale : function() {
       let res = $translate.use() || "en";
       res = (res =='ru')? 'en' : res;
       return res;
@@ -238,6 +244,10 @@ i18n.service('i18n',function($translate,config, i18nTemp, APIProvider, APIUser){
 
     
     formatDate : function(d,format){
+
+     
+
+
       if(!format){
         var locale = $translate.use() || "en";
         d = new Date(d);
@@ -253,6 +263,11 @@ i18n.service('i18n',function($translate,config, i18nTemp, APIProvider, APIUser){
       }
       date.locale(this.locale());
       return date.format(new Date(d),format);  
+    },
+
+    timeAgo: (d) => {
+      var locale = $translate.use() || "en";
+       return timeago().format(d, locale)
     },
 
     timeFormat:function(d,format){

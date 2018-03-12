@@ -60,6 +60,39 @@ let ColorUtility = class {
 		      
 	}
 
+	scaleFontColor(value) {
+		let res =  
+		( angular.isDefined(this.scope.answer.value[0]))
+              ? ((value >= this.scope.config.state.options.ordinals.range.min)
+                  && (value < this.scope.answer.value[0])
+                ) 
+                ? "#5b6d81"
+                : ((value >= this.scope.config.state.options.ordinals.range.min)
+                    && (value == this.scope.answer.value[0])
+                  )
+                  ? "#5b6d81"
+                  : "#e7e7e7"
+              : "#e7e7e7";
+        
+        return res;
+	}
+
+	mScaleFontColor(entity, value){
+		let index = this.scope.answer.value.map(item => item.entity).indexOf(entity)
+
+		  return  ( angular.isDefined(this.scope.answer.value[index]))
+		              ? ((value >= this.scope.config.state.options.ordinals.range.min)
+		                  && (value < this.scope.answer.value[index].value)
+		                ) 
+		                ? "#5b6d81"
+		                : ((value >= this.scope.config.state.options.ordinals.range.min)
+		                    && (value == this.scope.answer.value[index].value)
+		                  )
+		                  ? "#5b6d81"
+		                  : "#e7e7e7"
+		              : "#e7e7e7"              
+	}
+
 	mScaleColor(entity, value){
 		let index = this.scope.answer.value.map(item => item.entity).indexOf(entity)
 
@@ -83,6 +116,7 @@ let ColorUtility = class {
 		                  : "#e7e7e7"
 		              : "#e7e7e7"              
 	}
+
 
 	influenceBg(value) {
 

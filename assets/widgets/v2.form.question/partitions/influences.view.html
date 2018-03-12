@@ -5,24 +5,27 @@
       <tr>
         <td   style=" border:none;
                       border-bottom: 1px solid #999;
-                      border-right: 1px solid #999;"
+                      border-right: 1px solid #999;
+                      font-size:large;"
         >
           <span style="margin:0 8em;">
           </span>
         </td>
-        <th   style=" border:none;
+        <td   style=" border:none;
                       border-bottom: 1px solid #999;
-                      text-align: center;" 
+                      text-align: center;
+                      font-size:large;" 
               ng-repeat="p in properties">
           {{p.title}}
-        </th>  
+        </td>  
       </tr>
       <tr ng-repeat="e in entities">
-        <th   style=" border:none;
-                      border-right: 1px solid #999;"
+        <td   style=" border:none;
+                      border-right: 1px solid #999;
+                      font-size:large;"
         >
           {{e.title}}
-        </th>
+        </td>
         <td ng-repeat="p in properties" style="border:none;">
           <div  ng-if="!config.state.options.disables[e.id][p.id]" 
                 style="width: 2em;
