@@ -76,6 +76,37 @@ let Scale = class extends Question {
           this.scope.config.state.options.ordinals.values = newValues;   
         }
 
+        getResponseStat(responses) {
+            let RStat = {};
+
+            this.scope.config.state.options.ordinals.values.forEach(e => {
+              RStat[e.value] = responses.filter(r => {
+                  if ( r.question_id == this.scope.config.state.id  && r.value == e.value) {
+                      return true
+                    } else {
+                      return false
+                    }
+                }).length;
+              
+            })
+            // console.log("RSTAT!!!!!!!!!!!!", RStat)
+            let pairs = _.toPairs(RStat)
+            // console.log(pairs)
+            let values = pairs.map(item => item[1])
+            let sum = values.reduce((item,sum) => {return sum+item})
+            if(sum==0){
+                  values = values.map(item => 0)
+                }else{
+                  values = values.map(item => item/sum )
+                }
+            // console.log(values)    
+            pairs.forEach((p,index) => {
+              RStat[p[0]] = values[index]
+            })    
+            // console.log(RStat)
+            this.scope.rstat = RStat;
+          }
+
 }
 
 module.exports = Scale;

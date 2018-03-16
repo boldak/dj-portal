@@ -45,7 +45,37 @@
           >
             &nbsp;
           </div>  
+        </td>
+        <td style="border:none;" ng-if="config.state.options.showResponsesStat && rstat">
+          <div style="height: 4em; width:{{2*properties.length}}em;">
+            <div  class="left" 
+                  ng-repeat="p in properties"
+            >
+              <div style="font-size: xx-small;
+                            position: relative;
+                            top: {{3*(1-rstat[e.id][p.id])}}em;
+                            text-align: center;
+                            height:1em;
+                            line-height: 1em;
+                            color:#777;"
+                >
+                  {{(100*rstat[e.id][p.id]).toFixed(0)}}%
+              </div>
+              <div       
+                  style=" background:#ffc107;
+                          border:0.05rem solid #999;
+                          position:relative;
+                          height:{{3*rstat[e.id][p.id]}}em;
+                          top:{{3*(1-rstat[e.id][p.id])}}em; 
+                          width:2em;
+                        "
+              >
+              </div>
+            <!-- {{100/properties.length+'%'}} -->
+            </div>  
+          </div>  
         </td>  
+
       </tr>  
     </table>  
 

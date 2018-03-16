@@ -96,6 +96,38 @@ let ManyToMany = class extends Question {
           }
         }
 
+
+          getResponseStat(responses) {
+            let RStat = {};
+            this.scope.alternatives.forEach(e => {
+              RStat[e.id] = responses.filter(r => {
+                  if ( r.entity_id == e.id ) {
+                      return true
+                    } else {
+                      return false
+                    }
+                }).length;
+              
+            })
+            // console.log("RSTAT!!!!!!!!!!!!", RStat)
+            let pairs = _.toPairs(RStat)
+            console.log(pairs)
+            let values = pairs.map(item => item[1])
+            let sum = values.reduce((item,sum) => {return sum+item})
+            if(sum==0){
+                  values = values.map(item => 0)
+                }else{
+                  values = values.map(item => item/sum )
+                }
+            // console.log(values)    
+            pairs.forEach((p,index) => {
+              RStat[p[0]] = values[index]
+            })    
+            // console.log(RStat)
+            this.scope.rstat = RStat;
+          }
+
 }
+
 
 module.exports = ManyToMany;

@@ -120,6 +120,29 @@
                 </label>
               </td>  
             </tr> 
+            <tr>
+              <td style="border:none;">
+                <label class="large" 
+                style="color:{{(config.state.options.showResponsesStat)?'#008CBA':'';}}"> 
+                  Show Responses Stat:
+                </label>  
+              </td>
+              <td style="border:none;>
+                <label class="large" style="color:{{(config.state.options.showResponsesStat)?'#008CBA':'';}}"> 
+                  <div  class="switch tiny radius left" 
+                        style=" margin: 0;
+                                padding: 0;
+                                line-height: 1;"
+                  >
+                    <input  type="checkbox"  
+                            id="{{widget.instanceName+'_showResponsesStat'}}"
+                            ng-model="config.state.options.showResponsesStat"
+                            ng-change="markModified()">
+                    <label  for="{{widget.instanceName+'_showResponsesStat'}}"></label>
+                  </div>
+                </label>
+              </td>  
+            </tr> 
           </table>  
 
 

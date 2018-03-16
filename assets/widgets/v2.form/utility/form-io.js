@@ -141,6 +141,279 @@ let dps = {
         dml.select(from:"answer", where:{{f}}, as:{{map}})
         json()
         sort({{sort}})
+    `,
+    exportResponses:`
+        
+
+        // exportResponses
+
+        //<?javascript
+        //    $scope.form_id = "5aa657defdaef838271d946f";
+        //
+        //?>
+
+        <?javascript
+            $scope.forForm = (item) => item.form == $scope.form_id;
+            $scope.isForm = (item) => item.id == $scope.form_id;
+
+            $scope.filename = $scope.form_id+"_"+_util.format.date(new Date(),"YYYY_MM_DD_HH_mm")+"_responses.csv";
+        ?>
+
+        dml.select(from:"answer", where:{{forForm}})
+        set("answers")
+        dml.select(from:"form", where:{{isForm}})
+        set("form")
+
+        <?javascript
+
+        let questions = $scope.form[0].config.questions;
+
+        let answers = $scope.answers.map ((a) => {
+          a.data = _.pairs(a.data).map(d => {
+            d[1].title = questions[d[0]].options.title;
+            
+            d[1].id = d[0];
+            
+            if (!d[1].value) {
+              return d[1]
+            }
+            
+            if( ["influences"].indexOf(d[1].type) >=0 ){
+              d[1].value = d[1].value.map(v => {
+                return {
+                  entity_id: v.entity,
+                  entity_title: questions[d[0]].options.entities[v.entity].title,
+                  property_id: v.property,
+                  property_title: questions[d[0]].options.properties[v.property].title,
+                  value:v.value
+                }
+              }) 
+            }
+
+            if( ["pairs","radiopairs"].indexOf(d[1].type) >=0 ){
+              d[1].value = d[1].value.map(v => {
+                return {
+                  entity_id: v.entity,
+                  entity_title: questions[d[0]].options.entities[v.entity].title,
+                  property_id: v.property,
+                  property_title: questions[d[0]].options.properties[v.property].title,
+                  value:1
+                }
+              }) 
+            }
+
+            if( ["radio","check","dropdown"].indexOf(d[1].type) >= 0 ){
+              d[1].value = d[1].value.map(v => {
+                return {
+                  entity_id: v,
+                  entity_title: questions[d[0]].options.nominals[v].title,
+                  property_id: "",
+                  property_title:"",
+                  value:1
+                }
+              }) 
+            }
+            
+            if( ["scales"].indexOf(d[1].type) >= 0 ){
+              d[1].value = d[1].value.map(v => {
+                return {
+                  entity_id: v.entity,
+                  entity_title: questions[d[0]].options.entities[v.entity].title,
+                  property_id: "",
+                  property_title:"",
+                  value:v.value
+                }
+              }) 
+            }
+            
+            
+            if( ["text","rate","range","datetime","scale"].indexOf(d[1].type) >= 0 ){
+              d[1].value = d[1].value.map(v => {
+                return {
+                  entity_id: "",
+                  entity_title: "",
+                  property_id: "",
+                  property_title:"",
+                  value:(d[1].type=="datetime")? _util.format.date(new Date(v), "DD/MM/YY HH:mm") : v
+                }
+              }) 
+            }
+            
+            return d[1];
+          })
+          return a;
+        });
+
+
+
+
+
+        let responses = [];
+
+        answers = answers.forEach( a => {
+            a.data.forEach( d => {
+              if(d.value){
+                d.value.forEach( v => {
+                    responses.push({
+                      response_id:a.id,
+                      updatedAt: _util.format.date(a.updatedAt, "DD/MM/YY HH:mm"),
+                      form:a.form,
+                      respondent:(a.user.email)? a.user.email : "",
+                      question_id: d.id,
+                      question_title: d.title,
+                      question_type: d.type,
+                      valid:(d.valid)? 1 : 0,
+                      entity_id: v.entity_id,
+                      entity_title:v.entity_title,
+                      property_id:v.property_id,
+                      property_title:v.property_title,
+                      value:v.value     
+                    })
+                  })    
+              } 
+            })
+        });
+
+        $scope.responses = responses;
+
+        ?>
+
+        get("responses")
+        export({{filename}})
+
+
+    `,
+    loadAllResponses:
+    `
+      // loadAllResponses    
+        <?javascript
+            $scope.forForm = (item) => item.form == $scope.form_id;
+            $scope.isForm = (item) => item.id == $scope.form_id;
+
+            // $scope.filename = $scope.form_id+"_"+_util.format.date(new Date(),"YYYY_MM_DD_HH_mm")+"_responses.csv";
+        ?>
+
+        dml.select(from:"answer", where:{{forForm}})
+        set("answers")
+        dml.select(from:"form", where:{{isForm}})
+        set("form")
+
+        <?javascript
+
+        let questions = $scope.form[0].config.questions;
+
+        let answers = $scope.answers.map ((a) => {
+          a.data = _.pairs(a.data).map(d => {
+            d[1].title = questions[d[0]].options.title;
+            
+            d[1].id = d[0];
+            
+            if (!d[1].value) {
+              return d[1]
+            }
+            
+            if( ["influences"].indexOf(d[1].type) >=0 ){
+              d[1].value = d[1].value.map(v => {
+                return {
+                  entity_id: v.entity,
+                  entity_title: questions[d[0]].options.entities[v.entity].title,
+                  property_id: v.property,
+                  property_title: questions[d[0]].options.properties[v.property].title,
+                  value:v.value
+                }
+              }) 
+            }
+
+            if( ["pairs","radiopairs"].indexOf(d[1].type) >=0 ){
+              d[1].value = d[1].value.map(v => {
+                return {
+                  entity_id: v.entity,
+                  entity_title: questions[d[0]].options.entities[v.entity].title,
+                  property_id: v.property,
+                  property_title: questions[d[0]].options.properties[v.property].title,
+                  value:1
+                }
+              }) 
+            }
+
+            if( ["radio","check","dropdown"].indexOf(d[1].type) >= 0 ){
+              d[1].value = d[1].value.map(v => {
+                return {
+                  entity_id: v,
+                  entity_title: questions[d[0]].options.nominals[v].title,
+                  property_id: "",
+                  property_title:"",
+                  value:1
+                }
+              }) 
+            }
+            
+            if( ["scales"].indexOf(d[1].type) >= 0 ){
+              d[1].value = d[1].value.map(v => {
+                return {
+                  entity_id: v.entity,
+                  entity_title: questions[d[0]].options.entities[v.entity].title,
+                  property_id: "",
+                  property_title:"",
+                  value:v.value
+                }
+              }) 
+            }
+            
+            
+            if( ["text","rate","range","datetime","scale"].indexOf(d[1].type) >= 0 ){
+              d[1].value = d[1].value.map(v => {
+                return {
+                  entity_id: "",
+                  entity_title: "",
+                  property_id: "",
+                  property_title:"",
+                  value:(d[1].type=="datetime")? _util.format.date(new Date(v), "DD/MM/YY HH:mm") : v
+                }
+              }) 
+            }
+            
+            return d[1];
+          })
+          return a;
+        });
+
+
+
+
+
+        let responses = [];
+
+        answers = answers.forEach( a => {
+            a.data.forEach( d => {
+              if(d.value){
+                d.value.forEach( v => {
+                    responses.push({
+                      response_id:a.id,
+                      updatedAt: _util.format.date(a.updatedAt, "DD/MM/YY HH:mm"),
+                      form:a.form,
+                      respondent:(a.user.email)? a.user.email : "",
+                      question_id: d.id,
+                      question_title: d.title,
+                      question_type: d.type,
+                      valid:(d.valid)? 1 : 0,
+                      entity_id: v.entity_id,
+                      entity_title:v.entity_title,
+                      property_id:v.property_id,
+                      property_title:v.property_title,
+                      value:v.value     
+                    })
+                  })    
+              } 
+            })
+        });
+
+        $scope.responses = responses;
+
+        ?>
+
+        get("responses")
+
     `
 }
 
@@ -275,15 +548,32 @@ let FormIO = class {
 
   }
 
+  exportResponses(form_id){
+    return this.runDPS({
+      script: dps.exportResponses,
+      state: { form_id: form_id }
+    })
+  }
+
 
   loadResponseStat(form) {
 
     return this.runDPS({
       script: dps.loadResponseStat,
-      state: { form: form }
+      state: { form_id: form }
     })
 
   }
+
+  loadAllResponses(form) {
+
+    return this.runDPS({
+      script: dps.loadAllResponses,
+      state: { form_id: form }
+    })
+
+  }
+
 
 
   prepareContext(u) {

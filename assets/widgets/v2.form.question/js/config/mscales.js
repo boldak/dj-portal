@@ -142,6 +142,47 @@ let MScales = class extends Question {
             ].value  
           }
         }
+
+        getResponseStat(responses) {
+        let RStat = {};
+        this.scope.entities.forEach(e => {
+          RStat[e.id] = {}
+          this.scope.config.state.options.ordinals.values.forEach(p => {
+            RStat[e.id][p.value] = responses.filter(r => {
+              if ( (r.entity_id == e.id) && (r.value == p.value) ){
+                  return true
+                }else{
+                  return false
+                }
+            }).length;
+          })
+        })
+        // console.log(RStat)
+        _.toPairs(RStat).forEach(e => {
+            let values = _.toPairs(e[1]);
+            // console.log(values)
+            let v = values.map(item => item[1])
+            // console.log(v)
+            // let max = v.reduce((item,max) => {return (max>item)?max:item})
+            // let min = v.reduce((item,min) => {return (min<item)?min:item})
+            let sum = v.reduce((item,sum) => {return sum+item})
+            // console.log(min,max)
+            if(sum==0){
+              v = v.map(item => 0)
+            }else{
+              v = v.map(item => item/sum )
+            }
+
+            values.map(item => item[0]).forEach((item,index)=>{
+              RStat[e[0]][item] = v[index]
+            })  
+        });
+
+        
+
+        this.scope.rstat = RStat;
+        console.log("RSTAT", this.scope.rstat)
+      }
   
 }
 

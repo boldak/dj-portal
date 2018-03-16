@@ -1,44 +1,77 @@
 
 <div class="row" style="margin:1em 0 0;">
   <div class="column small-10 small-centered">
-      
-      <div class="row">
-        <div  class=" left" 
-              ng-repeat="v in config.state.options.ordinals.values"
-              style=" padding:0 0.25em; 
-                      cursor:pointer;    
-                      font-size: large;
-                      text-align: center;
-                      font-weight: bold;
-                      color:{{colorUtility.scaleColor(v.value)}}"
+    <table style="width:100%; border:none;">
+      <tr>
+        <td style="border:none;">
+          <div  class=" left" 
+                ng-repeat="v in config.state.options.ordinals.values"
+                style=" padding:0 0.25em; 
+                        cursor:pointer;    
+                        font-size: large;
+                        text-align: center;
+                        font-weight: bold;
+                        color:{{colorUtility.scaleColor(v.value)}}"
 
-              ng-click="config.setValue(v.value)"
-        > 
-          
-            <div style=" color:{{colorUtility.scaleFontColor(v.value)}};
-                        font-size:small;
-                        "
-            >{{v.value}}</div>
-            <div style="
-                  font-size:xx-large; 
-                  font-weight:bold;
-                  width:1em;
-                  height:0.5em;
-                  background: {{colorUtility.scaleColor(v.value)}};
-                  border:1px solid #999" 
+                ng-click="config.setValue(v.value)"
+          > 
+            
+              <div style=" color:{{colorUtility.scaleFontColor(v.value)}};
+                          font-size:small;
+                          "
+              >{{v.value}}
+            </div>
+              <div style="
+                    font-size:xx-large; 
+                    font-weight:bold;
+                    width:1em;
+                    height:0.5em;
+                    background: {{colorUtility.scaleColor(v.value)}};
+                    border:1px solid #999" 
+              >
+                &nbsp;
+              </div>
+             
+             <!-- <i style="font-size:xx-large; font-weight:bold;" class="fa fa-pause"></i><br/> -->
+             
+             <div style=" color:{{colorUtility.scaleFontColor(v.value)}}; 
+                          font-size:xx-small;">
+              {{v.title}}
+              </div>
+          </div>
+        </td>
+        <td style="border:none;" ng-if="config.state.options.showResponsesStat && rstat">
+            <div style="height: 4em; width:{{2*config.state.options.ordinals.values.length}}em;">
+            <div  class="left" 
+                  ng-repeat="v in config.state.options.ordinals.values" 
             >
-              &nbsp;
-            </div>
-           
-           <!-- <i style="font-size:xx-large; font-weight:bold;" class="fa fa-pause"></i><br/> -->
-           
-           <div style=" color:{{colorUtility.scaleFontColor(v.value)}}; 
-                        font-size:xx-small;">
-            {{v.title}}
-            </div>
-        </div>
-        
-      </div>
+              <div style="font-size: xx-small;
+                          position: relative;
+                          top: {{3*(1-rstat[v.value])}}em;
+                          text-align: center;
+                          height:1em;
+                          line-height: 1em;
+                          color:#777;"
+              >
+                {{(100*rstat[v.value]).toFixed(0)}}%
+              </div>
+              <div style=" background:#ffc107;
+                          border:0.05rem solid #999;
+                          position:relative;
+                          height:{{3*rstat[v.value]}}em;
+                          top:{{3*(1-rstat[v.value])}}em; 
+                          width:2em;
+                          "
+              >
+              </div>          
+
+            </div>  
+          </div>  
+        </td>  
+      </tr>  
+    </table>
+      
+     
    </div>  
 </div>  
 

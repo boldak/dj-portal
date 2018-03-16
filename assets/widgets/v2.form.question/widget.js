@@ -1064,8 +1064,9 @@ $scope.m = true;
   $scope.$watch("effects", updateConfig, true);
 
   $scope.$watch("answer", (oldV, newV) => {
-    if($scope.config.validateAnswer) $scope.config.validateAnswer();
-    (new APIUser()).invokeAll("questionMessage", {action:"change-answer", data:$scope.answer})
+    if($scope.config && $scope.config.validateAnswer) $scope.config.validateAnswer();
+      (new APIUser()).invokeAll("questionMessage", {action:"change-answer", data:$scope.answer})
+    
   }, true);
 
 
@@ -1139,6 +1140,14 @@ $scope.m = true;
           applyAnswer()
           return
         } 
+
+        if(context.action == "responseStat" && $scope.widget.ID){
+          // console.log("ResponseStat", context)
+          if(context.data && $scope.config.getResponseStat){
+            $scope.config.getResponseStat(context.data)
+          }
+          return
+        }
 
         if(context.action == "show"){
           $scope.hidden = false;

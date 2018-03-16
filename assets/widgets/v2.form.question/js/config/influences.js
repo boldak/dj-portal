@@ -110,7 +110,7 @@ let Influences = class extends Question {
     this.scope.answer = {
       valid: false,
       question: this.scope.widget.ID,
-      type: "pairs",
+      type: "influences",
       value: []
     }
 
@@ -262,6 +262,48 @@ let Influences = class extends Question {
     newValues[newValues.length-1].title = highTitle;
     this.scope.config.state.options.ordinals.values = newValues;   
   }
+
+
+  getResponseStat(responses) {
+
+    console.log("INFLUENCES RESPONSE STAT", responses)
+      let RStat = {};
+      this.scope.entities.forEach(e => {
+        RStat[e.id] = {}
+        this.scope.properties.forEach(p => {
+          RStat[e.id][p.id] = {}
+          this.scope.config.state.options.ordinals.values.forEach( v => {
+            RStat[e.id][p.id][v.value] = responses.filter(r => {
+              if ( (r.entity_id == e.id) && (r.property_id == p.id) && (r.value == v.value)){
+                  return true
+                }else{
+                  return false
+                }
+            }).length;  
+          })
+        })
+      })
+      
+      // console.log(RStat)
+
+      _.toPairs(RStat).forEach(e => {
+        _.toPairs(e[1]).forEach(p => {
+          let values = _.toPairs(p[1]).map(item=> item[1])
+          let sum = values.reduce((item,sum) => {return sum+item})
+          if(sum==0){
+            values = values.map(item => 0)
+          } else {
+            values = values.map(item => item/sum )
+          }
+          _.toPairs(p[1]).map(item => item[0]).forEach((item,index) => {
+            RStat[e[0]][p[0]][item] = values[index]
+          })  
+        })
+      })  
+
+      this.scope.rstat = RStat;
+      // console.log("RSTAT", this.scope.rstat)
+    }
 
  
 

@@ -1,8 +1,92 @@
 
 <div class="row" style="margin:1em 0 0">
   <div class="column small-10 small-centered">
+
+      <table style="width:100%; border:none;">
+        <tr ng-repeat="a in alternatives">
+          <td style="border:none;">
+            <input 
+              id="{{a.id}}" 
+              class="radio" 
+              type="radio" 
+              name="{{'radio_'+widget.ID}}"
+              ng-model="answer.value[0]"
+              ng-change="config.setValue(a.id)"
+              value="{{a.id}}"
+             > 
+            <label for="{{a.id}}" style="font-size: large;">
+              {{a.title}}
+            </label>
+          </td>
+          <td ng-if="config.state.options.showUserInfo && a.user" style="border:none;">
+            <i>
+              <span   style=" 
+                  background-image: url({{a.user.photo}});
+                  background-size: 2em 2em;
+                  border-radius: 50%;
+                  display: block;
+                  overflow: hidden;
+                  position: relative;
+                  height: 2em;
+                  width: 2em;
+                  float: left;
+                  margin: -0.25em 0.5em 0 3em;
+                  background-color: red;"></span>
+               <span style="float: left; font-size: smaller; margin: 0.25em 0 0 0.5em">
+                {{a.user.name}}
+              </span>
+            </i>
+          </td>
+          <td style="border:none;" ng-if="config.state.options.showResponsesStat && rstat">
+            <div style="width:10em;">
+              <div  style="
+                      background:#ffc107;
+                      border:0.05rem solid #999;
+                      width:{{5*rstat[a.id]}}em;
+                    "
+                    class="left"
+              >
+                &nbsp;
+              </div>
+              <div style="    margin: 0 0 0 0.5em;
+                              color: #777;
+                              font-size: x-small;"
+                   class="left"           
+              >
+                {{(rstat[a.id]*100).toFixed(0)}}%
+              </div>  
+            </div>    
+          </td>  
+        </tr>
+        <tr>
+          <td colspan=3 style="border:none;">
+            <div class="column small-7 left" style="padding:0 0;">
+              <input  ng-model="textFields.alternative" type="text" placeholder="Text">
+            </div>
+            <div class="column small-3 left">  
+              <button
+                class="large left"
+                ng-click="addPMAlternative(alternatives)"
+                ng-disabled="!textFields.alternative"
+                style=" /*color: #5f8ab9;*/
+                        background: #617e8b;
+                        margin-top: 0.16em;
+                        /* font-size: larger; */
+                        /*border: 1px solid #5f8ab9;*/
+                        border-radius: 6px;
+                        padding: 0.2em 0.5em 0.2em 0.5em;"
+              >
+                <i class=" fa fa-plus-square"/> 
+                  <widget-translate>Add</widget-translate>
+              </button>
+             </div> 
+          </td>
+        </tr>  
+      </table>
+
+
     
-      <div  class="row" 
+    <!--   <div  class="row" 
             
             ng-repeat="a in alternatives"
       >
@@ -71,7 +155,7 @@
       </div>  
     </div>
   </div>
-</div>
+</div> -->
 
 
 

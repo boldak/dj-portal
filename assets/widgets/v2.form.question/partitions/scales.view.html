@@ -56,7 +56,36 @@
         >
           {{config.getValue(e.id)}}
         </span> -->
-        </td>  
+        </td>
+        <td style="border:none;" ng-if="config.state.options.showResponsesStat && rstat">
+          <div style="height: 4em; width:{{2*config.state.options.ordinals.values.length}}em;">
+            <div  class="left" 
+                  ng-repeat="v in config.state.options.ordinals.values"
+            >
+              <div style="font-size: xx-small;
+                            position: relative;
+                            top: {{3*(1-rstat[e.id][v.value])}}em;
+                            text-align: center;
+                            height:1em;
+                            line-height: 1em;
+                            color:#777;"
+                >
+                  {{(100*rstat[e.id][v.value]).toFixed(0)}}%
+              </div>
+              <div       
+                  style=" background:#ffc107;
+                          border:0.05rem solid #999;
+                          position:relative;
+                          height:{{3*rstat[e.id][v.value]}}em;
+                          top:{{3*(1-rstat[e.id][v.value])}}em; 
+                          width:2em;
+                        "
+              >
+              </div>
+            <!-- {{100/properties.length+'%'}} -->
+            </div>  
+          </div>  
+        </td>    
       </tr>  
     </table>  
   </div>  

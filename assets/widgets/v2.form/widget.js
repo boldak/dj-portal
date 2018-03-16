@@ -198,6 +198,15 @@ let scopeFor = widgetInstanceName => instanceNameToScope.get(widgetInstanceName)
     })
   }
 
+  $scope.exportResponses = () => {
+    $scope.transport.exportResponses($scope.widget.form.id)
+    .then(res => {
+      app.save(() => {
+        $scope.exportResponseUrl = res.data.url;
+        $window.location.href = $dps.getUrl()+$scope.exportResponseUrl  
+      })
+    })
+  }
 
   $scope.userNotification = () => {
     $scope.widget.form.config.access.lastNotificatedAt = new Date();
@@ -301,8 +310,16 @@ let scopeFor = widgetInstanceName => instanceNameToScope.get(widgetInstanceName)
     let loadResponseStat = (formId) => {
       $scope.transport.loadResponseStat(formId)
       .then(res => {
-        $scope.responsesStat = res.data
+        $scope.responsesStat = res.data;
+        // (new APIUser()).invokeAll("formMessage", {action:"responseStat", data:res.data});
         // console.log($scope.responsesStat)
+      })
+    }
+
+    let loadAllResponses = (formId) => {
+      $scope.transport.loadAllResponses(formId)
+      .then(res => {
+        (new APIUser()).invokeAll("formMessage", {action:"responseStat", data:res.data});
       })
     }
 
@@ -315,8 +332,9 @@ let scopeFor = widgetInstanceName => instanceNameToScope.get(widgetInstanceName)
 
         // if($scope.globalConfig.designMode){
          
-        // }
-
+          // }
+        
+        loadAllResponses($scope.widget.form.id)  
         if($scope.widget.form.config.access.type != 'any'){
           if(!user.id){
             let index = $scope.widget.form.config.access.users.map(item => item.apikey).indexOf(user.apikey)
@@ -400,6 +418,7 @@ let scopeFor = widgetInstanceName => instanceNameToScope.get(widgetInstanceName)
 
                   $scope.processing = false;
                   $scope.blockMessages = false;
+
                   $scope.fanButton.state("none")
               })
             }
@@ -523,6 +542,7 @@ let scopeFor = widgetInstanceName => instanceNameToScope.get(widgetInstanceName)
           $scope.transport
             .loadForm($scope.widget.form.id)  
             .then(res => {
+
               $scope.widget.form = res.data[0];
               (new APIUser()).invokeAll("formMessage", {action:"update", data:$scope.widget.form});
               $scope.metadataTools.prepaire();
@@ -568,6 +588,7 @@ let scopeFor = widgetInstanceName => instanceNameToScope.get(widgetInstanceName)
 
       $q.all([saveFormPromise, saveAnswerPromise])
         .then(() => {
+          loadAllResponses($scope.widget.form.id)
           $scope.$evalAsync(() => {
             $scope.fanButton.state("completed")
             $scope.blockMessages = false;  
