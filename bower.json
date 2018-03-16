@@ -48,7 +48,10 @@
     "numeral": "^2.0.6",
     "components-font-awesome": "^4.7.0",
     "tinycolor": "^1.4.1",
-    "javascript-time-ago": "hustcc/timeago.js"
+    "javascript-time-ago": "hustcc/timeago.js",
+	"moment": "^2.21.0",
+    	"moment-round": "^1.0.1"
+	
   },
   "resolutions": {
     "d3": "v3.5.17"
