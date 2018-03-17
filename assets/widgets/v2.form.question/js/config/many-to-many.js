@@ -127,6 +127,9 @@ let ManyToMany = class extends Question {
             this.scope.rstat = RStat;
           }
 
+          isResponse(value){
+            return this.scope.answer.value.indexOf(value) >= 0
+          }
 }
 
 

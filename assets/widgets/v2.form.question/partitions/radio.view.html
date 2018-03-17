@@ -40,7 +40,7 @@
           <td style="border:none;" ng-if="config.state.options.showResponsesStat && rstat">
             <div style="width:10em;">
               <div  style="
-                      background:#ffc107;
+                      background:{{(config.isResponse(a.id))?'#FF5722':'#ffc107'}};
                       border:0.05rem solid #999;
                       width:{{5*rstat[a.id]}}em;
                     "

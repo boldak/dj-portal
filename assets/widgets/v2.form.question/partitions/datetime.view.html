@@ -1,10 +1,117 @@
 <div class="row" style="margin:1em 0 0">
   <div class="column small-10 small-centered">
-    <div class="column small-3" style="width:auto;">
-      <input 	type="{{config.state.options.format}}" 
-      			ng-model="answer.value[0]"
-       />
-    </div>
+  	<table style="width:100%; border:none;">
+  		<tr>
+  			<td style="border:none;">
+			    <div class="column small-3" style="width:auto;">
+			      <input 	type="{{config.state.options.format}}" 
+			      			ng-model="answer.value[0]"
+			       />
+			    </div>
+			</td>
+			<td style="border:none; width:75%" ng-if="config.state.options.showResponsesStat && rstat">
+
+				<table style="box-shadow: 0 0.1em 0.5em 0 #607D8B;">
+					<tr>
+						<td ng-repeat="v in rstat track by $index" 
+							style="border: none; 
+									width:2em;
+									"
+						>
+								<div style="font-size: xx-small;
+				                            text-align: center;
+				                            height:1em;
+				                            line-height: 1em;
+				                            color:#777;"
+				                >
+				                  {{(100*rstat[$index].value).toFixed(0)}}%
+				              </div>
+						</td>	
+					</tr>
+					<tr>
+						<td ng-repeat="v in rstat track by $index" 
+							style="border: none; 
+									width:2em;
+									"
+						>	
+							<div style="height:5em;">
+								  <div       
+					                  style=" 
+					                  background:{{(config.isResponse($index))?'#FF5722':'#ffc107'}};
+					                          border:0.05rem solid #999;
+					                          position:relative;
+					                          height:{{5*rstat[$index].value}}em;
+					                          top:{{5*(1-rstat[$index].value)}}em; 
+					                        "
+					              >
+					              </div>
+				            </div>  
+						</td>
+					</tr>
+					<tr>
+						<td ng-repeat="v in rstat track by $index" 
+							style="border: none; 
+									width:2em;
+									"
+						>    
+							<div  
+			                  style=" 
+			                          text-align: center;
+			                          height:1em;
+			                          line-height: 1em;
+			                          color:#777; 
+			                          font-size: xx-small;
+			                        "
+			            	  >
+			              		{{rstat[$index].title}}
+			              	</div>
+						</td>
+					</tr>		
+				</table>
+
+	        <!--   <div style="height: 6em; width:{{4*rstat.length}}em; font-size:xx-small;">
+	            <div  class="left" 
+	                  ng-repeat="v in rstat track by $index"
+	            >
+	              <div style="font-size: xx-small;
+	                            position: relative;
+	                            top: {{5*(1-rstat[$index].value)}}em;
+	                            text-align: center;
+	                            height:1em;
+	                            line-height: 1em;
+	                            color:#777;"
+	                >
+	                  {{(100*rstat[$index].value).toFixed(0)}}%
+	              </div>
+	              <div       
+	                  style=" background:#ffc107;
+	                          border:0.05rem solid #999;
+	                          position:relative;
+	                          height:{{5*rstat[$index].value}}em;
+	                          top:{{5*(1-rstat[$index].value)}}em; 
+	                          width:4em;
+	                        "
+	              >
+	              </div>
+	              <div       
+	                  style=" position:relative;
+	                          top:5.25em;
+	                          text-align: center;
+	                          height:1em;
+	                          line-height: 1em;
+	                          color:#777; 
+	                          font-size: xx-small;
+	                        "
+	              >
+	              	{{rstat[$index].title}}
+	              </div>
+ -->
+	            <!-- {{100/properties.length+'%'}} -->
+<!-- 	            </div>  
+	          </div>  
+ -->	        </td>
+		</tr>
+	</table>		    
   </div>
 </div> 
 <!-- 

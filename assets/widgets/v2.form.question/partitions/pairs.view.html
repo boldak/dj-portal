@@ -47,35 +47,46 @@
           </div>  
         </td>
         <td style="border:none;" ng-if="config.state.options.showResponsesStat && rstat">
-          <div style="height: 4em; width:{{2*properties.length}}em;">
-            <div  class="left" 
-                  ng-repeat="p in properties"
-            >
-              <div style="font-size: xx-small;
-                            position: relative;
-                            top: {{3*(1-rstat[e.id][p.id])}}em;
-                            text-align: center;
-                            height:1em;
-                            line-height: 1em;
-                            color:#777;"
-                >
-                  {{(100*rstat[e.id][p.id]).toFixed(0)}}%
-              </div>
-              <div       
-                  style=" background:#ffc107;
-                          border:0.05rem solid #999;
-                          position:relative;
-                          height:{{3*rstat[e.id][p.id]}}em;
-                          top:{{3*(1-rstat[e.id][p.id])}}em; 
-                          width:2em;
-                        "
-              >
-              </div>
-            <!-- {{100/properties.length+'%'}} -->
-            </div>  
-          </div>  
-        </td>  
 
+          <table style="margin: 1em; box-shadow: 0 0.1em 0.5em 0 #607D8B;">
+            <tr>
+              <td ng-repeat="p in properties" 
+                style="border: none; 
+                    width:2em;
+                    "
+              >
+                  <div style="font-size: xx-small;
+                                      text-align: center;
+                                      height:1em;
+                                      line-height: 1em;
+                                      color:#777;"
+                          >
+                            {{(100*rstat[e.id][p.id]).toFixed(0)}}%
+                        </div>
+              </td> 
+            </tr>
+            <tr>
+              <td ng-repeat="p in properties" 
+                style="border: none; 
+                    width:2em;
+                    "
+              > 
+                <div style="height:5em;">
+                    <div       
+                              style=" 
+                              background:{{(config.isResponse(e.id,p.id))?'#FF5722':'#ffc107'}};
+                                      border:0.05rem solid #999;
+                                      position:relative;
+                                      height:{{5*rstat[e.id][p.id]}}em;
+                                      top:{{5*(1-rstat[e.id][p.id])}}em; 
+                                    "
+                          >
+                          </div>
+                      </div>  
+              </td>
+            </tr>
+          </table>
+        </td>
       </tr>  
     </table>  
 

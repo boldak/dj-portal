@@ -289,6 +289,13 @@ let RadioPairs = class extends Question {
     // console.log("RSTAT", this.scope.rstat)
   }
 
+  isResponse(entity, property){
+
+    let s = this.scope.answer.value.filter((item) => {
+      return (item.entity == entity) && (item.property == property)
+    })
+    return (s.length > 0 )    
+  }
  
 
 }

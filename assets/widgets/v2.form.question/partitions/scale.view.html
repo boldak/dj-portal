@@ -40,34 +40,66 @@
               </div>
           </div>
         </td>
-        <td style="border:none;" ng-if="config.state.options.showResponsesStat && rstat">
-            <div style="height: 4em; width:{{2*config.state.options.ordinals.values.length}}em;">
-            <div  class="left" 
-                  ng-repeat="v in config.state.options.ordinals.values" 
-            >
-              <div style="font-size: xx-small;
-                          position: relative;
-                          top: {{3*(1-rstat[v.value])}}em;
-                          text-align: center;
-                          height:1em;
-                          line-height: 1em;
-                          color:#777;"
-              >
-                {{(100*rstat[v.value]).toFixed(0)}}%
-              </div>
-              <div style=" background:#ffc107;
-                          border:0.05rem solid #999;
-                          position:relative;
-                          height:{{3*rstat[v.value]}}em;
-                          top:{{3*(1-rstat[v.value])}}em; 
-                          width:2em;
-                          "
-              >
-              </div>          
+        <td style="border:none; width:50%" ng-if="config.state.options.showResponsesStat && rstat">
 
-            </div>  
-          </div>  
-        </td>  
+          <table style="box-shadow: 0 0.1em 0.5em 0 #607D8B;">
+            <tr>
+              <td ng-repeat="v in config.state.options.ordinals.values" 
+                style="border: none; 
+                    width:2em;
+                    "
+              >
+                  <div style="font-size: xx-small;
+                                      text-align: center;
+                                      height:1em;
+                                      line-height: 1em;
+                                      color:#777;"
+                          >
+                            {{(100*rstat[v.value]).toFixed(0)}}%
+                        </div>
+              </td> 
+            </tr>
+            <tr>
+              <td ng-repeat="v in config.state.options.ordinals.values" 
+                style="border: none; 
+                    width:2em;
+                    "
+              > 
+                <div style="height:5em;">
+                    <div       
+                              style=" 
+                              background:{{(config.isResponse(v.value))?'#FF5722':'#ffc107'}};
+                                      border:0.05rem solid #999;
+                                      position:relative;
+                                      height:{{5*rstat[v.value]}}em;
+                                      top:{{5*(1-rstat[v.value])}}em; 
+                                    "
+                          >
+                          </div>
+                      </div>  
+              </td>
+            </tr>
+            <tr>
+              <td ng-repeat="v in config.state.options.ordinals.values" 
+                style="border: none; 
+                    width:2em;
+                    "
+              >    
+                <div  
+                          style=" 
+                                  text-align: center;
+                                  height:1em;
+                                  line-height: 1em;
+                                  color:#777; 
+                                  font-size: xx-small;
+                                "
+                        >
+                          {{v.value}}
+                        </div>
+              </td>
+            </tr>   
+          </table>
+        </td>
       </tr>  
     </table>
       

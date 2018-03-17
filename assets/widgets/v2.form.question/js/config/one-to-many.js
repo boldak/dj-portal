@@ -116,6 +116,10 @@ let OneToMany = class extends Question {
             // console.log(RStat)
             this.scope.rstat = RStat;
           }
+
+          isResponse(value){
+            return this.scope.answer.value.indexOf(value) >= 0
+          }
         
 
 }

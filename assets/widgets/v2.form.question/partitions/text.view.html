@@ -1,13 +1,19 @@
 <div class="row" style="margin:1em 0 0">
   <div class="column small-10 small-centered">
-    <textarea 
-    	placeholder="{{config.state.options.placeholder}}" 
-    	ng-model="answer.value[0]"
-      	value="answer.value[0]"
-    	class="text" 
-    	rows="{{config.state.options.rows}}"
-    >
-   </textarea>
+    <table style="width:100%; border:none;">
+      <tr>
+        <td style="border:none;">
+          <textarea 
+          	placeholder="{{config.state.options.placeholder}}" 
+          	ng-model="answer.value[0]"
+            	value="answer.value[0]"
+          	class="text" 
+          	rows="{{config.state.options.rows}}"
+          >
+         </textarea>
+        </td>
+      </tr>   
+    </table>
   </div>
 </div> 
 

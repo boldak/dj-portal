@@ -49,6 +49,39 @@ let Rate = class extends Question {
   }
 
   updateConfig() {}
+
+  getResponseStat(responses) {
+    let RStat = [];
+    for(let index = 1; index <= this.scope.config.state.options.max; index++){
+      RStat.push(responses.filter(r => {
+          if ( r.question_id == this.scope.config.state.id  && r.value == index) {
+              return true
+            } else {
+              return false
+            }
+        }).length);
+    }
+
+    let values = RStat.map(item => item)
+    let sum = values.reduce((item,sum) => {return sum+item})
+    if(sum==0){
+          values = values.map(item => 0)
+        }else{
+          values = values.map(item => item/sum )
+        }
+    
+    this.scope.rstat = RStat.map((item,index) => {
+      return {
+        title: index+1,
+        value: values[index]
+      }  
+    });
+  }
+
+  isResponse(value) {
+    return this.scope.answer.value[0] == value
+  }
+
 }
 
 module.exports = Rate;

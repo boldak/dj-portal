@@ -266,7 +266,7 @@ let Influences = class extends Question {
 
   getResponseStat(responses) {
 
-    console.log("INFLUENCES RESPONSE STAT", responses)
+    // console.log("INFLUENCES RESPONSE STAT", responses)
       let RStat = {};
       this.scope.entities.forEach(e => {
         RStat[e.id] = {}
@@ -305,7 +305,19 @@ let Influences = class extends Question {
       // console.log("RSTAT", this.scope.rstat)
     }
 
- 
+    isResponse(entity, property, value) {
+      let index = -1;
+      for (let i = 0; i < this.scope.answer.value.length; i++) {
+        let v = this.scope.answer.value[i]
+        if ((v.entity == entity) && (v.property == property)) {
+          index = i;
+          break;
+        }
+      }
+      return (index >= 0) 
+        ? this.scope.answer.value[index].value == value 
+        : false;   
+    }
 
 }
 

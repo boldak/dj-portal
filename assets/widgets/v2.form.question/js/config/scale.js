@@ -107,6 +107,10 @@ let Scale = class extends Question {
             this.scope.rstat = RStat;
           }
 
+          isResponse(value) {
+             return this.scope.answer.value[0] == value
+          }
+
 }
 
 module.exports = Scale;

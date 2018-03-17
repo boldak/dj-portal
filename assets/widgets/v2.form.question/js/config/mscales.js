@@ -157,16 +157,10 @@ let MScales = class extends Question {
             }).length;
           })
         })
-        // console.log(RStat)
         _.toPairs(RStat).forEach(e => {
             let values = _.toPairs(e[1]);
-            // console.log(values)
             let v = values.map(item => item[1])
-            // console.log(v)
-            // let max = v.reduce((item,max) => {return (max>item)?max:item})
-            // let min = v.reduce((item,min) => {return (min<item)?min:item})
             let sum = v.reduce((item,sum) => {return sum+item})
-            // console.log(min,max)
             if(sum==0){
               v = v.map(item => 0)
             }else{
@@ -181,8 +175,18 @@ let MScales = class extends Question {
         
 
         this.scope.rstat = RStat;
-        console.log("RSTAT", this.scope.rstat)
       }
+
+      isResponse(entity,value) {
+        let index = this.scope.answer.value.map(item => item.entity).indexOf(entity);
+        if(index >= 0){
+          return this.scope.answer.value[index].value == value
+        } else{
+          return false
+        }
+      }
+
+
   
 }
 

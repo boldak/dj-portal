@@ -69,16 +69,21 @@
           </div>  
         </td>
         <td style="border:none;" ng-if="config.state.options.showResponsesStat && rstat">
-          <div style="height: 3em; margin: 1em 0; width:{{properties.length}}em; ">
+          <div style="  height: 5em; 
+                        margin: 1em 0; 
+                        width:{{properties.length}}em;
+                        box-shadow: 0 0.1em 0.5em 0 #607D8B; 
+                        "
+          >
             <div  class="left" ng-repeat="p in properties" style="height: 4em; width:1em;">
               <div ng-repeat="v in config.state.options.ordinals.values"
                    style="
                       background: {{colorUtility.influenceBg(v.value)}};
                       /*border:1px solid #e7e7e7;*/
-                      outline: 1px solid #e7e7e7;
+        outline: {{(config.isResponse(e.id,p.id,v.value))?'1px solid #F44336':'1px solid #e7e7e7'}};
                       outline-offset: -2px;
                       width:1em;
-                      height:{{3*rstat[e.id][p.id][v.value]}}em;
+                      height:{{5*rstat[e.id][p.id][v.value]}}em;
                       /*display: inline-block;*/
                    " 
               >

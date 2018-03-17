@@ -55,6 +55,8 @@ System.config({
     "javascript-time-ago": "components/javascript-time-ago/dist/timeago.min.js",
     // "javascript-time-ago-locale.en":"components/javascript-time-ago/locale/en/index.js",
     // "javascript-time-ago-locale.en":"components/javascript-time-ago/locale/uk/index.js",
+    "moment":"components/moment/moment.js",
+    "moment-round":"components/moment-round/dist/moment-round.js",
     
     "jsinq": "components/jsinq/source/jsinq.js",
     "jsinq-query": "components/jsinq/source/jsinq-query.js",
@@ -288,7 +290,20 @@ System.config({
         // "javascript-time-ago-locale.en",
         // "javascript-time-ago-locale.uk"
       ]
-    }
+    },
+
+    "moment-round": {
+      "exports": "moment",
+      "deps": [
+        "moment"
+      ]
+    },
+
+    "moment": {
+      "exports": "moment",
+      "deps": [
+      ]
+    },
 
 
   }
