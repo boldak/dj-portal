@@ -59,7 +59,7 @@
                                       text-align: center;
                                       height:1em;
                                       line-height: 1em;
-                                      color:#777;"
+                                      color:{{(config.isResponse(e.id,p.id))?'#FF5722':'#777'}};"
                           >
                             {{(100*rstat[e.id][p.id]).toFixed(0)}}%
                         </div>
@@ -75,7 +75,7 @@
                     <div       
                               style=" 
                               background:{{(config.isResponse(e.id,p.id))?'#FF5722':'#ffc107'}};
-                                      border:0.05rem solid #999;
+                              border:0.05rem solid {{(config.isResponse(e.id,p.id))?'#FF5722':'#999'}};
                                       position:relative;
                                       height:{{5*rstat[e.id][p.id]}}em;
                                       top:{{5*(1-rstat[e.id][p.id])}}em; 

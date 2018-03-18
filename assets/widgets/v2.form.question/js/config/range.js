@@ -90,7 +90,8 @@ let Range = class extends Question {
     this.th = th;
     this.scope.rstat = RStat.map((item,index) => {
       return {
-        title: ((th[index+1]+th[index])/2).toFixed(2),
+        // title: ((th[index+1]+th[index])/2).toFixed(2),
+        title: (th[index]).toFixed(2),
         value: values[index]
       }  
     });

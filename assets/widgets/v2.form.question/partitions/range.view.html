@@ -31,7 +31,7 @@
                                       text-align: center;
                                       height:1em;
                                       line-height: 1em;
-                                      color:#777;"
+                                      color:{{(config.isResponse($index))?'#FF5722':'#777'}};"
                           >
                             {{(100*rstat[$index].value).toFixed(0)}}%
                         </div>
@@ -47,7 +47,7 @@
                     <div       
                               style=" 
                               background:{{(config.isResponse($index))?'#FF5722':'#ffc107'}};
-                                      border:0.05rem solid #999;
+                      border:0.05rem solid {{(config.isResponse($index))?'#FF5722':'#999'}};
                                       position:relative;
                                       height:{{5*rstat[$index].value}}em;
                                       top:{{5*(1-rstat[$index].value)}}em; 
@@ -68,7 +68,7 @@
                                   text-align: center;
                                   height:1em;
                                   line-height: 1em;
-                                  color:#777; 
+                                  color:{{(config.isResponse($index))?'#FF5722':'#777'}}; 
                                   font-size: xx-small;
                                 "
                         >

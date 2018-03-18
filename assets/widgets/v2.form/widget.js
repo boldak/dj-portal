@@ -636,7 +636,7 @@ let scopeFor = widgetInstanceName => instanceNameToScope.get(widgetInstanceName)
       .then(() => {$scope.processing = false;})
     })
 
-    .translate(updateWidget)
+    // .translate(updateWidget)
 
     .create((event, widget) => {
         
@@ -678,7 +678,8 @@ let scopeFor = widgetInstanceName => instanceNameToScope.get(widgetInstanceName)
         }
 
         if(context.action == 'remove'){
-            $scope.widget.form.config.questions[context.data.widget.ID]
+            // console.log('remove',$scope.widget.form.config.questions[context.data.widget.ID])
+            $scope.widget.form.config.questions[context.data.widget.ID] = undefined;
             return
         }
 

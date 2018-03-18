@@ -41,7 +41,7 @@
             <div style="width:10em;">
               <div  style="
                       background:{{(config.isResponse(a.id))?'#FF5722':'#ffc107'}};
-                      border:0.05rem solid #999;
+                      border:0.05rem solid {{(config.isResponse(a.id))?'#FF5722':'#999'}};
                       width:{{5*rstat[a.id]}}em;
                     "
                     class="left"
@@ -49,7 +49,7 @@
                 &nbsp;
               </div>
               <div style="    margin: 0 0 0 0.5em;
-                              color: #777;
+                              color: {{(config.isResponse(a.id))?'#FF5722':'#777'}};
                               font-size: x-small;"
                    class="left"           
               >
