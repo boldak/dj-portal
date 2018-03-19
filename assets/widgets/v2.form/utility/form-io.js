@@ -613,9 +613,9 @@ let FormIO = class {
   
    
 // TODO Comments 3 lines below for production mode
-   return new Promise((resolve) => {
-    resolve({script:script, state:state})
-   }) 
+   // return new Promise((resolve) => {
+   //  resolve({script:script, state:state})
+   // }) 
 
 
 
