@@ -59,7 +59,7 @@ ${scope.$filter("json")(scope.answer)}
 ])
 
 .factory("queryString", () => (uri, param) => {
-  
+  console.log(uri)
   var queryString = {};
   uri.replace(
       new RegExp("([^?=&]+)(=([^&]*))?", "g"),

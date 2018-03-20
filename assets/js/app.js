@@ -100,7 +100,8 @@ app.constant('globalConfig', {
 
 app.constant('selectedHolder',null);
 
-
+// console.log(window.location.href)
+app.constant("pageURI", window.location.href);
 
 // app.constant('appSkins', [
 //   {

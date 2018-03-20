@@ -4,7 +4,7 @@ import "./utility/index.js";
 
 
 let m = angular.module('app.widgets.v2.form', [
-  'app.dps', "oc.lazyLoad", "ngAnimate", "formUtility"
+  'app', 'app.dps', "oc.lazyLoad", "ngAnimate", "formUtility"
 ])
 
 
@@ -40,9 +40,9 @@ m.controller('FormController', function(
   testMessage,
   queryString,
   confirm,
-  defaultNotificationTemplate
+  defaultNotificationTemplate,
+  pageURI
 ) {
-
 
 
 
@@ -50,7 +50,10 @@ m.controller('FormController', function(
 
 $ocLazyLoad.load({files:["/widgets/v2.form.question/djform.css"]}); 
 
-user.apikey = queryString($window.location.href).apikey 
+user.apikey = queryString(pageURI).apikey 
+// console.log(pageURI)
+// console.log("query", queryString(pageURI))
+// console.log("access for user", user)
 
 angular.extend($scope, {
 
