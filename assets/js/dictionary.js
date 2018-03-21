@@ -11,11 +11,11 @@ dictionaryModule.dictionary = {};
 
 
 
-dictionaryModule.run(function ($http,i18n,$dps) {
+dictionaryModule.run(function (i18n, $dps) {
   
   // $http.get("./api/dictionary")
   $dps.get("/api/dictionary")
-            .success(function (data) {
+            .then(function (data) {
               // console.log(data)
                 var d = {};
                 for(let i in data){
@@ -37,8 +37,8 @@ dictionaryModule.run(function ($http,i18n,$dps) {
 
 
 
-dictionaryModule.service("$lookup",[ "$http","$translate", "i18n", "$dps",
-  function($http, $translate, i18n, $dps){
+dictionaryModule.service("$lookup",[ "i18n", "$dps",
+  function( i18n, $dps){
     var LocalDictionary = function(dictionary){
       this._table = {}
       if (dictionary) this._init(dictionary)
@@ -70,7 +70,7 @@ dictionaryModule.service("$lookup",[ "$http","$translate", "i18n", "$dps",
       // $http.get("./api/dictionary")
       
       $dps.get("/api/dictionary")
-              .success(function (data) {
+              .then(function (data) {
                   var d = {};
                   for(let i in data){
                     d[data[i].key] = data[i].value;

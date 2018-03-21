@@ -36,7 +36,7 @@
     </div>  
 
   <div class="addWidget">
-    <ul class="small-block-grid-3 medium-block-grid-6 large-block-grid-8">
+    <ul class="small-block-grid-3 medium-block-grid-6 large-block-grid-10">
       <li ng-repeat="widget in filteredWidgets = (widgetTypes | filter: hasTags)"
           ng-click="add(widget)"
           class="has-tip"
@@ -44,6 +44,9 @@
           tooltip-popup-delay='1000'
           tooltip="{{widget.type + ': ' + widget.description}}">
         <img class="th" ng-class="{selected: isSelected(filteredWidgets[$index])}" ng-src="{{widget.icon}}"/>
+        <div>
+          {{widget.type}}
+        </div>  
       </li>
     </ul>
   </div>

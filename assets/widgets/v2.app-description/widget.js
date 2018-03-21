@@ -9,7 +9,7 @@ angular.module('app.widgets.v2.app-description', [])
       author,
       pageSubscriptions,
       i18n,
-      $http,
+      $portal,
       appUrls,
       $translate,
       prompt, alert, user, dialog
@@ -22,8 +22,8 @@ angular.module('app.widgets.v2.app-description', [])
     
     var emitter = new EventEmitter($scope);
 
-    $http.get(appUrls.appList)
-        .success(apps => {
+    $portal.get(appUrls.appList)
+        .then(apps => {
           apps.forEach((c) =>{
             if(c.i18n){
               config.i18n = (config.i18n)? config.i18n : {}; 
@@ -64,13 +64,13 @@ angular.module('app.widgets.v2.app-description', [])
 
       // prompt(`${$translate.instant('WIDGET.V2.APP-DESCRIPTION.NEW_NAME')}:`)
       //   .then(newAppName => {
-            $http.get(appUrls.api.rename(app.id, newAppName))
-              .success(()=>{
+            $portal.get(appUrls.api.rename(app.id, newAppName))
+              .then(()=>{
                 $scope.refresh();
               })
-              .error((data, error) => {
+              .catch(e => {
                 this.restoreApps();
-                alert.error($translate.instant('WIDGET.V2.APP-DESCRIPTION.ERROR_RENAMING_APP', {error, data}));
+                alert.error(e)//$translate.instant('WIDGET.V2.APP-DESCRIPTION.ERROR_RENAMING_APP', {error, data}));
               });
           });
     };
@@ -96,13 +96,13 @@ angular.module('app.widgets.v2.app-description', [])
             return;
           }
 
-          $http.get(appUrls.api.destroy(app.id))
-          .success(() => {
+          $portal.get(appUrls.api.destroy(app.id))
+          .then(() => {
             $scope.refresh();
           })
-          .error((data, error) => {
+          .catch(e => {
             $scope.refresh();
-            alert.error($translate.instant('WIDGET.V2.APP-DESCRIPTION.ERROR_DELETING_APP'));
+            alert.error(e)//$translate.instant('WIDGET.V2.APP-DESCRIPTION.ERROR_DELETING_APP'));
           });
         });
     };

@@ -5,46 +5,8 @@ import 'angular-foundation';
 const appListWidget = angular.module('app.widgets.v2.app-list', ['mm.foundation']);
 
 
-// appListWidget.controller('AppCreatorController', function ($scope, $http, $translate,
-//                                                            EventEmitter, 
-//                                                            // $modalInstance,
-//                                                            appSkins,
-//                                                            appUrls, prompt, alert, user) {
-//   console.log('INIT AppCreatorController')
-//   const evtEmitter = new EventEmitter($scope);
 
-//   angular.extend($scope, {
-//     "user" : user,
-//     model: {
-//       newAppName: "",
-//       skinName: "default"
-//     },
-//     skins: appSkins,
-//     createApp() {
-//       const app = {
-//         name: this.model.newAppName,
-//         skin: this.model.skinName,
-//         owner: user
-//       };
-
-//       $http.get(appUrls.api.createApp(app.name, app.skin))
-//         .success(data => {
-//           app.id = data.id;
-//           evtEmitter.emit('new-app-created', app);
-//           // $modalInstance.close();
-//         })
-//         .error((data, error) => {
-//           alert.error($translate.instant('WIDGET.APP-CREATOR.ERROR_CREATING_APP', {data, error}));
-//         });
-//     }
-//   });
-//   console.log($scope)
-// });
-
-
-
-
-appListWidget.controller('AppListController', function ($scope, $http, $translate,
+appListWidget.controller('AppListController', function ($scope, $portal, $translate,
                                                         APIProvider,EventEmitter,
                                                         i18n,config,appUrls,$modal,
                                                         dialog, prompt, alert, user,
@@ -59,8 +21,8 @@ appListWidget.controller('AppListController', function ($scope, $http, $translat
     apps: undefined,
     oldApps: undefined,
     update(){
-      $http.get(appUrls.appList)
-        .success(apps => {
+      $portal.get(appUrls.appList)
+        .then(apps => {
           $scope.apps = apps;
           $scope.oldApps = apps;
           apps.forEach((c) =>{
@@ -121,18 +83,19 @@ appListWidget.controller('AppListController', function ($scope, $http, $translat
         const fd = new FormData();
         // Take the first selected file
         fd.append('file', form.fields.file.value, form.fields.name.value);
-        $http.post(appUrls.api.import, fd, {
+        $portal.post(appUrls.api.import, fd, {
           withCredentials: true,
           headers: {'Content-Type': undefined},
           transformRequest: angular.identity
-        }).success(data => {
+        }).then(data => {
           $scope.update();
-        }).error((data, status) => {
-          if (status === 415) {
-            alert.error($translate.instant('WIDGET.V2.APP-LIST.CANNOT_PARSE_DATA_AS_VALID_JSON', {data}));
-          } else {
-            alert.error($translate.instant('WIDGET.V2.APP-LIST.ERROR_IMPORTING_APP', {status}));
-          }
+        }).catch(e => {
+          alert.error(e)
+          // if (status === 415) {
+          //   alert.error($translate.instant('WIDGET.V2.APP-LIST.CANNOT_PARSE_DATA_AS_VALID_JSON', {data}));
+          // } else {
+          //   alert.error($translate.instant('WIDGET.V2.APP-LIST.ERROR_IMPORTING_APP', {status}));
+          // }
         });
 
       })      
@@ -159,53 +122,18 @@ appListWidget.controller('AppListController', function ($scope, $http, $translat
             }
           } 
       }).then((form) => {
-          $http.get(appUrls.api.createApp(form.fields.name.value, form.fields.skin.value))
-          .success(data => {
+          $portal.get(appUrls.api.createApp(form.fields.name.value, form.fields.skin.value))
+          .then(data => {
             $scope.update();
           })
-          .error((data, error) => {
-            alert.error($translate.instant('WIDGET.V2.APP-LIST.ERROR_CREATING_APP', {data, error}));
+          .catch((e) => {
+            alert.error(e)//$translate.instant('WIDGET.V2.APP-LIST.ERROR_CREATING_APP', {data, error}));
           });
 
       })
     }
   });  
-  //   saveApps() {
-  //     this.oldApps = angular.copy(this.apps);
-  //   },
-  //   restoreApps() {
-  //     this.apps = this.oldApps;
-  //   },
-
-  //   renameApp(appId) {
-  //     prompt(`${$translate.instant('WIDGET.APP-LIST.NEW_NAME')}:`).then(newAppName => {
-  //       this.saveApps();
-  //       this.apps[this.apps.findIndex(app => appId === app.id)].name = newAppName;
-  //       $http.get(appUrls.api.rename(appId, newAppName))
-  //         .error((data, error) => {
-  //           this.restoreApps();
-  //           alert.error($translate.instant('WIDGET.APP-LIST.ERROR_RENAMING_APP', {error, data}));
-  //         });
-  //     });
-  //   },
-
-  //   deleteApp(appId, appName) {
-  //     prompt($translate.instant('WIDGET.APP-LIST.TYPE_APP_NAME_TO_CONFIRM_DELETION')).then(confirmName => {
-  //       if (confirmName !== appName) {
-  //         alert.error($translate.instant('WIDGET.APP-LIST.WRONG_NAME_APP_NOT_DELETED'));
-  //         return;
-  //       }
-
-  //       this.saveApps();
-  //       this.apps.splice(this.apps.findIndex(app => appId === app.id), 1);
-  //       $http.get(appUrls.api.destroy(appId)).error((data, error) => {
-  //         this.restoreApps();
-  //         alert.error($translate.instant('WIDGET.APP-LIST.ERROR_DELETING_APP'));
-  //       });
-  //     });
-  //   }
-  // });
-  // 
+   
   
   $scope.tags = [];
 
@@ -269,7 +197,6 @@ appListWidget.controller('AppListController', function ($scope, $http, $translat
     })
 
     .translate(() => {
-      console.log("transl",$scope.selection)
       emitter.emit("setApplication",$scope.selection);
     })
     

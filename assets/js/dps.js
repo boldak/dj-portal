@@ -9,6 +9,25 @@ dps.run (function(config, $location){
   console.log("Data Processing Server URL", config.dps);
 })
 
+
+dps.service("$portal", function ($http, $location, user, appName, i18n) {
+	angular.extend(this, {
+		
+		get: (url) => {
+			return $http.get(url).then(res => res.data)
+		},
+		
+		post: (url, data, options) => {
+			// data = data || {};
+			// data.client = {user: user, app: appName};
+			// data.locale = data.locale || i18n.locale();
+			return $http.post(url, data, options).then(res => res.data)
+		
+		}
+	})	
+})
+
+
 dps.service('$dps',
 
    	function($http, config, $location, FileSaver, Blob, user, appName, i18n){

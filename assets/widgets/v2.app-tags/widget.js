@@ -9,7 +9,7 @@ const appTags = angular.module('app.widgets.v2.app-tags', ['mm.foundation']);
 
 
 
-appTags.controller('AppTagsController', function ($scope, $http, $translate,
+appTags.controller('AppTagsController', function ($scope, $portal, $translate,
                                                         APIProvider,EventEmitter,
                                                         i18n,config,appUrls,$modal,
                                                         dialog, prompt, alert, user,
@@ -28,8 +28,8 @@ appTags.controller('AppTagsController', function ($scope, $http, $translate,
     update(){
       $scope.tags = [];
       $scope.selectedTags = [];
-      $http.get(appUrls.appList)
-        .success(apps => {
+      $portal.get(appUrls.appList)
+        .then(apps => {
           apps.forEach((app) => {
           app.keywords = (app.keywords) ? app.keywords : [];  
           app.keywords.forEach( (t) => {
