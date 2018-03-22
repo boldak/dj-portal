@@ -414,6 +414,14 @@ let dps = {
 
         get("responses")
 
+    `,
+    findUserProfile: `
+      // <?javascript
+      //     $scope.email = "annakukharuk@gmail.com";
+      //     $scope.email = "ishchenko.kpi@gmail.com";
+      // ?>
+
+      profile.find({{email}})
     `
 }
 
@@ -570,6 +578,15 @@ let FormIO = class {
     return this.runDPS({
       script: dps.loadAllResponses,
       state: { form_id: form }
+    })
+
+  }
+
+  findUserProfile(email) {
+
+    return this.runDPS({
+      script: dps.findUserProfile,
+      state: { email: email }
     })
 
   }

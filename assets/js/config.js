@@ -303,8 +303,7 @@ System.config({
       "exports": "moment",
       "deps": [
       ]
-    },
-
+    }
 
   }
 });

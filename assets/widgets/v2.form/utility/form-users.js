@@ -82,16 +82,25 @@ let UserList = class {
   addInvitedUser() {
     this.scope.widget.form.config.access.users = this.scope.widget.form.config.access.users || [];
     if (angular.isString(this.invitedUserAdd)) {
-    
-        this.scope.widget.form.config.access.users.push({ 
+        let invited = { 
           email: this.invitedUserAdd,
           apikey: apikey() 
-      })
+        }
+
+        this.scope.transport.findUserProfile(invited.email)
+        .then(profile => {
+          profile = profile.data;
+          if(profile.type != "none"){
+            invited.photo = profile.profile.photo;
+            invited.name = profile.profile.name;
+          }
+          this.scope.widget.form.config.access.users.push(invited)
+        })
     
     } else {
       this.scope.widget.form.config.access.users.push(this.invitedUserAdd)
     }
-    console.log(this.scope.widget.form.config.access.users)
+   
     this.invitedUserAdd = undefined;
     this.invitedUser = undefined;
     this.invitedUserIsValid = false;
