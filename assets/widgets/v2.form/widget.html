@@ -278,7 +278,80 @@
       <!-- <pre>{{responsesStat}}</pre> -->
       <div class="row">
         <div class="column small-12">
-          <table style="border:none">
+          <table  style="
+                    box-shadow: 0 0.1em 0.5em 0 #607D8B;
+                    margin: 0 auto;" 
+                  ng-if="responseDynamic"
+          >
+          <tr>
+            <td   style="
+                        border: none;
+                        color: #777;
+                        text-align: center;
+                        font-size: larger;" 
+                  colspan="{{responseDynamic.length}}"
+            >
+              Total: {{responsesStat.length}} responses
+            </td>
+          </tr>    
+          <tr>
+            <td ng-repeat="v in responseDynamic track by $index" 
+              style="border: none; 
+                  width:2em;
+                  "
+            >
+                <div style="font-size: xx-small;
+                                    text-align: center;
+                                    height:1em;
+                                    line-height: 1em;
+                                    color:#777;
+                                    "
+                        >
+    {{(responseDynamic[$index].value>0) ? ((100*responseDynamic[$index].value).toFixed(0)+'%') :' '}}
+                      </div>
+            </td> 
+          </tr>
+          <tr>
+            <td ng-repeat="v in responseDynamic track by $index" 
+              style="border: none; 
+                  width:2em;
+                  "
+            > 
+              <div style="height:5em;">
+                  <div       
+                            style=" 
+                     background:#03a9f4;
+                     border:0.05rem solid {{(responseDynamic[$index].value>0)?'#03a9f4':'#999'}};
+                                    position:relative;
+                                    height:{{5*responseDynamic[$index].height}}em;
+                                    top:{{5*(1-responseDynamic[$index].height)}}em; 
+                                  "
+                        >
+                        </div>
+                    </div>  
+            </td>
+          </tr>
+          <tr>
+            <td ng-repeat="v in responseDynamic track by $index" 
+              style="border: none; 
+                  width:2em;
+                  "
+            >    
+              <div  
+                        style=" 
+                                text-align: center;
+                                
+                                line-height: 1em;
+                                color:#777; 
+                                font-size: xx-small;
+                              "
+                      >
+                        {{responseDynamic[$index].title}}
+                      </div>
+            </td>
+          </tr>   
+        </table>
+          <!-- <table style="border:none">
             <tr>
               <td style="border:none;">
                 Starts: 
@@ -303,7 +376,7 @@
                 {{responsesStat.length}} response(s)
               </td> 
             </tr> 
-          </table>
+          </table> -->
         </div>
       </div>    
 <!--       <div class="row" ng-if="widget.form.config.access.type == 'invited'">

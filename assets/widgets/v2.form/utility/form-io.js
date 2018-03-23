@@ -568,7 +568,7 @@ let FormIO = class {
 
     return this.runDPS({
       script: dps.loadResponseStat,
-      state: { form_id: form }
+      state: { form: form }
     })
 
   }
