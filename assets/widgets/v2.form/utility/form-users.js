@@ -84,17 +84,19 @@ let UserList = class {
     if (angular.isString(this.invitedUserAdd)) {
         let invited = { 
           email: this.invitedUserAdd,
-          apikey: apikey() 
+          apikey: apikey(),
+          find: true 
         }
+        this.scope.widget.form.config.access.users.push(invited);
 
         this.scope.transport.findUserProfile(invited.email)
         .then(profile => {
           profile = profile.data;
+          invited.find = false;
           if(profile.type != "none"){
             invited.photo = profile.profile.photo;
             invited.name = profile.profile.name;
           }
-          this.scope.widget.form.config.access.users.push(invited)
         })
     
     } else {

@@ -264,6 +264,132 @@
       </div>
 
       <hr/>
+       <hr/>
+      <div ng-if="widget.form.config.access.type == 'invited'">
+        <h4>Invited respondents</h4>
+            
+        <table style="border:none;">
+          <tr style="background:#e7e7e7;">
+            <td colspan="3" style="border:none; font-size: x-small;">
+              Respondent
+            </td>
+            <td colspan="2" style="border:none; font-size: x-small;">
+              Notified at
+            </td>  
+          </tr>  
+          <tr ng-repeat="u in widget.form.config.access.users">
+            <td style="border:none;">
+                <i>
+                  <i  ng-if="u.find" 
+                      class="fa fa-spinner fa-pulse"
+                      style=" font-size: 2.75em;
+                              padding: 0 0 0 0.16em;
+                              color: #cedded;"
+                  />
+                  <span   style=" 
+                      background-image: url({{u.photo}});
+                      background-size: 3em 3em;
+                      border-radius: 50%;
+                      display: block;
+                      overflow: hidden;
+                      position: relative;
+                      height: 3em;
+                      width: 3em;
+                      float: left;
+                      "
+                      ng-if="u.photo && !u.find"></span>
+                  <span ng-if="!u.photo && !u.find" style="float: left; margin: 0 0 0 -0.4em;">
+                        <i  class="fa fa-user-circle"
+                            style="     font-size: 2.75em;
+                                        padding: 0 0 0 0.16em;
+                                        color: #cedded;"
+                        >
+                          
+                        </i></span>
+                </i>
+            </td>
+            <td style="border:none;">
+                <a href="mailto:{{u.email}}" target="blank" style="font-size: large;">  
+                  {{(u.name)? u.name : u.email}}
+                </a>  
+            </td>
+
+            <!-- <td style="border:none; font-size:x-small">
+              {{u.apikey}}
+            </td>   -->
+            
+            <td   style=" border:none; 
+                          font-size: large; 
+                          color:#5f8ab9; 
+                          cursor:pointer;"
+            >
+                <i  ng-click="userUtils.editInvitedUser(u)"  
+                    ng-if="!u.id" class="fa fa-address-card"/>
+                <i ng-if="u.id">&nbsp;</i>
+            </td>
+
+            <td style="border:none; font-size: x-small;" ng-if="u.notifiedAt">
+              <!-- <i class="fa fa-external-link"/> -->
+              {{timeAgo(u.notifiedAt)}}
+            </td>
+            <td style="border:none; font-size: x-small;" ng-if="!u.notifiedAt">
+              <!-- <i class="fa fa-external-link"/> -->
+              <!-- {{formatDate(u.notifiedAt)}} -->
+              &nbsp;
+            </td>  
+            
+            <td style="border:none; font-size: large; color:#5f8ab9; cursor:pointer;"
+                ng-click="userUtils.deleteInvitedUser(u.email)"  
+            >
+                <i class="fa fa-times"/>
+            </td>
+            
+          </tr>
+          <tr style="border:none;">
+            <td style="border:none;" colspan="2">
+              <div class="row" style="padding: 0; margin:2em 0 0 0;">
+                  <div  ng-if="userUtils.userIsInvited" 
+                        style="font-size: smaller; color: #f08a24; margin:-1.5em 1em;"
+                  >
+                    <i class="fa fa-exclamation-triangle" style="margin:0 0.5em;" />already invited
+                  </div>
+                  <div  ng-if="!userUtils.userIsInvited" 
+                        style="font-size: smaller; color: #f08a24; margin:-1.5em 1em;"
+                  >
+                    &nbsp;
+                  </div>
+                  <div class="column small-12 left" style="padding:0;">
+                     <input   type="text" 
+                              ng-model="invitedUser" 
+                              ng-change="userUtils.validInvitedUser(invitedUser)" 
+                              placeholder="Enter user email" 
+                              typeahead="cu as cu.email for cu in userUtils.getUsers($viewValue)" typeahead-template-url="/widgets/v2.form/userShortInfo.html" 
+                              class="form-control"  
+                              typeahead-on-select="userUtils.validInvitedUser(invitedUser)"
+                    >
+                  </div>
+              </div>    
+            </td>
+            <td style="border:none;">
+                    <button   ng-click="userUtils.addInvitedUser()" 
+                              style="     color: #5f8ab9;
+                                          background: none;
+                                          font-size: xx-large;
+                                          padding: 1em 0 0.5em 0;
+                                          margin: 0;
+                                          cursor: pointer;
+                                          border: none;
+                                          outline: none;""
+                              ng-disabled="!userUtils.invitedUserIsValid || userUtils.userIsInvited"
+                    >
+                      <i class="fa fa-user-plus" />
+                    </button>
+                  
+            </td>  
+          </tr>  
+        </table>
+        <hr/>
+      </div>
       <h4>
         Responses
         
@@ -425,126 +551,7 @@
           </div>
         </div>
       </div> -->
-      <hr/>
-      <div ng-if="widget.form.config.access.type == 'invited'">
-        <h4>Invited respondents</h4>
-            
-        <table style="border:none;">
-          <tr style="background:#e7e7e7;">
-            <td colspan="3" style="border:none; font-size: x-small;">
-              Respondent
-            </td>
-            <td colspan="2" style="border:none; font-size: x-small;">
-              Notified at
-            </td>  
-          </tr>  
-          <tr ng-repeat="u in widget.form.config.access.users">
-            <td style="border:none;">
-                <i>
-                  <span   style=" 
-                      background-image: url({{u.photo}});
-                      background-size: 3em 3em;
-                      border-radius: 50%;
-                      display: block;
-                      overflow: hidden;
-                      position: relative;
-                      height: 3em;
-                      width: 3em;
-                      float: left;
-                      "
-                      ng-if="u.photo"></span>
-                  <span ng-if="!u.photo" style="float: left; margin: 0 0 0 -0.4em;">
-                        <i  class="fa fa-user-circle"
-                            style="     font-size: 2.75em;
-                                        padding: 0 0 0 0.16em;
-                                        color: #cedded;"
-                        >
-                          
-                        </i></span>
-                </i>
-            </td>
-            <td style="border:none;">
-                <a href="mailto:{{u.email}}" target="blank" style="font-size: large;">  
-                  {{(u.name)? u.name : u.email}}
-                </a>  
-            </td>
-
-            <!-- <td style="border:none; font-size:x-small">
-              {{u.apikey}}
-            </td>   -->
-            
-            <td   style=" border:none; 
-                          font-size: large; 
-                          color:#5f8ab9; 
-                          cursor:pointer;"
-            >
-                <i  ng-click="userUtils.editInvitedUser(u)"  
-                    ng-if="!u.id" class="fa fa-address-card"/>
-                <i ng-if="u.id">&nbsp;</i>
-            </td>
-
-            <td style="border:none; font-size: x-small;" ng-if="u.notifiedAt">
-              <!-- <i class="fa fa-external-link"/> -->
-              {{timeAgo(u.notifiedAt)}}
-            </td>
-            <td style="border:none; font-size: x-small;" ng-if="!u.notifiedAt">
-              <!-- <i class="fa fa-external-link"/> -->
-              <!-- {{formatDate(u.notifiedAt)}} -->
-              &nbsp;
-            </td>  
-            
-            <td style="border:none; font-size: large; color:#5f8ab9; cursor:pointer;"
-                ng-click="userUtils.deleteInvitedUser(u.email)"  
-            >
-                <i class="fa fa-times"/>
-            </td>
-            
-          </tr>
-          <tr style="border:none;">
-            <td style="border:none;" colspan="2">
-              <div class="row" style="padding: 0; margin:2em 0 0 0;">
-                  <div  ng-if="userUtils.userIsInvited" 
-                        style="font-size: smaller; color: #f08a24; margin:-1.5em 1em;"
-                  >
-                    <i class="fa fa-exclamation-triangle" style="margin:0 0.5em;" />already invited
-                  </div>
-                  <div  ng-if="!userUtils.userIsInvited" 
-                        style="font-size: smaller; color: #f08a24; margin:-1.5em 1em;"
-                  >
-                    &nbsp;
-                  </div>
-                  <div class="column small-12 left" style="padding:0;">
-                     <input   type="text" 
-                              ng-model="invitedUser" 
-                              ng-change="userUtils.validInvitedUser(invitedUser)" 
-                              placeholder="Enter user email" 
-                              typeahead="cu as cu.email for cu in userUtils.getUsers($viewValue)" typeahead-template-url="/widgets/v2.form/userShortInfo.html" 
-                              class="form-control"  
-                              typeahead-on-select="userUtils.validInvitedUser(invitedUser)"
-                    >
-                  </div>
-              </div>    
-            </td>
-            <td style="border:none;">
-                    <button   ng-click="userUtils.addInvitedUser()" 
-                              style="     color: #5f8ab9;
-                                          background: none;
-                                          font-size: xx-large;
-                                          padding: 1em 0 0.5em 0;
-                                          margin: 0;
-                                          cursor: pointer;
-                                          border: none;
-                                          outline: none;""
-                              ng-disabled="!userUtils.invitedUserIsValid || userUtils.userIsInvited"
-                    >
-                      <i class="fa fa-user-plus" />
-                    </button>
-                  
-            </td>  
-          </tr>  
-        </table>
-        <hr/>
-      </div>
+     
     </div>
   </div>
 </div>
