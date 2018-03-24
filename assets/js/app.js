@@ -3,7 +3,8 @@
 import angular from 'angular';
 import 'angular-animate';
 import 'angular-cookies';
-import 'angular-foundation';
+import 'angular-material';
+// import 'angular-foundation';
 import 'angular-json-editor';
 import 'angular-oclazyload';
 import 'angular-ui-router';
@@ -30,7 +31,9 @@ import 'skin-directives'
 import 'user';
 import 'widget-api';
 
-const app = angular.module('app', ['ui.router', 'ngStorage', 'ngAnimate', 'oc.lazyLoad', 'mm.foundation',
+const app = angular.module('app', ['ui.router', 'ngStorage', 'ngAnimate', 'oc.lazyLoad', 
+  'mm.foundation',
+  'ngMaterial', 'ngMessages',
   'ngCookies', 'angular-json-editor', 'ui.tree','angular-clipboard','cfp.hotkeys',
   'app.templates', 'react', 'duScroll',
   'app.widgetApi', 'app.config', 'app.i18n','app.dps', 'app.skins','app.skinDirectives',
@@ -1055,7 +1058,7 @@ app.directive('widgetHolder', function (appUrls, widgetManager, app, selectHolde
   return {
     restrict: 'E',
     templateUrl: appUrls.widgetHolderHTML,
-    transclude: true,
+    // transclude: true,
     scope: true,
     link(scope, element, attrs) {
       scope.$watchCollection('scope.config.holders', () => {
@@ -1124,7 +1127,7 @@ app.directive('widget', function ($rootScope, $translate, $window, appUrls,
   return {
     restrict: 'E',
     templateUrl: '/partials/widget.html',
-    transclude: true,
+    // transclude: {{}}, //true,
     scope: {
       type: '@',
       widget: '=config',

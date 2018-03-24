@@ -21,6 +21,11 @@ System.config({
     "angular": "components/angular/angular.js",
     "angular-mocks": "components/angular-mocks/angular-mocks.js",
     "angular-animate": "components/angular-animate/angular-animate.js",
+
+    "angular-aria":"components/angular-aria/angular-aria.js",
+    "angular-messages":"components/angular-messages/angular-messages.js",
+    "angular-material":"components/angular-material/angular-material.js",
+    
     "angular-translate": "components/angular-translate/angular-translate.js",
     "angular-translate-loader-static-files": "components/angular-translate-loader-static-files/angular-translate-loader-static-files.js",
     "angular-translate-storage-cookie": "components/angular-translate-storage-cookie/angular-translate-storage-cookie.js",
@@ -109,6 +114,26 @@ System.config({
         "angular"
       ]
     },
+    
+    "angular-aria": {
+      "deps": [
+        "angular"
+      ]
+    },
+
+    "angular-messages": {
+      "deps": [
+        "angular"
+      ]
+    },
+
+    "angular-material": {
+      "deps": [
+        "angular-messages",
+        "angular-aria"
+      ]
+    },
+
     "angular-scroll": {
       "deps": [
         "angular"
