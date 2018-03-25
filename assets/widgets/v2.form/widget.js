@@ -212,7 +212,15 @@ let scopeFor = widgetInstanceName => instanceNameToScope.get(widgetInstanceName)
   }
 
   $scope.userNotification = () => {
+    
+    // $scope.transport
+      // .updateForm($scope.widget.form)
+      // .then(() => {$scope.processing = false;})
+
+
     $scope.widget.form.config.access.lastNotificatedAt = new Date();
+    saveForm();
+    
     if($scope.widget.form.config.access.type != 'invited') return
     dialog({
       title:"Notify Respondents",
@@ -257,10 +265,14 @@ let scopeFor = widgetInstanceName => instanceNameToScope.get(widgetInstanceName)
   }
 
   $scope.changeAccess = () => {
-    // console.log("change access", $scope.widget.form.config.access.type)
+    console.log("change access", $scope.widget.form.config.access.type)
     $scope.widget.form.config.access.enabled = !$scope.widget.form.config.access.enabled;
-    if($scope.widget.form.config.access.type == 'invited') $scope.userNotification();
     
+    saveForm();
+
+
+    if($scope.widget.form.config.access.type == 'invited') $scope.userNotification();
+  
   }
 
   // $scope.$watch(widget.config.access.enabled, userNotification)
@@ -315,12 +327,17 @@ let scopeFor = widgetInstanceName => instanceNameToScope.get(widgetInstanceName)
       .then(res => {
         $scope.responsesStat = res.data;
         // (new APIUser()).invokeAll("formMessage", {action:"responseStat", data:res.data});
-        let dyna = $scope.responsesStat.filter(item => item)
-        dyna.push({date: new Date(), v:1})
-        $scope.responseDynamic = $scope.answerUtils.getResponseDynamic(dyna);
+        if($scope.responsesStat){
+          let dyna = $scope.responsesStat.filter(item => item)
+          dyna.push({date: new Date(), v:1})
+          $scope.responseDynamic = $scope.answerUtils.getResponseDynamic(dyna);
+
+        }  
+
         // console.log("responseSTAT",$scope.answerUtils.getResponseDynamic(dyna));
       })
     }
+    
 
     let loadAllResponses = (formId) => {
       $scope.transport.loadAllResponses(formId)
@@ -528,7 +545,7 @@ let scopeFor = widgetInstanceName => instanceNameToScope.get(widgetInstanceName)
             $scope.transport
             .loadForm($scope.widget.form.id)  
             .then(res => {
-              console.log("invokeAll update")
+              // console.log("invokeAll update")
               $scope.formLoaded = true;
               $scope.widget.form = res.data[0];
               
@@ -615,14 +632,7 @@ let scopeFor = widgetInstanceName => instanceNameToScope.get(widgetInstanceName)
 
   $scope.fanButton.state("process")
 
-
-
-  new APIProvider($scope)
-    .config(() => {
-      updateWidget()  
-    })
-
-    .save(() => {
+  let saveForm =  () => {
       $scope.processing = true;
       updateConfig();
       $scope.widget.form.config.questions = {};
@@ -633,14 +643,17 @@ let scopeFor = widgetInstanceName => instanceNameToScope.get(widgetInstanceName)
           $scope.widget.form.config.questions[item.config.id] = item.config;
         })
 
-      // TODO behevior for open access in presentation mode when user add alternatives
-
-      // TODO get all question config and add into $scope.form.config.questions array
-      // This is for design mode
       $scope.transport
       .updateForm($scope.widget.form)
       .then(() => {$scope.processing = false;})
+  }
+
+  new APIProvider($scope)
+    .config(() => {
+      updateWidget()  
     })
+
+    .save(saveForm)
 
     // .translate(updateWidget)
 
@@ -725,6 +738,12 @@ let scopeFor = widgetInstanceName => instanceNameToScope.get(widgetInstanceName)
             }
           }   
         }
+    })
+
+    .beforePresentationMode(() => {
+      console.log("beforePresentationMode")
+      saveForm();
+
     })  
 
     .provide('formMessage', (e, context) => {
