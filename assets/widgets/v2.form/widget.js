@@ -315,12 +315,15 @@ let scopeFor = widgetInstanceName => instanceNameToScope.get(widgetInstanceName)
       .then(res => {
         $scope.responsesStat = res.data;
         // (new APIUser()).invokeAll("formMessage", {action:"responseStat", data:res.data});
-        let dyna = $scope.responsesStat.filter(item => item)
-        dyna.push({date: new Date(), v:1})
-        $scope.responseDynamic = $scope.answerUtils.getResponseDynamic(dyna);
+        if($scope.responsesStat){
+          let dyna = $scope.responsesStat.filter(item => item)
+          dyna.push({date: new Date(), v:1})
+          $scope.responseDynamic = $scope.answerUtils.getResponseDynamic(dyna);
+        }  
         // console.log("responseSTAT",$scope.answerUtils.getResponseDynamic(dyna));
       })
     }
+    
 
     let loadAllResponses = (formId) => {
       $scope.transport.loadAllResponses(formId)
