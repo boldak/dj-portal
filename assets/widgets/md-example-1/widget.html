@@ -47,7 +47,9 @@
           <md-content layout-padding>
             <div style="    padding: 2em;
     border: 1px solid #aaa;
-    border-radius: 8px;">
+    max-height: 15em;
+    overflow: auto;
+    >
               <form name="userForm">
 
                 <div layout-gt-xs="row">
@@ -93,7 +95,7 @@
                     <label>State</label>
                     <md-select ng-model="user.state">
                       <md-option ng-repeat="state in states" value="{{state.abbrev}}">
-                        {{state.abbrev}}
+                       <i class="fa fa-user"> {{state.abbrev}}</i>
                       </md-option>
                     </md-select>
                   </md-input-container>
