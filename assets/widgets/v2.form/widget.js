@@ -117,6 +117,8 @@ angular.extend($scope, {
 
 })
 
+console.log("QUERY STRING", pageURI, queryString(pageURI));
+
 $scope.user.apikey = queryString(pageURI).apikey 
 // console.log("USER !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!", $scope.user)
 
