@@ -979,6 +979,7 @@ app.controller('MainController', function ($scope, $location, $cookies, $window,
     app,
     config,
     user,
+    skinConfig:{},
 
     skin: {
       url: appUrls.skinUrl(config.skinName || 'default')
@@ -1123,6 +1124,7 @@ app.directive('widget', function ($rootScope, $translate, $window, appUrls,
       }
     });
   }
+  // console.log("SERVICE CONFIG", config)
 
   return {
     restrict: 'E',
@@ -1137,6 +1139,7 @@ app.directive('widget', function ($rootScope, $translate, $window, appUrls,
     },
     controller() {}, // needed for require: '^widget' to work in widget-translate directive
     link(scope, element, attrs) {
+      // console.log("SCOPE.WIDGET",scope)
       // console.log("Link", element)
       if (!scope.type) {
         throw "widget directive needs type parameter";
@@ -1151,7 +1154,9 @@ app.directive('widget', function ($rootScope, $translate, $window, appUrls,
       scope.skin = attrs.skin;
       // console.log(scope.type+" "+attrs.instancename+" "+attrs.skin);
 
-      if (!scope.widget && attrs.instancename) {
+      // if (!scope.widget && attrs.instancename) {
+      
+      if (scope.skin && attrs.instancename) {
         config.appWidgets = config.appWidgets || [];
         let conf = config.appWidgets.find(wgt => wgt.instanceName === attrs.instancename);
         if (!conf) {
@@ -1165,12 +1170,15 @@ app.directive('widget', function ($rootScope, $translate, $window, appUrls,
         scope.widget = conf;
         scope.element = element;
         scope.disallowEditInstanceName = true;
-      }
+        // console.log("APP WGT ELEMENT", scope.element)
+      } else {
 
-      scope.widget = scope.widget || {};
-      scope.widget.type = scope.widget.type || scope.type;
-      scope.widget.instanceName =
-        attrs.instanceName || scope.widget.instanceName || randomWidgetName();
+        scope.widget = scope.widget || {};
+        scope.widget.type = scope.widget.type || scope.type;
+        scope.widget.instanceName =
+          attrs.instanceName || scope.widget.instanceName || randomWidgetName();
+      }
+      
 
       widgetTypesPromise.then(w => {
         if (w.data[scope.widget.type].noicon !== true) {

@@ -7,15 +7,7 @@ module.exports.defaultAppConfigBase = {
   ],
   "isPublished": true,
   "appWidgets": [
-    {
-      "type": "language-selector",
-      "instanceName": "language-selector",
-      "showFlags": true
-    },
-    {
-      "type": "page-list",
-      "instanceName": "page-list-nav"
-    },
+    
     {
       "instanceName": "AppTopbar",
       "type": "v2.topbar",

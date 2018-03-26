@@ -3,6 +3,46 @@
 
 <div ng-controller="MdExampleController" layout="column" ng-cloak class="md-inline-form">
 
+
+ <md-fab-toolbar 
+                  md-direction="right">
+    <md-fab-trigger md-fab-top-left class="align-with-text">
+      <md-button aria-label="menu" class="md-fab md-primary">
+        <md-icon md-font-icon="fa-user"
+            aria-label="a"
+            style="font-family: FontAwesome;"
+        ></md-icon>
+      </md-button>
+    </md-fab-trigger>
+
+    <md-toolbar>
+      <md-fab-actions class="md-toolbar-tools">
+        <md-button aria-label="comment">
+          <md-icon md-font-icon="fa-user"
+            aria-label="a"
+            style="font-family: FontAwesome;"
+        ></md-icon> Switch Mode
+        </md-button>
+        <md-button aria-label="label">
+          <md-icon md-font-icon="fa-user"
+            aria-label="a"
+            style="font-family: FontAwesome;"
+        ></md-icon>Options
+        </md-button>
+        <md-button aria-label="photo" class="md-icon-button">
+          <md-icon md-font-icon="fa-user"
+            aria-label="a"
+            style="font-family: FontAwesome;"
+        ></md-icon>
+        </md-button>
+      </md-fab-actions>
+    </md-toolbar>
+  </md-fab-toolbar>
+
+
+  
+
+
   <md-content md-theme="docs-dark" layout-gt-sm="row" layout-padding>
     <div>
       <md-input-container>

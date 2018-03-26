@@ -25,9 +25,7 @@
                   style="margin:0 0 0 0.2rem; padding: 0.2em 0.5em;font-stretch: ultra-condensed;"
                   ng-disabled="app.sendingToServer || !app.wasModified">
           <img src="./img/save-icon.png" width="24px">      
-          <!-- <span ng-if="app.sendingToServer" translate>SAVING_DOTS</span> -->
           <span translate>SAVE</span>
-          <!-- <span ng-if="!app.sendingToServer && app.wasSavedEver" translate>SAVED</span> -->
         </button>
 
         <button class="left button radius" ng-click="app.openShareSettings()" id="appShareBtn"
@@ -90,28 +88,7 @@
       </div>
     </div>  
     <div class="right" style="margin: 0.5em 0 0 0;">
-      <!-- <div style="  margin: 0;
-                    padding: 0.5em 0.5em 0 0;
-                    float: left;
-                    font-stretch: ultra-condensed;
-                    font-size: small;
-                    font-weight: bold;">
-        <span style="height: 32px; width: 32px; color: #A09C90;"> 
-          {{(user.isAdmin)?'Administrator ':(user.isOwner)?'Owner ':'Collaborator '}}
-        </span>
-        <span style="color: #008CBA;height: 32px;width: 32px;">{{user.name}}</span>
-      </div>
-      <span style=" background-image: url({{user.photo}});
-                    background-size: 32px 32px;
-                    border-radius: 50%;
-                    display: block;
-                    overflow: hidden;
-                    position: relative;
-                    height: 32px;
-                    width: 32px;
-                    float: left;
-                    margin: 0 0.5em 0 0">
-      </span> -->
+     
       <button class="right button radius" 
               style="margin:0 0 0 0.2rem; padding: 0.2em 0.5em;font-stretch: ultra-condensed;"
               ng-click="logOut()">
@@ -122,5 +99,3 @@
   </div>
 </div>
 
-
-  

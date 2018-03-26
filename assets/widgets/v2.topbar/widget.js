@@ -225,7 +225,10 @@ m.controller('TopBarController', function (
    
    new APIProvider($scope)
     .config( () => {
-    
+
+      // console.log($scope)
+      $scope.widget = ($scope.widget)? $scope.widget : {}
+
       $scope.widget.decoration = ($scope.widget.decoration) ? $scope.widget.decoration :
         {
           languageSelector : {
@@ -236,8 +239,9 @@ m.controller('TopBarController', function (
           loginButton:true,
           gotoApps : true
         };
+      
       $scope.widget.content = ($scope.widget.content) ? $scope.widget.content : [];
-      console.log("Select lang", $scope.currentLang.key)
+      // console.log("Select lang", $scope.currentLang.key)
       $scope.selectLanguage($scope.currentLang.key)
       // eventEmitter.emit("selectLanguage",$scope.currentLang.key);
       

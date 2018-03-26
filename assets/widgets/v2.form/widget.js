@@ -378,11 +378,19 @@ let scopeFor = widgetInstanceName => instanceNameToScope.get(widgetInstanceName)
 
 
         if( $scope.widget.form.config.access.enabled && $scope.widget.form.config.access.type == "invited"){
+          
+          if(!$scope.widget.form.config.access.users){
+            $scope.fanButton.state("disabled");
+            $scope.fanButton._state.tooltip = "Only invited respondents."
+            return;
+          }
+          
           let u = $scope.widget.form.config.access.users.filter(item => {
             if(item.id && user.id ) return item.id == user.id;
             if(item.apikey && user.apikey ) return item.apikey == user.apikey;
             return false
           })
+          
           if(u.length == 0){
             $scope.fanButton.state("disabled");
             $scope.fanButton._state.tooltip = "Only invited respondents."

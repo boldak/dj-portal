@@ -38,13 +38,32 @@
   <h5>Invite people</h5>
   <fieldset class="row invite-people row-no-left-padding">
     <div class="column medium-7">
-      <input type="text" ng-model="selectedUser"
+
+      <md-content class="md-padding">
+        <md-autocomplete
+            md-selected-item="selectedUser"
+            md-search-text="searchText"
+            md-items="item in getUsers(searchText)"
+            md-item-text="item.name"
+            md-min-length="0"
+            placeholder="Add user">
+          <md-item-template>
+            <span md-highlight-text="searchText" md-highlight-flags="^i">{{item.name}}</span>
+          </md-item-template>
+          <md-not-found>
+            No user matching "{{searchText}}" were found.
+          </md-not-found>
+        </md-autocomplete>
+      </md-content>
+
+
+      <!-- <input type="text" ng-model="selectedUser"
              translate translate-attr-placeholder="ENTER_NAME_DOTS"
              typeahead="user as user.name + ' ' + user.email for user in getUsers($viewValue)"
              typeahead-editable="false"
              typeahead-on-select="addCollaboration()"
-             typeahead-loading="loadingUsers" class="form-control">
-      <i ng-show="loadingUsers" class="glyphicon glyphicon-refresh"></i>
+              class="form-control"> -->
+      <!-- <i ng-show="loadingUsers" class="glyphicon glyphicon-refresh"></i> -->
     </div>
     <div class="column medium-3 end">
       <select>
