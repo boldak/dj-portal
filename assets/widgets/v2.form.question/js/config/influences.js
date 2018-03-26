@@ -265,7 +265,7 @@ let Influences = class extends Question {
 
 
   getResponseStat(responses) {
-
+      if(!responses) return;
     // console.log("INFLUENCES RESPONSE STAT", responses)
       let RStat = {};
       this.scope.entities.forEach(e => {

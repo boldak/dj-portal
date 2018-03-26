@@ -51,6 +51,7 @@ let Rate = class extends Question {
   updateConfig() {}
 
   getResponseStat(responses) {
+    if(!responses) return;
     let RStat = [];
     for(let index = 1; index <= this.scope.config.state.options.max; index++){
       RStat.push(responses.filter(r => {
