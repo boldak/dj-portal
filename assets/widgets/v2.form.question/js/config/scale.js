@@ -77,6 +77,7 @@ let Scale = class extends Question {
         }
 
         getResponseStat(responses) {
+          if(!responses) return;
             let RStat = {};
 
             this.scope.config.state.options.ordinals.values.forEach(e => {
