@@ -50,7 +50,7 @@ m.controller('FormController', function(
 
 $ocLazyLoad.load({files:["/widgets/v2.form.question/djform.css"]}); 
 
-user.apikey = queryString(pageURI).apikey 
+
 // console.log(pageURI)
 // console.log("query", queryString(pageURI))
 // console.log("access for user", user)
@@ -65,7 +65,7 @@ angular.extend($scope, {
   
   pageWidgets: pageWidgets,
 
-  user: user,
+  user: angular.extend({},user),
 
   $filter: $filter,
 
@@ -116,6 +116,12 @@ angular.extend($scope, {
   }
 
 })
+
+console.log("QUERY STRING", pageURI, queryString(pageURI));
+
+$scope.user.apikey = queryString(pageURI).apikey 
+// console.log("USER !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!", $scope.user)
+
 
 $scope.widgetPanel.allowConfiguring = undefined;
 $scope.widgetPanel.allowCloning = undefined;
@@ -183,14 +189,14 @@ let scopeFor = widgetInstanceName => instanceNameToScope.get(widgetInstanceName)
         }
     })
     .then(form => {
-      console.log(form.fields.file.value,
-          form.fields.encoding.value)
+      // console.log(form.fields.file.value,
+      //     form.fields.encoding.value)
       $scope.transport.loadLocalFile(
           form.fields.file.value,
           form.fields.encoding.value
       )
       .then(text => {
-        console.log("READ TEXT: ", text)
+        // console.log("READ TEXT: ", text)
       })
       // runDPSwithFile(form.fields.file.value, {
       //   script: form.fields.script.value,
@@ -265,7 +271,7 @@ let scopeFor = widgetInstanceName => instanceNameToScope.get(widgetInstanceName)
   }
 
   $scope.changeAccess = () => {
-    console.log("change access", $scope.widget.form.config.access.type)
+    // console.log("change access", $scope.widget.form.config.access.type)
     $scope.widget.form.config.access.enabled = !$scope.widget.form.config.access.enabled;
     
     saveForm();
@@ -342,8 +348,58 @@ let scopeFor = widgetInstanceName => instanceNameToScope.get(widgetInstanceName)
     let loadAllResponses = (formId) => {
       $scope.transport.loadAllResponses(formId)
       .then(res => {
-        (new APIUser()).invokeAll("formMessage", {action:"responseStat", data:res.data});
+        if(res.type != "error"){
+          (new APIUser()).invokeAll("formMessage", {action:"responseStat", data:res.data});
+        }
       })
+    }
+
+
+    let accessIsAlowed =  () => {
+        // console.log("CHECK ACCESS FOR", angular.extend({},$scope.user), $scope.widget.form.config.access)
+        
+        if($scope.widget.form.config.access.type != 'any'){
+          if(!$scope.user.id && $scope.user.apikey){
+            let index = $scope.widget.form.config.access.users.map(item => item.apikey).indexOf($scope.user.apikey)
+            if(index >= 0){
+              angular.extend($scope.user,$scope.widget.form.config.access.users[index]) 
+            }  
+          }
+        }  
+
+       if( $scope.widget.form.config.access.enabled && $scope.widget.form.config.access.type == "users"){
+          if(!$scope.user.id){
+            $scope.fanButton.state("disabled");
+            $scope.fanButton._state.tooltip = "Only users."
+            return false;
+          }
+        }
+
+
+        if( $scope.widget.form.config.access.enabled && $scope.widget.form.config.access.type == "invited"){
+          if(!$scope.widget.form.config.access.users){
+            $scope.fanButton.state("disabled");
+            $scope.fanButton._state.tooltip = "Only invited respondents."
+            return false;
+          }
+          let u = $scope.widget.form.config.access.users.filter(item => {
+            if(item.id && $scope.user.id ) return item.id == $scope.user.id;
+            if(item.apikey && $scope.user.apikey ) return item.apikey == $scope.user.apikey;
+            return false
+          })
+          if(u.length == 0){
+            $scope.fanButton.state("disabled");
+            $scope.fanButton._state.tooltip = "Only invited respondents."
+            return false;
+          }
+        }
+
+        if( !$scope.widget.form.config.access.enabled && !$scope.user.isOwner && !$scope.user.isCollaborator ){
+            $scope.fanButton.state("disabled");
+            $scope.fanButton._state.tooltip = "The form is closed."
+            return false;
+        }
+        return true;
     }
 
     let loadForm = $scope.reload = () => {
@@ -358,45 +414,55 @@ let scopeFor = widgetInstanceName => instanceNameToScope.get(widgetInstanceName)
           // }
         
         loadAllResponses($scope.widget.form.id)  
-        if($scope.widget.form.config.access.type != 'any'){
-          if(!user.id){
-            let index = $scope.widget.form.config.access.users.map(item => item.apikey).indexOf(user.apikey)
-            if(index >= 0){
-              angular.extend(user,$scope.widget.form.config.access.users[index]) 
-            }  
-          }
-        }  
+        
+        // if($scope.widget.form.config.access.type != 'any'){
+        //   if(!user.id){
+        //     let index = $scope.widget.form.config.access.users.map(item => item.apikey).indexOf(user.apikey)
+        //     if(index >= 0){
+        //       angular.extend(user,$scope.widget.form.config.access.users[index]) 
+        //     }  
+        //   }
+        // }  
 
         
-        if( $scope.widget.form.config.access.enabled && $scope.widget.form.config.access.type == "users"){
-          if(!user.id){
-            $scope.fanButton.state("disabled");
-            $scope.fanButton._state.tooltip = "Only users."
-            return;
-          }
-        }
+        // if( $scope.widget.form.config.access.enabled && $scope.widget.form.config.access.type == "users"){
+        //   if(!user.id){
+        //     $scope.fanButton.state("disabled");
+        //     $scope.fanButton._state.tooltip = "Only users."
+        //     return;
+        //   }
+        // }
 
 
-        if( $scope.widget.form.config.access.enabled && $scope.widget.form.config.access.type == "invited"){
-          let u = $scope.widget.form.config.access.users.filter(item => {
-            if(item.id && user.id ) return item.id == user.id;
-            if(item.apikey && user.apikey ) return item.apikey == user.apikey;
-            return false
-          })
-          if(u.length == 0){
-            $scope.fanButton.state("disabled");
-            $scope.fanButton._state.tooltip = "Only invited respondents."
-            return;
-          }
-        }
+        // if( $scope.widget.form.config.access.enabled && $scope.widget.form.config.access.type == "invited"){
+        //   if(!$scope.widget.form.config.access.users){
+        //     $scope.fanButton.state("disabled");
+        //     $scope.fanButton._state.tooltip = "Only invited respondents."
+        //     return;
+        //   }
+        //   let u = $scope.widget.form.config.access.users.filter(item => {
+        //     if(item.id && user.id ) return item.id == user.id;
+        //     if(item.apikey && user.apikey ) return item.apikey == user.apikey;
+        //     return false
+        //   })
+        //   if(u.length == 0){
+        //     $scope.fanButton.state("disabled");
+        //     $scope.fanButton._state.tooltip = "Only invited respondents."
+        //     return;
+        //   }
+        // }
 
-        if( !$scope.widget.form.config.access.enabled && !user.isOwner && !user.isCollaborator ){
-            $scope.fanButton.state("disabled");
-            $scope.fanButton._state.tooltip = "The form is closed."
-            return;
-        }
+        // if( !$scope.widget.form.config.access.enabled && !user.isOwner && !user.isCollaborator ){
+        //     $scope.fanButton.state("disabled");
+        //     $scope.fanButton._state.tooltip = "The form is closed."
+        //     return;
+        // }
 
-        (new APIUser()).invokeAll("formMessage", {action:"show"})
+        let availableAccess = accessIsAlowed();
+        if( availableAccess == true ){
+          // console.log("ACCESS IS AVAILABLE");
+          (new APIUser()).invokeAll("formMessage", {action:"show"});
+        }  
 
         $scope.formLoaded = true;
         $scope.widget.form = res.data[0];
@@ -426,7 +492,7 @@ let scopeFor = widgetInstanceName => instanceNameToScope.get(widgetInstanceName)
             if (      $scope.widget.form.config.access.type == "users" 
                   ||  $scope.widget.form.config.access.type == "invited") {
               $scope.transport
-                .loadAnswer(user,$scope.widget.form.id)
+                .loadAnswer($scope.user,$scope.widget.form.id)
                 .then( res => {
                   // console.log("LOADED ANSWER", res)  
                   if(res.data){
@@ -442,7 +508,9 @@ let scopeFor = widgetInstanceName => instanceNameToScope.get(widgetInstanceName)
                   $scope.processing = false;
                   $scope.blockMessages = false;
 
-                  $scope.fanButton.state("none")
+                  if( availableAccess == true ){
+                    $scope.fanButton.state("none")
+                  }  
               })
             }
         }        

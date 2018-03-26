@@ -80,6 +80,7 @@ let DateTime = class extends Question {
   }
 
   getResponseStat(responses) {
+    if(!responses) return;
 
     let defFormat = "YYYY-MM-DD HH:mm";
     let inputFormat = "DD/MM/YY HH:mm";

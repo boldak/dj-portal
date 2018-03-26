@@ -601,7 +601,8 @@ let FormIO = class {
         metadata[item.key] = item.value;
       })
 
-    metadata.app_url +=(u.name)? "" : `?apikey=${u.apikey}`;
+    metadata.app_url +=(angular.isDefined(u.apikey)) ? `?apikey=${u.apikey}`:  "" ;
+    // console.log("USER METADATA", metadata, u)
     return {
         metadata: metadata,
         user: u

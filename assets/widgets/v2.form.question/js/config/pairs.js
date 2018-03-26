@@ -247,6 +247,7 @@ let Pairs = class extends Question {
 
 
     getResponseStat(responses) {
+      if(!responses) return;
     let RStat = {};
     this.scope.entities.forEach(e => {
       RStat[e.id] = {}

@@ -55,6 +55,7 @@ let Range = class extends Question {
   updateConfig() {}
 
   getResponseStat(responses) {
+    if(!responses) return;
     let RStat = [];
     let th = [];
     let step = (this.scope.config.state.options.range.max -

@@ -88,6 +88,7 @@ let OneToMany = class extends Question {
         }
 
           getResponseStat(responses) {
+            if(!responses) return;
             let RStat = {};
             this.scope.alternatives.forEach(e => {
               RStat[e.id] = responses.filter(r => {
