@@ -16,7 +16,7 @@ dictionaryModule.run(function (i18n, $dps) {
   // $http.get("./api/dictionary")
   $dps.get("/api/dictionary")
             .then(function (data) {
-              // console.log(data)
+               console.log("Dictionary service", data)
                 var d = {};
                 for(let i in data){
                   d[data[i].key] = data[i].value;
@@ -32,7 +32,8 @@ dictionaryModule.run(function (i18n, $dps) {
                 }
                i18n.add("uk",tua,true);
                i18n.add("en",ten,true);
-            });
+            })
+            .catch( e => {console.log("No server side dictionary : ", JSON.stringify(e, null,"\t"))})
 });
 
 
@@ -86,7 +87,8 @@ dictionaryModule.service("$lookup",[ "i18n", "$dps",
                   }
                  i18n.add("uk",tua,true);
                  i18n.add("en",ten,true);
-            });
+            })
+            .catch( e => {console.log("No server side dictionary : ", JSON.stringify(e, null,"\t"))})  
     }
 
   return lookup;
