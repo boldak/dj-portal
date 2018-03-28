@@ -27,7 +27,6 @@ let UserList = class {
           user.email.toLowerCase().includes(filterValue.toLowerCase())
         )
         .slice(0, 8)
-        console.log(filterValue, this.scope.widget.form.config.access.users, this.userList, result)
       resolve(result)
     })
   }
@@ -41,17 +40,11 @@ let UserList = class {
 
     if (angular.isString(value)) {
       this.userIsInvited = this.scope.widget.form.config.access.users.map(item => item.email).indexOf(value) >= 0;
-      if(this.userIsInvited){
-        this.scope.validationMessage = "Respondent already invited"
-      }
       return
     }
 
     if (angular.isDefined(value.email)) {
-      this.userIsInvited = this.scope.widget.form.config.access.users.map(item => item.email).indexOf(value.email) >= 0;
-      if(this.userIsInvited){
-        this.scope.validationMessage = "Respondent already invited"
-      }
+      this.scope.userIsInvited = this.scope.widget.form.config.access.users.map(item => item.email).indexOf(value.email) >= 0;
       return
     }
 
@@ -68,21 +61,12 @@ let UserList = class {
     }
 
     if (angular.isString(value)) {
-        value = value.trim();
-        let t = emailRegex.test(value);
-        if (t) {
-          this.invitedUserAdd = value
-        }
-        this.invitedUserIsValid = t;
-        if(!t){
-          this.scope.validationMessage = "Invalid email address"
-        } else {
-          if(this.userIsInvited){
-            this.scope.validationMessage = "Respondent already invited"
-          } else {
-            this.scope.validationMessage = "New respondent"  
-          }
-        }
+      value = value.trim();
+      let t = emailRegex.test(value);
+      if (t) {
+        this.invitedUserAdd = value
+      }
+      this.invitedUserIsValid = t;
       return
     }
 

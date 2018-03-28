@@ -291,29 +291,23 @@ modals.controller('PageSettingsModalController', function ($scope, $state, $moda
   });
 });
 
-modals.controller('ShareSettingsModalController', function ($scope, $modalInstance, $portal, author, appUrls, config) {
+modals.controller('ShareSettingsModalController', function ($scope, $modalInstance, $http, author, appUrls, config) {
   angular.extend($scope, {
     author,
     collaborations: angular.copy(config.collaborations) || [], // TODO: change to collaborations
 
     getUsers(filterValue) {
       // todo: add support for filterValue
-      return new Promise( ( resolve, reject ) => {
-        $portal.get(appUrls.usersList).then(result =>{
-          console.log("USER LIST", result)
-            /* Hack: filters do not work in angular-foundation's typeahead view for some reason */
-            resolve(
-                result//.data
-                  .filter(user => !this.userIsCollaborator(user))
-                  .filter(user =>
-                  user.name.toLowerCase().includes(filterValue.toLowerCase()) ||
-                  user.email.toLowerCase().includes(filterValue.toLowerCase())
-                )
-                  .slice(0, 8)
-            )
-        })      
-      }) 
-      
+      return $http.get(appUrls.usersList).then(result =>
+          /* Hack: filters do not work in angular-foundation's typeahead view for some reason */
+          result.data
+            .filter(user => !this.userIsCollaborator(user))
+            .filter(user =>
+            user.name.toLowerCase().includes(filterValue.toLowerCase()) ||
+            user.email.toLowerCase().includes(filterValue.toLowerCase())
+          )
+            .slice(0, 8)
+      );
     },
 
     addCollaboration() {
@@ -400,7 +394,7 @@ modals.controller("ViewPageConfigController", function($scope, $modalInstance,
 
 })
 
-modals.controller('ResourceManagerController', function (  $scope, $portal, $upload, appName,
+modals.controller('ResourceManagerController', function (  $scope, $http, $upload, appName,
                                                             dialog, clipboard, 
                                                             $modalInstance, $translate) {
     
@@ -415,8 +409,8 @@ modals.controller('ResourceManagerController', function (  $scope, $portal, $upl
     }
 
     $scope.load = function(){
-      $portal.get("./api/resource")
-      .then(data => {
+      $http.get("./api/resource")
+      .success(function(data){
         $scope.upload_process = false;
         $scope.resources = data;
       })
@@ -470,8 +464,8 @@ modals.controller('ResourceManagerController', function (  $scope, $portal, $upl
 
     $scope.deleteResource = function(resource){
       $scope.upload_process = true;
-      $portal.get("./api/resource/delete/"+resource.path)
-        .then(() => {
+      $http.get("./api/resource/delete/"+resource.path)
+        .success(function(){
           $scope.upload_process = false;
           $scope.load();
         })
@@ -490,12 +484,12 @@ modals.controller('ResourceManagerController', function (  $scope, $portal, $upl
           } 
       }).then(function(form){
         $scope.upload_process = true;
-        $portal.post("./api/resource/rename",
+        $http.post("./api/resource/rename",
           { app:$scope.appName,
             oldPath:form.fields.oldName.value,
             newPath:form.fields.newName.value
           })
-          .then(() => {
+          .success(function(){
             $scope.load();    
           })
       })

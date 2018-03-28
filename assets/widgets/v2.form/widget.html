@@ -359,48 +359,14 @@
                     &nbsp;
                   </div>
                   <div class="column small-12 left" style="padding:0;">
-
-
-
-                    <md-content class="md-padding">
-                      <md-autocomplete
-                          md-selected-item="selectedUser"
-                          md-search-text="invitedUser"
-                          md-items="item in userUtils.getUsers(invitedUser)"
-                          md-selected-item-change="userUtils.validInvitedUser(item)"
-                          md-search-text-change="userUtils.validInvitedUser(invitedUser)"
-                          md-item-text="item.email"
-                          md-min-length="0"
-                          placeholder="Respondent's email">
-                        <md-item-template>
-                          <img src="{{item.photo}}" style="width:2em; height:2em;"/>
-                          <span md-highlight-text="invitedUser" md-highlight-flags="^i">
-                            {{item.name}}
-                          </span>
-                        </md-item-template>
-                        <md-not-found>
-                          <span style="
-                                color:{{(userUtils.invitedUserIsValid && !userUtils.userIsInvited)?'#5f8ab9':'#f08a24'}};
-                                font-size:small;
-                          ">
-                            {{validationMessage}}
-                          </span>  
-                        </md-not-found>
-                      </md-autocomplete>
-                    </md-content>
-                    
-
-
-
-
-                     <!-- <input   type="text" 
+                     <input   type="text" 
                               ng-model="invitedUser" 
                               ng-change="userUtils.validInvitedUser(invitedUser)" 
                               placeholder="Enter user email" 
                               typeahead="cu as cu.email for cu in userUtils.getUsers($viewValue)" typeahead-template-url="/widgets/v2.form/userShortInfo.html" 
                               class="form-control"  
                               typeahead-on-select="userUtils.validInvitedUser(invitedUser)"
-                    > -->
+                    >
                   </div>
               </div>    
             </td>

@@ -16,7 +16,7 @@
     "angular-translate-storage-cookie": "2.8.1",
     "angular-translate-storage-local": "2.8.1",
     "angular-ui-router": "0.3.2",
-    "angular-ui-tree": "2.5.0",
+    "angular-ui-tree": "2.22.6",
     "es6-module-loader": "0.17.0",
     "foundation": "5.5.2",
     "foundation-icon-fonts": "zurb/foundation-icon-fonts",

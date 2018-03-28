@@ -6,6 +6,7 @@
     <div class="row">
       <div ui-tree="treeOptions" class="column small-11 small-centered">
         <table ui-tree-nodes ng-model="alternatives" style="border: none;">
+          
           <tr   ui-tree-node 
                 ng-repeat="i in alternatives" 
                 ng-click="cselect(i.id)"
