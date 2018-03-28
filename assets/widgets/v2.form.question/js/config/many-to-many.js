@@ -112,7 +112,7 @@ let ManyToMany = class extends Question {
             })
             // console.log("RSTAT!!!!!!!!!!!!", RStat)
             let pairs = _.toPairs(RStat)
-            console.log(pairs)
+            // console.log(pairs)
             let values = pairs.map(item => item[1])
             let sum = values.reduce((item,sum) => {return sum+item})
             if(sum==0){

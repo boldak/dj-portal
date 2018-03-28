@@ -38,7 +38,7 @@ angular
 	let list = _.toPairs(factory).map(item => {
 		return [item[0], item[1]()]
 	});
-	console.log(list)
+	// console.log(list)
 	let res = {};
 	for (let item of list){
 		// console.log(item)

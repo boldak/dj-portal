@@ -751,11 +751,11 @@ let scopeFor = widgetInstanceName => instanceNameToScope.get(widgetInstanceName)
     .provide('questionMessage', (e, context) => {
       
       if ($scope.blockMessages) {
-        console.log("Block MESSAGE FROM QUESTION")
+        // console.log("Block MESSAGE FROM QUESTION")
         return;
       } 
 
-      console.log("HANDLE MESSAGE FROM QUESTION", context)
+      // console.log("HANDLE MESSAGE FROM QUESTION", context)
       
         if(context.action == 'init'){
             initQuestion(context.data)
@@ -807,7 +807,7 @@ let scopeFor = widgetInstanceName => instanceNameToScope.get(widgetInstanceName)
     })
 
     .beforePresentationMode(() => {
-      console.log("beforePresentationMode")
+      // console.log("beforePresentationMode")
       saveForm();
 
     })  

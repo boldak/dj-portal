@@ -140,7 +140,7 @@ $scope.submit = () => {
 }
 
 $scope.addPMAlternative = (collection, field) => {
-  console.log("ADD", field)
+  // console.log("ADD", field)
   
   collection.push({
       id:randomID(), 
@@ -380,14 +380,14 @@ $scope.m = true;
     .save(updateConfig)
 
     .create((event, widget) => {
-        console.log("Question handle create widget", widget)
+        // console.log("Question handle create widget", widget)
 
     })
 
     // .translate(updateWidget)
     
     .provide('formMessage', (e, context) => {
-        console.log("HANDLE MESSAGE FROM FORM", context)
+        // console.log("HANDLE MESSAGE FROM FORM", context)
         
         if(context.action == "remove" && context.data.widget.instanceName == $scope.widget.formWidget){
             $scope.widget.ID = undefined;
@@ -439,7 +439,7 @@ $scope.m = true;
     })    
 
     .removal(() => {
-      console.log('Form question widget is destroyed');
+      // console.log('Form question widget is destroyed');
       (new APIUser()).invokeAll("questionMessage",{action:"remove", data:$scope})
     });
 })
