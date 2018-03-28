@@ -601,7 +601,7 @@ app.service('app', function ($http, $state, $stateParams, $log, config, $rootSco
                     +": "+`${$translate.instant('SAVED')}`
                   },
                   1000  
-                )
+                ).then(()=>{}).catch(()=>{})
               })
           })
         })

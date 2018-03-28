@@ -566,7 +566,7 @@ info.controller('SplashController', function($scope, $modalInstance, form, wait)
     $scope.form = form;
     wait = wait || 1500;
     if (wait) {
-        setTimeout(() => { $modalInstance.dismiss(); }, wait);
+        setTimeout(() => { $modalInstance.close(true); }, wait);
     }
 });
 
