@@ -46,7 +46,9 @@ System.config({
     "ng-prettyjson": "components/ng-prettyjson/src/ng-prettyjson-tmpl.js",
     "ng-json-explorer": "components/ng-json-explorer/src/angular-json-explorer.js",
     "angular-oclazyload": "components/oclazyload/dist/ocLazyLoad.js",
-    "angular-foundation": "js/libs/dj-foundation/mm-foundation-tpls.js",
+    // "angular-foundation": "js/libs/dj-foundation/mm-foundation-tpls.js",
+    "angular-foundation": "components/angular-foundation/mm-foundation-tpls.js",
+    
     "angular-json-editor": "components/angular-json-editor/src/angular-json-editor.js",
     "json-editor": "components/json-editor/dist/jsoneditor.js",
     "angular-cookies": "components/angular-cookies/angular-cookies.js",
