@@ -1,0 +1,132 @@
+<div ng-cloak="" layout-fill layout="column">
+  
+    <div class="md-hue-2" layout="row" style="height: 4em;
+    background: #283593;
+    color: #e3e5f1;">
+      
+      <md-button class="md-button" aria-label="Favorite">
+        <img src="{{(config.icon)?config.icon:'./img/default-app-icon.png'}}" style="height: 3em;
+    float: right;"/>
+      </md-button>
+
+      <h2 flex md-truncate style="margin: 1em 0;
+    white-space: nowrap;
+    text-transform: uppercase;
+    font-weight: 500;
+    font-size: 1em;
+    font-style: inherit;
+    font-variant: inherit;
+    font-family: inherit;
+    font-weight: bold;">
+        {{config.title | translate}}
+      </h2>
+
+      <md-button class="md-button" aria-label="Favorite">
+        Page One
+      </md-button>
+
+      <md-fab-speed-dial  md-direction="down" md-open="isOpen" class="md-fling">
+        <md-fab-trigger>
+          <md-button aria-label="menu" class="md-fab md-mini md-hue-2">
+            <md-icon md-svg-src="img/icons/menu.svg"></md-icon>
+          </md-button>
+        </md-fab-trigger>
+
+          
+          <md-fab-actions>
+            <md-button aria-label="Twitter" class="md-fab md-raised md-mini">
+              <md-icon md-svg-src="img/icons/twitter.svg" aria-label="Twitter"></md-icon>
+            </md-button>
+            <md-button aria-label="Facebook" class="md-fab md-raised md-mini">
+              <md-icon md-svg-src="img/icons/facebook.svg" aria-label="Facebook"></md-icon>
+            </md-button>
+            <md-button aria-label="Google Hangout" class="md-fab md-raised md-mini">
+              <md-icon md-svg-src="img/icons/hangout.svg" aria-label="Google Hangout"></md-icon>
+            </md-button>
+        </md-fab-actions>
+      
+      </md-fab-speed-dial>
+
+
+    </div>
+
+
+   <!-- <md-toolbar class="md-hue-2">
+      <div class="md-toolbar-tools">
+      
+        <md-button aria-label="Settings">
+          <img src="{{(config.icon)?config.icon:'./img/default-app-icon.png'}}" style="height: 4em;"/>
+        </md-button>
+
+        <h2 flex md-truncate>
+          {{config.title | translate}}
+        </h2>
+
+        <md-button class="md-icon-button" aria-label="Favorite">
+          <md-icon md-svg-icon="img/icons/favorite.svg" style="color: greenyellow;"></md-icon>
+        </md-button>
+
+        <md-button class="md-icon-button" aria-label="More">
+          <md-icon md-svg-icon="img/icons/more_vert.svg"></md-icon>
+        </md-button>
+  
+      </div>
+
+    </md-toolbar> -->
+
+  <md-content>
+    <application-view>
+    </application-view>  
+  </md-content>  
+
+   <div class="md-hue-2" layout="row" style="height: 4em;
+    background: #283593;
+    color: #e3e5f1;">
+      
+      <md-button class="md-button" aria-label="Favorite">
+        <img src="{{(config.icon)?config.icon:'./img/default-app-icon.png'}}" style="height: 3em;
+    float: right;"/>
+      </md-button>
+
+      <h2 flex md-truncate style="margin: 1em 0;
+    white-space: nowrap;
+    text-transform: uppercase;
+    font-weight: 500;
+    font-size: 1em;
+    font-style: inherit;
+    font-variant: inherit;
+    font-family: inherit;
+    font-weight: bold;">
+        {{config.title | translate}}
+      </h2>
+
+      <md-button class="md-button" aria-label="Favorite">
+        Page One
+      </md-button>
+
+      <md-fab-speed-dial  md-direction="down" md-open="isOpen" class="md-fling">
+        <md-fab-trigger>
+          <md-button aria-label="menu" class="md-fab md-mini md-hue-2">
+            <md-icon md-svg-src="img/icons/menu.svg"></md-icon>
+          </md-button>
+        </md-fab-trigger>
+
+          
+          <md-fab-actions>
+            <md-button aria-label="Twitter" class="md-fab md-raised md-mini">
+              <md-icon md-svg-src="img/icons/twitter.svg" aria-label="Twitter"></md-icon>
+            </md-button>
+            <md-button aria-label="Facebook" class="md-fab md-raised md-mini">
+              <md-icon md-svg-src="img/icons/facebook.svg" aria-label="Facebook"></md-icon>
+            </md-button>
+            <md-button aria-label="Google Hangout" class="md-fab md-raised md-mini">
+              <md-icon md-svg-src="img/icons/hangout.svg" aria-label="Google Hangout"></md-icon>
+            </md-button>
+        </md-fab-actions>
+      
+      </md-fab-speed-dial>
+
+
+    </div>
+
+</div>  

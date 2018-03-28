@@ -974,7 +974,11 @@ app.controller('MainController', function ($scope, $location, $cookies, $window,
      // hotkeys.toggleHelp();
   }
   
+
+ 
+
   angular.extend($scope, {
+
     globalConfig,
     app,
     config,
