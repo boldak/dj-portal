@@ -1,6 +1,6 @@
 import angular from 'angular';
 import FormMetadata from "./form-metadata.js";
-import FanButton from "./form-fan-button.js";
+import Toast from "./form-fan-button.js";
 import FormIO from "./form-io.js";
 import UserUtils from "./form-users.js";
 import AnswerUtils from "./form-answer.js";
@@ -10,7 +10,7 @@ angular
 .module("formUtility", [])
 
 .factory("formMetadata",[() => scope => new FormMetadata(scope)])
-.factory("formFanButton",[() => scope => new FanButton(scope)])
+.factory("formToast",[() => scope => new Toast(scope)])
 .factory("formAnswerUtils",[() => scope => new AnswerUtils(scope)])
 .factory("formIO",[() => (scope,transport) => new FormIO(scope, transport)])
 .factory("formUserUtils",[() => (scope,userList) => new UserUtils(scope,userList)])

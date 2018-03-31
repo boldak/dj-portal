@@ -616,7 +616,9 @@ let FormIO = class {
     let state = {}
     let script = "";
    
-    this.scope.widget.form.config.access.users.forEach((u,index) => {
+    this.scope.widget.form.config.access.users
+      .filter(item => item.selected)
+      .forEach((u,index) => {
       
       script += _.template(templateStr)({index:index})
       

@@ -51,7 +51,7 @@ gulp.task('build', [
   'copy-templates-json', 
   'build-template-images', 
   'copy-static-files', 
-  'build-deps',
+  // 'build-deps',
   'copy-license',
   'copy-libs']);
 

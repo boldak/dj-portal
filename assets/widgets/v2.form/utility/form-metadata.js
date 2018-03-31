@@ -8,10 +8,31 @@ let FormMetadata = class {
 		this.metadata = [];
 	}
 
-	valid() {
-      if(!this.scope.textFields.key) return false;
-      return this.metadata.map(item => item.key).indexOf(this.scope.textFields.key) < 0
-    }
+	valid(field) {
+    let res;
+      
+      if(!this.scope.textFields.key){
+        res = false;
+        if(field){
+          field.$error = (field.$error) ? field.$error : {}; 
+          field.$error.required = true;  
+        }
+        
+      } else {
+         res = this.metadata.map(item => item.key).indexOf(this.scope.textFields.key) < 0
+         if (field){
+            field.$error = (field.$error) ? field.$error : {};
+          if (res) {
+            field.$error.doublicate = undefined;
+            field.$valid = true;
+            field.$invalid = false;
+           } else {
+            field.$error.doublicate = true;
+           }
+         }  
+      }
+    return res;
+  }
 	
 	prepaire() {
       this.metadata = _.toPairs(this.scope.widget.form.metadata)

@@ -8,6 +8,57 @@ let m = angular.module('app.widgets.v2.form', [
 ])
 
 
+
+m.controller("ToastController", ($scope, APIProvider) => {
+  (new APIProvider($scope, true))
+    .provide("toast-message", ( e, data ) => {
+      $scope.toastData = data;
+      $scope.toastData.top = "50px";
+    })
+})
+
+m.config(($mdToastProvider) => {
+  
+  $mdToastProvider.addPreset('testPreset', {
+    options: function() {
+      return {
+        template:
+          `
+          <md-toast style="position:fixed; top:{{toastData.top}};">
+            <div class="md-toast-content form-toast" style="color:{{toastData.color}};">
+              <md-progress-circular 
+                ng-if="toastData.progress"
+                class="md-accent"
+                style="margin-right:1em;" 
+                md-diameter="20px"
+              >
+              </md-progress-circular>
+              <img ng-if="toastData.image"
+                src="{{toastData.image}}" class="md-avatar"/>
+              <md-icon ng-if="toastData.icon"
+                       md-font-icon="{{toastData.icon}}"
+                       style="  font-family: FontAwesome; 
+                                font-size: 32px;
+                                margin-right: 0.25em;
+                                color:{{toastData.color}};"
+              > 
+              </md-icon>  
+              {{toastData.message}}
+            </div>
+          </md-toast>
+          `,
+        position: "top right",
+        // parent: document.getElementById("skin-top"),
+        hideDelay: false,
+        controller: 'ToastController'
+
+      };
+    }
+  });
+});
+
+
+
 m.controller('FormController', function(
   $scope,
   APIProvider,
@@ -31,7 +82,6 @@ m.controller('FormController', function(
   $info,
   $filter,
   formMetadata,
-  formFanButton,
   formIO,
   formUserUtils,
   formAnswerUtils,
@@ -41,14 +91,20 @@ m.controller('FormController', function(
   queryString,
   confirm,
   defaultNotificationTemplate,
-  pageURI
+  pageURI,
+  $translate,
+  $mdColors,
+  $mdToast,
+  formToast,
+  $timeout
+  
 ) {
 
 
+// $mdColors.getThemeColor('primary-600');
 
 
-
-$ocLazyLoad.load({files:["/widgets/v2.form.question/djform.css"]}); 
+// $ocLazyLoad.load({files:["/widgets/v2.form.question/djform.css"]}); 
 
 
 // console.log(pageURI)
@@ -56,6 +112,24 @@ $ocLazyLoad.load({files:["/widgets/v2.form.question/djform.css"]});
 // console.log("access for user", user)
 
 angular.extend($scope, {
+
+  primaryColor: "#f3f3f3",//$mdColors.getThemeColor('primary'),
+
+  accentColor: $mdColors.getThemeColor('accent-500'),
+
+  warnColor: $mdColors.getThemeColor('warn-500'),
+
+  disableColor: "#333",
+
+  showToast: (e) => {
+    return $mdToast.show($mdToast.testPreset());
+  },
+
+  hideToast: () => { $mdToast.hide() },
+  
+  APIUser: APIUser,
+
+  timeout: $timeout,
 
   dialog: dialog,
 
@@ -101,7 +175,7 @@ angular.extend($scope, {
 
   metadataTools: formMetadata($scope),
 
-  fanButton: formFanButton($scope),
+  formToast: formToast($scope),
 
   transport: formIO($scope,$dps),
 
@@ -109,10 +183,14 @@ angular.extend($scope, {
 
   defaultNotificationTemplate: defaultNotificationTemplate,
 
-  accessTypes:{
-    any: "For any respondents",
-    users: "For logged users",
-    invited: "For invited respondents"
+  accessTypes:[
+    { type: "any",      title: "For any respondents"      },
+    { type: "users",    title: "For logged users"         },
+    { type: "invited",  title: "For invited respondents"  }
+  ],
+
+  translate : (message) => {
+    return $translate('WIDGET.V2.FORM.'+message)
   }
 
 })
@@ -367,8 +445,14 @@ let scopeFor = widgetInstanceName => instanceNameToScope.get(widgetInstanceName)
 
        if( $scope.widget.form.config.access.enabled && $scope.widget.form.config.access.type == "users"){
           if(!$scope.user.id){
-            $scope.fanButton.state("disabled");
-            $scope.fanButton._state.tooltip = "Only users."
+            $scope.formToast.show({
+              state: "disabled",
+              message: "Only users can access to form.",
+              color: $scope.warnColor,
+              icon: "fa-times-circle",
+              notInterrupted: true,
+              delay:5000
+            })
             return false;
           }
         }
@@ -376,8 +460,14 @@ let scopeFor = widgetInstanceName => instanceNameToScope.get(widgetInstanceName)
 
         if( $scope.widget.form.config.access.enabled && $scope.widget.form.config.access.type == "invited"){
           if(!$scope.widget.form.config.access.users){
-            $scope.fanButton.state("disabled");
-            $scope.fanButton._state.tooltip = "Only invited respondents."
+            $scope.formToast.show({
+              state: "disabled",
+              message: "Only invited respondents can access to form.",
+              color: $scope.warnColor,
+              icon: "fa-times-circle",
+              notInterrupted: true,
+              delay:5000
+            })
             return false;
           }
           let u = $scope.widget.form.config.access.users.filter(item => {
@@ -386,89 +476,71 @@ let scopeFor = widgetInstanceName => instanceNameToScope.get(widgetInstanceName)
             return false
           })
           if(u.length == 0){
-            $scope.fanButton.state("disabled");
-            $scope.fanButton._state.tooltip = "Only invited respondents."
+            $scope.formToast.show({
+              state: "disabled",
+              message: "Only invited respondents can access to form.",
+              color: $scope.warnColor,
+              icon: "fa-times-circle",
+              notInterrupted: true,
+              delay:5000
+            })
             return false;
           }
         }
 
         if( !$scope.widget.form.config.access.enabled && !$scope.user.isOwner && !$scope.user.isCollaborator ){
-            $scope.fanButton.state("disabled");
-            $scope.fanButton._state.tooltip = "The form is closed."
+            
+            $scope.formToast.show({
+              state: "disabled",
+              message: "The form is closed.",
+              color: $scope.warnColor,
+              icon: "fa-times-circle",
+              notInterrupted: true,
+              delay:5000
+            })
             return false;
         }
+
+        $scope.formToast.show({
+              state: "success",
+              message: `Respondent ${($scope.user.name) ? $scope.user.name : $scope.user.email } is logged`,
+              color: $scope.primaryColor,
+              icon: ($scope.user.photo) ? undefined : "fa-user-circle",
+              image: ($scope.user.photo) ? $scope.user.photo : undefined,
+              notInterrupted: true,
+              delay:5000
+            })
         return true;
     }
 
     let loadForm = $scope.reload = () => {
 
       $scope.blockMessages = true;
+
+      $scope.formToast.show({
+              state: "process",
+              message: `Load form...`,
+              color: $scope.primaryColor,
+              progress:true,
+              delay:3000
+            })
+
+
+
       $scope.transport
       .loadForm($scope.widget.form.id)    
       .then(res => {
 
-        // if($scope.globalConfig.designMode){
-         
-          // }
-        
         loadAllResponses($scope.widget.form.id)  
         
-        // if($scope.widget.form.config.access.type != 'any'){
-        //   if(!user.id){
-        //     let index = $scope.widget.form.config.access.users.map(item => item.apikey).indexOf(user.apikey)
-        //     if(index >= 0){
-        //       angular.extend(user,$scope.widget.form.config.access.users[index]) 
-        //     }  
-        //   }
-        // }  
-
-        
-        // if( $scope.widget.form.config.access.enabled && $scope.widget.form.config.access.type == "users"){
-        //   if(!user.id){
-        //     $scope.fanButton.state("disabled");
-        //     $scope.fanButton._state.tooltip = "Only users."
-        //     return;
-        //   }
-        // }
-
-
-        // if( $scope.widget.form.config.access.enabled && $scope.widget.form.config.access.type == "invited"){
-        //   if(!$scope.widget.form.config.access.users){
-        //     $scope.fanButton.state("disabled");
-        //     $scope.fanButton._state.tooltip = "Only invited respondents."
-        //     return;
-        //   }
-        //   let u = $scope.widget.form.config.access.users.filter(item => {
-        //     if(item.id && user.id ) return item.id == user.id;
-        //     if(item.apikey && user.apikey ) return item.apikey == user.apikey;
-        //     return false
-        //   })
-        //   if(u.length == 0){
-        //     $scope.fanButton.state("disabled");
-        //     $scope.fanButton._state.tooltip = "Only invited respondents."
-        //     return;
-        //   }
-        // }
-
-        // if( !$scope.widget.form.config.access.enabled && !user.isOwner && !user.isCollaborator ){
-        //     $scope.fanButton.state("disabled");
-        //     $scope.fanButton._state.tooltip = "The form is closed."
-        //     return;
-        // }
-
         let availableAccess = accessIsAlowed();
+        
         if( availableAccess == true ){
-          // console.log("ACCESS IS AVAILABLE");
           (new APIUser()).invokeAll("formMessage", {action:"show"});
         }  
 
         $scope.formLoaded = true;
         $scope.widget.form = res.data[0];
-        
-        // if( $scope.globalConfig.designMode && $scope.widget.form.metadata.app_url != $window.location.href ){
-        //   confirm("Page and Form mismatch. Clone Form?")
-        //     .then(() => {cloneForm()})
-        // }
         
         $scope.widget.form.config.access.users = $scope.widget.form.config.access.users || [];
         $scope.widget.form.config.questions = $scope.widget.form.config.questions || {};  
@@ -485,14 +557,21 @@ let scopeFor = widgetInstanceName => instanceNameToScope.get(widgetInstanceName)
           $scope.answer = $scope.answerUtils.create()
           $scope.processing = false;
           $scope.blockMessages = false;
-          $scope.fanButton.state("none")
+          
+          $scope.formToast.show({
+              state: "none",
+              message: `Prepare form...`,
+              color: $scope.primaryColor,
+              progress:true,
+              delay:1000
+            })
+
         } else {
             if (      $scope.widget.form.config.access.type == "users" 
                   ||  $scope.widget.form.config.access.type == "invited") {
               $scope.transport
                 .loadAnswer($scope.user,$scope.widget.form.id)
                 .then( res => {
-                  // console.log("LOADED ANSWER", res)  
                   if(res.data){
                     $scope.answer = ( res.data.length == 0)
                       ? $scope.answerUtils.create()
@@ -507,18 +586,17 @@ let scopeFor = widgetInstanceName => instanceNameToScope.get(widgetInstanceName)
                   $scope.blockMessages = false;
 
                   if( availableAccess == true ){
-                    $scope.fanButton.state("none")
+                    $scope.formToast.show({
+                      state: "none",
+                      message: `Prepare form...`,
+                      color: $scope.primaryColor,
+                      progress:true,
+                      delay:1000
+                    })
                   }  
               })
             }
         }        
-
-
-
-        
-          
-          
-       
       })
     }
 
@@ -555,14 +633,6 @@ let scopeFor = widgetInstanceName => instanceNameToScope.get(widgetInstanceName)
   $scope.setAccessType = (value) => {
     
     $scope.widget.form.config.access.type = value;
-    
-    // if( value == "invited"){
-    //   $scope.widget.form.config.access.invitationTemplate =
-    //   $scope.widget.form.config.access.invitationTemplate ||  "Dear ${user.name} !\nWe invite you for expert assessments  \"${metadata.title}\"\nSee ${ref(metadata.app_url)}";
-    //   $scope.widget.form.config.access.notificationTemplate =
-    //   $scope.widget.form.config.access.notificationTemplate || "notification Template";
-    // }
-    
     $scope.markModified()
   
   }
@@ -581,18 +651,25 @@ let scopeFor = widgetInstanceName => instanceNameToScope.get(widgetInstanceName)
   $scope.$watch("metadata", $scope.markModified, true);
 
   $scope.saveAnswers = () => {
+    console.log("SAVE ANSWERS", $scope.formToast)
 
-    if(!$scope.fanButton._state) return;
-    if($scope.fanButton._state.identity == "disabled") return;
-
-    $scope.fanButton.state("process")
+    if(["none", "disabled"].indexOf($scope.formToast.state) >= 0) return;
     
+    $scope.formToast.show({
+              state: "process",
+              message: `Save responses...`,
+              color: $scope.primaryColor,
+              progress:true,
+              delay:3000
+            })
+
+
     if(!$scope.widget.form.config.access.enabled){
       
       $info(testMessage($scope), "The form is started in test mode")
-      .then(()=> {
-        $scope.fanButton.state("none");    
-      })
+      // .then(()=> {
+      //   $scope.formToast.state("none");    
+      // })
 
     } else {
 
@@ -679,7 +756,13 @@ let scopeFor = widgetInstanceName => instanceNameToScope.get(widgetInstanceName)
         .then(() => {
           loadAllResponses($scope.widget.form.id)
           $scope.$evalAsync(() => {
-            $scope.fanButton.state("completed")
+            $scope.formToast.show({
+              state: "completed",
+              message: `Changes saved successfully!`,
+              color: $scope.primaryColor,
+              icon: "fa-check",
+              delay:3000
+            })
             $scope.blockMessages = false;  
             app.unmarkModified();
           },100)
@@ -690,13 +773,17 @@ let scopeFor = widgetInstanceName => instanceNameToScope.get(widgetInstanceName)
 
   let validateFormConfig = (data) => {
     // console.log("VALIDATE")
-    $scope.fanButton.state("list");
-    $scope.fanButton._state.tooltip =
-    `You added an alternative to the "${truncString(data.options.title)}" question. Click to save changes.` 
+    $scope.formToast.show({
+              state: "list",
+              message: `You added an alternative to the "${truncString(data.options.title)}" question. Click to save changes.`,
+              color: $scope.warnColor,
+              icon: "fa-pencil",
+              delay:3000
+            })
     $scope.modified.form = true;        
   }          
 
-  $scope.fanButton.state("process")
+  // // $scope.fanButton.state("process")
 
   let saveForm =  () => {
       $scope.processing = true;

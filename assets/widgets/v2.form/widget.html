@@ -12,9 +12,86 @@
 }
 
 </style>
+
+
+
+
+<style>
+
+.no-error div.md-errors-spacer {
+    display: none;
+}
+
+.with-placeholder {
+    margin: 1em 0;
+} 
+
+td md-input-container {
+  margin:0;
+}
+
+td input[type="text"] {
+  margin:0;
+}
+
+
+button.disabled:hover, button.disabled:focus, button[disabled]:hover, button[disabled]:focus, .button.disabled:hover, .button.disabled:focus, .button[disabled]:hover, .button[disabled]:focus {
+  background: transparent; 
+}
+
+button:hover, button:focus, .button:hover, .button:focus {
+  color:inherit;
+  background: inherit;
+}
+
+:focus {
+  border:none;
+  outline: none;
+}
+
+/*.autocomplete-custom-template .item-title {
+  display: block;
+  line-height: 2;
+}*/
+.autocomplete-custom-template .item-title md-icon,
+.autocomplete-custom-template .item-title img,
+.md-toast-content img
+ {
+    height: 36px;
+    width: 36px;
+    margin-top: 8px;
+    margin-bottom: 8px;
+    margin-right: 16px;
+    border-radius: 50%;
+    box-sizing: content-box;
+}
+
+.form-toast {
+    /*background: #e7e7e7 !important;*/
+    opacity: 0.9;
+}
+
+/*.md-toast-open-top .md-button.md-fab-top-left,
+.md-toast-open-top .md-button.md-fab-top-right {
+  -webkit-transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+  transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+  -webkit-transform: translate3d(0, 84px, 0);
+          transform: translate3d(0, 84px, 0); }
+  .md-toast-open-top .md-button.md-fab-top-left:not([disabled]).md-focused, .md-toast-open-top .md-button.md-fab-top-left:not([disabled]):hover,
+  .md-toast-open-top .md-button.md-fab-top-right:not([disabled]).md-focused,
+  .md-toast-open-top .md-button.md-fab-top-right:not([disabled]):hover {
+    -webkit-transform: translate3d(0, 82px, 0);
+            transform: translate3d(0, 82px, 0); }
+ md-toast.md-top {
+      top: 50px; }*/
+</style>
+
+
+
+
 <div class="row" ng-controller="FormController" style="padding: 0.5rem; margin: 0;">
 
-    
+<pre>{{toastData | json}}</pre>    
 
 
 <!-- <pre>{{user | json}}</pre> -->
@@ -38,7 +115,7 @@
   </div> -->
  <!--  <button ng-click="reload()">REload</button>
  <pre> {{widget.form.config.access | json}} </pre> -->
-  <div  class="fan-btn top fade" 
+<!--   <div  class="fan-btn top fade" 
         ng-if="!globalConfig.designMode && fanButton._state"
 
   >
@@ -106,481 +183,424 @@
             </div>
           </div>  
     
-  </div>    
-  
-  <div ng-show="globalConfig.designMode">
-    <h3 ng-if="isDisabled()" style="  color: #f08a24;" class="fi-alert"> 
-      DJ-Form is disabled. You can use only single instance of DJ-Form per page.
-    </h3>
-    <div ng-if="!isDisabled() && processing" class="row">
-      <div class="column small-2 small-centered" style="  text-align:center;
-              color:#999;
-              font-size:xx-large">
-        <i class="fa fa-spinner fa-pulse" />
-      </div>
-    </div>
-    <div ng-if="!isDisabled() && !processing" class="row" style="margin: 0.5em 0 0 0; height:auto;">
-      <h3> 
-      DJ-Form <span style="font-size: smaller;">#{{widget.form.id}}</span>
-    </h3>
-    <div class="row">
-      <div class="column small-12">
-        <button class="tiny button" ng-click="openImportDialog()">
-          Import
-        </button>  
-      </div>  
-    </div>  
-    <div class="row" ng-if="pageLocation != widget.form.metadata.app_url.value">
-      <div class="column small-12">
-        <div style="  color: rgb(240, 138, 36);">
-          <i class="fa fa-exclamation-triangle" style="margin:0 0.5em;"/>
-          <span style="margin:0 0.5em;"> Page and Form mismatch.</span>
-          <span class="button tiny"
-                style="margin:0 0.5em; padding:0.5em;"
-                ng-click="cloneForm()"
-          >
-            Clone 
-          </span>
-        </div>
-      </div>  
-    </div>  
-      <div class="row">
-        <div ng-if="widget.form.config.cloned" class="column small-12" style="font-size: small;">
-          Cloned from: #{{widget.form.config.cloned}}
-        </div>
-      </div>
-      <div class="row">
-        <div class="column small-12" style="font-size: small;">
-          Created at: {{formatDate(widget.form.createdAt)}}
-        </div>
-      </div>
-      <div class="row">
-        <div class="column small-12" style="font-size: small;">
-          Last update: {{formatDate(widget.form.updatedAt)}}
-        </div>
-      </div>
-      <hr/>
-      <h4>
-      Metadata  
-    </h4>
-      <div class="row">
-        <div class="column small-12">
-          <div class="column small-3 left">
-            <label class="large">Key</label>
-          </div>
-          <div class="column small-8 left">
-            <label class="large">Value</label>
-          </div>
-        </div>
-      </div>
-      <div ng-repeat="m in metadataTools.metadata" class="row">
-        <div class="column small-12">
-          <div class="column small-3 left">
-            <input style="margin-bottom: 0.25em;" type="text" ng-model="m.key" ng-value="m.key" ng-disabled="true">
-          </div>
-          <div class="column small-8 left">
-            <input style="margin-bottom: 0.25em;" type="text" ng-model="m.value" ng-value="m.value" ng-disabled="!m.editable">
-          </div>
-          <div class="column small-1" style="padding: 0.25em;">
-            <button ng-if="!m.required" ng-click="metadataTools.delete(m.key)" style=" color: #5f8ab9;
-                            background: none;
-                            font-size: xx-large;
-                            padding: 0;
-                            margin: 0;
-                            cursor: pointer;">
-              <i class="fa fa-times" />
-            </button>
-          </div>
-        </div>
-      </div>
-      <div class="row">
-        <div class="column small-12">
-          <div class="column small-3 left">
-            <input style="margin-bottom: 0.25em;" type="text" ng-model="textFields.key" ng-value="textFields.key">
-          </div>
-          <div class="column small-8 left">
-            <input style="margin-bottom: 0.25em;" type="text" ng-model="textFields.value" ng-value="textFields.value">
-          </div>
-          <div class="column small-1" style="padding: 0.25em;">
-            <button ng-click="metadataTools.add(textFields.key, textFields.value)" 
-                    style=" color: #5f8ab9;
-                            background: none;
-                            font-size: xx-large;
-                            padding: 0;
-                            margin: 0;
-                            cursor: pointer;
-                            border:none;
-                            outline:none;" 
-                    ng-disabled="!metadataTools.valid()"
-            >
-              <i class="fa fa-plus-circle" />
-            </button>
-          </div>
-        </div>
-      </div>
-      <hr/>
-      <h4>
-        Access   
-      </h4>
-      <div class="row">
-        <div class="column small-12">
-          <div class="column small-3 left">
-            <a  class="button split tiny" 
-                style="   background-color: #5f8ab9;
-                          color: #e7e7e7;
-                          font-size: large;"
-            >
-              {{accessTypes[widget.form.config.access.type]}}
-              <span dropdown-toggle="{{'#'+widget.ID+'_access_type'}}"/>
-            </a>
-            <ul id="{{widget.ID+'_access_type'}}" class="f-dropdown">
-              <li><a ng-click="setAccessType('any')">For any respondents</a></li>
-              <li><a ng-click="setAccessType('users')">For logged users</a></li>
-              <li><a ng-click="setAccessType('invited')">For invited respondents</a></li>
-            </ul>
-          </div>
-          <div class="column small-4 left" style="margin: 0.5em;"
+  </div>  -->
 
-          >
-            <label class="large left" style="margin-right: 1em;">
-              Access {{(widget.form.config.access.enabled)? "was opened": "was closed" }} 
-              <span ng-if="widget.form.config.access.lastNotificatedAt">
-                ({{timeAgo(widget.form.config.access.lastNotificatedAt)}})
-              </span>  
-            </label>
-            <div class="switch tiny radius left">
-              <input  type="checkbox" 
-                      id="{{widget.instanceName+'_access_enabled'}}" 
-                      ng-model="widget.form.config.access.enabled"
-                      ng-click = "userNotification()"
-              >
-              <label for="{{widget.instanceName+'_access_enabled'}}"
-                       
-              ></label>
 
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <hr/>
-       <hr/>
-      <div ng-if="widget.form.config.access.type == 'invited'">
-        <h4>Invited respondents</h4>
-            
-        <table style="border:none;">
-          <tr style="background:#e7e7e7;">
-            <td colspan="3" style="border:none; font-size: x-small;">
-              Respondent
-            </td>
-            <td colspan="2" style="border:none; font-size: x-small;">
-              Notified at
-            </td>  
-          </tr>  
-          <tr ng-repeat="u in widget.form.config.access.users">
-            <td style="border:none;">
-                <i>
-                  <span  ng-if="u.find" 
-                      class="fa fa-spinner fa-pulse"
-                      style=" font-size: 1em;
-                              padding: 0 0 0 0.16em;
-                              color: #cedded;"
-                  />
-                  <span   style=" 
-                      background-image: url({{u.photo}});
-                      background-size: 3em 3em;
-                      border-radius: 50%;
-                      display: block;
-                      overflow: hidden;
-                      position: relative;
-                      height: 3em;
-                      width: 3em;
-                      float: left;
-                      "
-                      ng-if="u.photo && !u.find"></span>
-                  <span ng-if="!u.photo && !u.find" style="float: left; margin: 0 0 0 -0.4em;">
-                        <i  class="fa fa-user-circle"
-                            style="     font-size: 2.75em;
-                                        padding: 0 0 0 0.16em;
-                                        color: #cedded;"
-                        >
-                          
-                        </i></span>
-                </i>
-            </td>
-            <td style="border:none;">
-                <a href="mailto:{{u.email}}" target="blank" style="font-size: large;">  
-                  {{(u.name)? u.name : u.email}}
-                </a>  
-            </td>
-
-            <!-- <td style="border:none; font-size:x-small">
-              {{u.apikey}}
-            </td>   -->
-            
-            <td   style=" border:none; 
-                          font-size: large; 
-                          color:#5f8ab9; 
-                          cursor:pointer;"
-            >
-                <i  ng-click="userUtils.editInvitedUser(u)"  
-                    ng-if="!u.id" class="fa fa-address-card"/>
-                <i ng-if="u.id">&nbsp;</i>
-            </td>
-
-            <td style="border:none; font-size: x-small;" ng-if="u.notifiedAt">
-              <!-- <i class="fa fa-external-link"/> -->
-              {{timeAgo(u.notifiedAt)}}
-            </td>
-            <td style="border:none; font-size: x-small;" ng-if="!u.notifiedAt">
-              <!-- <i class="fa fa-external-link"/> -->
-              <!-- {{formatDate(u.notifiedAt)}} -->
-              &nbsp;
-            </td>  
-            
-            <td style="border:none; font-size: large; color:#5f8ab9; cursor:pointer;"
-                ng-click="userUtils.deleteInvitedUser(u.email)"  
-            >
-                <i class="fa fa-times"/>
-            </td>
-            
-          </tr>
-          <tr style="border:none;">
-            <td style="border:none;" colspan="2">
-              <div class="row" style="padding: 0; margin:2em 0 0 0;">
-                  <div  ng-if="userUtils.userIsInvited" 
-                        style="font-size: smaller; color: #f08a24; margin:-1.5em 1em;"
-                  >
-                    <i class="fa fa-exclamation-triangle" style="margin:0 0.5em;" />already invited
-                  </div>
-                  <div  ng-if="!userUtils.userIsInvited" 
-                        style="font-size: smaller; color: #f08a24; margin:-1.5em 1em;"
-                  >
-                    &nbsp;
-                  </div>
-                  <div class="column small-12 left" style="padding:0;">
-                     <input   type="text" 
-                              ng-model="invitedUser" 
-                              ng-change="userUtils.validInvitedUser(invitedUser)" 
-                              placeholder="Enter user email" 
-                              typeahead="cu as cu.email for cu in userUtils.getUsers($viewValue)" typeahead-template-url="/widgets/v2.form/userShortInfo.html" 
-                              class="form-control"  
-                              typeahead-on-select="userUtils.validInvitedUser(invitedUser)"
-                    >
-                  </div>
-              </div>    
-            </td>
-            <td style="border:none;">
-                    <button   ng-click="userUtils.addInvitedUser()" 
-                              style="     color: #5f8ab9;
-                                          background: none;
-                                          font-size: xx-large;
-                                          padding: 1em 0 0.5em 0;
-                                          margin: 0;
-                                          cursor: pointer;
-                                          border: none;
-                                          outline: none;""
-                              ng-disabled="!userUtils.invitedUserIsValid || userUtils.userIsInvited"
-                    >
-                      <i class="fa fa-user-plus" />
-                    </button>
-                  
-            </td>  
-          </tr>  
-        </table>
-        <hr/>
-      </div>
-      <h4>
-        Responses
+  <div ng-cloak ng-show="globalConfig.designMode">
+    
+    <md-content>
+      <md-tabs md-dynamic-height md-border-bottom>
         
-          <span class="button tiny"
-                  style="margin:0 0.5em; padding:0.5em;"
-                  ng-click="exportResponses()"
-            >
-              Export CSV 
-          </span>
-             
-      </h4>
-      <!-- <pre>{{responsesStat}}</pre> -->
-      <div class="row">
-        <div class="column small-12">
-          <table  style="
-                    box-shadow: 0 0.1em 0.5em 0 #607D8B;
-                    margin: 0 auto;" 
-                  ng-if="responseDynamic"
-          >
-          <tr>
-            <td   style="
-                        border: none;
-                        color: #777;
-                        text-align: center;
-                        font-size: larger;" 
-                  colspan="{{responseDynamic.length}}"
-            >
-              Total: {{responsesStat.length}} responses
-            </td>
-          </tr>    
-          <tr>
-            <td ng-repeat="v in responseDynamic track by $index" 
-              style="border: none; 
-                  width:2em;
-                  "
-            >
-                <div style="font-size: xx-small;
-                                    text-align: center;
-                                    height:1em;
-                                    line-height: 1em;
-                                    color:#777;
-                                    "
-                        >
-    {{(responseDynamic[$index].value>0) ? ((100*responseDynamic[$index].value).toFixed(0)+'%') :' '}}
-                      </div>
-            </td> 
-          </tr>
-          <tr>
-            <td ng-repeat="v in responseDynamic track by $index" 
-              style="border: none; 
-                  width:2em;
-                  "
-            > 
-              <div style="height:5em;">
-                  <div       
-                            style=" 
-                     background:#03a9f4;
-                     border:0.05rem solid {{(responseDynamic[$index].value>0)?'#03a9f4':'#999'}};
-                                    position:relative;
-                                    height:{{5*responseDynamic[$index].height}}em;
-                                    top:{{5*(1-responseDynamic[$index].height)}}em; 
-                                  "
-                        >
-                        </div>
-                    </div>  
-            </td>
-          </tr>
-          <tr>
-            <td ng-repeat="v in responseDynamic track by $index" 
-              style="border: none; 
-                  width:2em;
-                  "
-            >    
-              <div  
-                        style=" 
-                                text-align: center;
-                                
-                                line-height: 1em;
-                                color:#777; 
-                                font-size: xx-small;
-                              "
+        <md-tab label="General">
+          <md-content class="md-padding">
+           
+              <md-card>
+                <md-card-title>
+                  <md-card-title-text>
+                    <span class="md-headline">Form: {{widget.form.id}}</span>
+                    <span class="md-subhead">
+                        Created at {{formatDate(widget.form.createdAt)}}
+                        <br/>
+                        Updated at {{formatDate(widget.form.updatedAt)}}
+                    </span>
+                  </md-card-title-text>
+                </md-card-title>
+                <md-card-actions layout="row" layout-align="start center">
+                  <md-button>Import</md-button>
+                  <md-button  class="md-warn"
+                              ng-click="cloneForm()"
+                              ng-if="pageLocation != widget.form.metadata.app_url.value"
+                  >
+                    Clone
+                  </md-button>
+                </md-card-actions>
+                <md-card-content  ng-if="pageLocation != widget.form.metadata.app_url.value"
+                                  md-colors="::{color: 'default-warn'}"
+                >
+                  <h3 md-colors="::{color: 'default-warn'}">
+                  <md-icon  md-font-icon="fa-exclamation-triangle" 
+                            style="font-family: FontAwesome;"
+                            class="md-warn"
+                  >
+                  </md-icon>
+                  Page and Form mismatch!
+                  </h3>
+                  <p class="md-warn">
+                    Current app url is <a src="{{pageLocation}}" target="_blank">{{pageLocation}}</a>
+                    <br/>
+                    But form metadata "app_url" is 
+                    <a src="{{ ( widget.form.metadata.app_url.value ) ? widget.form.metadata.app_url.value : '#' }}">
+                      {{ ( widget.form.metadata.app_url.value ) ? widget.form.metadata.app_url.value : 'empty' }}
+                    </a>  
+                    <br/>
+                    For clone form click "CLONE" button above or ignore this message.
+                  </p> 
+                </md-card-content>
+              </md-card>
+           
+
+
+          </md-content>
+        </md-tab>
+
+        
+
+        <md-tab label="{{'Metadata' | translate}}">
+          <md-content class="md-padding">
+            <form name="formMetadata">
+              <md-card>
+                  
+                  <md-card-title>
+                    <md-card-title-text>
+                      <span class="md-headline">Form metadata</span>
+                    </md-card-title-text>
+                  </md-card-title>
+
+                  <md-card-content>
+
+                  <table style="width:100%; border:none; margin:0 auto; background: transparent;">
+                    <tr>
+                      <th class="md-tab" style="    border: none;
+                                                    width: 30%;
+                                                    padding: 0;
+                                                    float:none;
+                      ">
+                        Key
+                      </th>
+                      <th  class="md-tab" style="   border: none;
+                                                    width: 65%;
+                                                    padding: 0;
+                                                    float: none;
+                      ">
+                        Value
+                      </th>  
+                    </tr>
+                    <tr ng-repeat="m in metadataTools.metadata">
+                      <td style="border:none;">
+                        <md-input-container class="md-block no-error">
+                          <input type="text" ng-model="m.key" ng-value="m.key" ng-disabled="true">
+                        </md-input-container>
+                      </td>
+                      <td style="border:none;">
+                        <md-input-container class="md-block no-error">
+                          <input type="text" ng-model="m.value" ng-value="m.value" ng-disabled="!m.editable">
+                        </md-input-container>
+                      </td>
+                      <td ng-if="!m.required" style="width:2em; border:none;">
+                         <button   
+                                  ng-click="metadataTools.delete(m.key)" 
+                                  class="md-button md-icon-button md-mini md-accent">
+                          <md-icon md-font-icon="fa-times" style="font-family: FontAwesome;"></md-icon>        
+                        </button> 
+                      </td>  
+                    </tr>
+                    <tr>
+                      <td style="border:none;">
+                        <md-input-container class="md-block with-placeholder">
+                          <label>Metadata key</label>
+                          <input ng-model="textFields.key" ng-value="textFields.key" name="metadataKey" required>
+
+                          <div ng-messages="formMetadata.metadataKey.$error">
+                            <div ng-message="required">Metadata key is required.</div>
+                            <div ng-message="doublicate">Metadata key shuld be unique.</div>
+                          </div>  
+                        
+                        </md-input-container>
+                      </td>
+                      <td style="border:none;">
+                        <md-input-container class="md-block with-placeholder">
+                          <label>Metadata value</label>
+                          <input ng-model="textFields.value" ng-value="textFields.value">
+                        </md-input-container>
+                      </td>
+                      <td style="width:2em; border:none;">
+                        <button   ng-click="metadataTools.add(textFields.key, textFields.value)" 
+                                  ng-disabled="!metadataTools.valid(formMetadata.metadataKey)"
+                                  class="md-button md-fab md-mini md-primary"
+                                  >
+                          <md-icon md-font-icon="fa-plus" style="font-family: FontAwesome;"></md-icon>        
+                        </button> 
+                      </td>  
+                    </tr>  
+                  </table>
+              
+                </md-card-content>
+              
+              </md-card>
+            </form>  
+          </md-content>
+        
+        </md-tab>
+
+        <md-tab label="Access">
+          <md-content class="md-padding">
+
+            <md-card>
+                
+                <md-card-title>
+                  <md-card-title-text>
+                    <span class="md-headline">Form Access</span>
+                  </md-card-title-text>
+                </md-card-title>
+
+                <md-card-content>
+                  <md-switch  ng-model="widget.form.config.access.enabled" 
+                              ng-change="userNotification()"
+                              class="md-primary"
+                  >
+                    Access {{(widget.form.config.access.enabled)? "was opened": "was closed" }} 
+                    <span ng-if="widget.form.config.access.lastNotificatedAt">
+                      ({{timeAgo(widget.form.config.access.lastNotificatedAt)}})
+                    </span>  
+                  </md-switch>
+
+                  <md-input-container>
+                    <label>Access mode</label>
+                    <md-select ng-model="widget.form.config.access.type">
+                      <md-option ng-repeat="t in accessTypes" 
+                          ng-click="setAccessType(t.type)" 
+                          ng-value="t.type"
                       >
-                        {{responseDynamic[$index].title}}
-                      </div>
-            </td>
-          </tr>   
-        </table>
-          <!-- <table style="border:none">
-            <tr>
-              <td style="border:none;">
-                Starts: 
-              </td>
-              <td style="border:none;">
-                {{timeAgo(responsesStat[0].date)}}
-              </td> 
-            </tr>
-            <tr>
-              <td style="border:none;">
-                Last response: 
-              </td>
-              <td style="border:none;">
-                {{timeAgo(responsesStat[responsesStat.length-1].date)}}
-              </td> 
-            </tr>
-            <tr>
-              <td style="border:none;">
-                Total: 
-              </td>
-              <td style="border:none;">
-                {{responsesStat.length}} response(s)
-              </td> 
-            </tr> 
-          </table> -->
-        </div>
-      </div>    
-<!--       <div class="row" ng-if="widget.form.config.access.type == 'invited'">
-        <div class="column small-12">
-          <div class="column small-3 left">
-            <label class="large left" style="margin-right: 1em;">
-              Invite respondents when the form starts for the first time 
-            </label>
-            <div class="switch tiny radius left">
-              <input type="checkbox" ng-disabled="widget.form.config.access.enabled" id="{{widget.instanceName+'_invU_enabled'}}" ng-model="widget.form.config.access.invitationEnabled">
-              <label for="{{widget.instanceName+'_invU_enabled'}}"></label>
-            </div>
-          </div>
-          <div ng-if="widget.form.config.access.invitationEnabled" class="column small-9">
-            <label class="large">Invitation template </label>
-            <textarea   class="text" 
-                        rows=5 
-                        ng-model="widget.form.config.access.invitationTemplate" 
-                        ng-disabled="widget.form.config.access.enabled"
-            ></textarea>
-          </div>
-        </div>
-      </div>
-      <div class="row" ng-if="widget.form.config.access.type == 'invited'">
-        <div class="column small-12">
-          <div class="column small-3 left">
-            <label class="large left" style="margin-right: 1em;">
-              Notify respondents when the form changes state
-            </label>
-            <div class="switch tiny radius left">
-              <input  type="checkbox" 
-                      ng-disabled="widget.form.config.access.enabled" 
-                      id="{{widget.instanceName+'_notU_enabled'}}" 
-                      ng-model="widget.form.config.access.notificationEnabled"
-              >
-              <label for="{{widget.instanceName+'_notU_enabled'}}"></label>
-            </div>
-          </div>
-          <div ng-if="widget.form.config.access.notificationEnabled" class="column small-9">
-            <label class="large">Notification template </label>
-            <textarea   class="text" 
-                        rows=5 
-                        ng-model="widget.form.config.access.notificationTemplate" 
-                        ng-disabled="widget.form.config.access.enabled"
-            ></textarea>
-          </div>
-        </div>
-      </div> -->
-     
-    </div>
-  </div>
-</div>
+                        {{t.title}}
+                      </md-option>
+                    </md-select>
+                  </md-input-container>
+                  <p ng-if="widget.form.config.access.type == 'invited'">
+                    Manage the list of respondents in the "Invited Respondents" tab.
+                  </p>  
 
-<!-- Notify users when the form changes state
-Invite users when the form starts for the first time
-Users can add alternatives
-access is open
-other
-the form is completed. save changes
-You can save the answer. But 2 out of 3 answers are not completed
-You added an alternative to the question. Click to save changes.
-Changes saved successfully
-saving changes...
-the form is started in test mode
-your alternative
-
-notification template
-invitation template
-
-process responses for this form
+                </md-card-content>  
+            </md-card>    
 
 
-page and form mismatch
-leave as is
+          
+          </md-content>
+        </md-tab>
+        <md-tab label="Invited Respondents" ng-if="widget.form.config.access.type == 'invited'">
+            <md-content class="md-padding">
+              <form name="formInvite">
+                <md-card>
+                  
+                  <md-card-title>
+                    <md-card-title-text>
+                      <span class="md-headline">Invited Respondents</span>
+                    </md-card-title-text>
+                  </md-card-title>
+
+                  <md-card-content>
+                    
+                    <div flex-gt-sm="50" flex>
+                      <md-toolbar layout="row" class="md-hue-3" ng-if="widget.form.config.access.users.length > 0">
+                        <div class="md-toolbar-tools">
+                          <span>Total {{widget.form.config.access.users.length}} respondents</span>
+                        </div>
+                        <span flex></span>
+                        <md-button ng-click="userUtils.selectAll()">
+                          Select All
+                        </md-button>
+                        <md-button ng-click="userNotification()">
+                          Notify
+                        </md-button>
+                      </md-toolbar>
+
+                      <md-content style="max-height: 25em;">
+
+                        <md-list class="md-dense" flex ng-if="widget.form.config.access.users.length > 0">
+                          
+                          <md-list-item class="md-3-line" ng-repeat="u in widget.form.config.access.users">
+                            
+                            <md-checkbox class="md-primary" ng-model="u.selected">
+                            </md-checkbox>
+                            
+                            <div layout-align="space-around" style="margin:auto;" ng-if="u.find">
+                              <md-progress-circular class="md-hue-2" md-diameter="20px">
+                              </md-progress-circular>
+                            </div>
+
+                            <md-icon  ng-if="!u.photo && !u.find"
+                                      md-font-icon="fa-user-circle"
+                                      style="font-family: FontAwesome; 
+                                      font-size: 2.5em;
+                                      margin-right: 0.25em;">
+                            </md-icon>
+
+                              
+                            <img ng-if="u.photo && !u.find" src="{{u.photo}}" class="md-avatar" />
+                            
+                            <div class="md-list-item-text" layout="column">
+                              <h3 style="font-size: large;">
+                                {{(u.name)? u.name : u.email}}
+                              </h3>
+                              <h4>
+                                <a href="mailto:{{u.email}}" target="_blank">{{u.email}}</a>
+                              </h4>  
+                              <h4 ng-if="u.apikey">apikey: {{(u.apikey)?u.apikey : 'not used'}}</h4>
+                              <h4 ng-if="u.notifiedAt">Notified at: {{timeAgo(u.notifiedAt)}}</h4>
+                            </div>
+
+                            <md-icon  ng-if="!u.id"
+                                      class="md-primary"
+                                      ng-click="userUtils.editInvitedUser(u)"
+                                      md-font-icon="fa-address-card"
+                                      style="font-family: FontAwesome; margin-right: 1em;">
+                            </md-icon>
+
+                            <md-icon  ng-click="userUtils.deleteInvitedUser(u.email)"  
+                                      md-font-icon="fa-times"
+                                      class="md-accent"
+                                      style="font-family: FontAwesome;">
+                            </md-icon>
+                          
+                          </md-list-item>
+                        </md-list>
+                      
+                      </md-content>
+                    </div>        
+                    <div flex-gt-sm="50" flex layout="row">
+                  
+
+                  <md-autocomplete flex required
+                      md-input-name="respondentEmail"
+                      md-selected-item="invitedUser"
+                      md-search-text="respondentEmail"
+                      md-items="cu in userUtils.notInvitedUsers"
+                      md-item-text="cu.email"
+                      md-search-text-change="userUtils.validInvitedUser(respondentEmail,formInvite.respondentEmail)"
+                      md-selected-item-change="userUtils.validInvitedUser(invitedUser,formInvite.respondentEmail)"
+                      md-floating-label="Respondent Email Address"
+                      md-clear-button="true"
+                      md-menu-class="autocomplete-custom-template"
+                  >
+                    <md-item-template>
+                      <span class="item-title">
+                        <img src="{{cu.photo}}" class="md-avatar" />
+                        {{cu.email}}
+                      </span>
+                    </md-item-template>
+                    <div  ng-messages="formInvite.respondentEmail.$error" 
+                          ng-if="formInvite.respondentEmail.$touched"
+                    >
+                      <div ng-message="email">Invalid email address.</div>
+                      <div ng-message="invited">Respondent already invited.</div>
+                    </div>
+                  </md-autocomplete>
+
+                  <button   ng-click="userUtils.addInvitedUser()" 
+                            ng-disabled="!userUtils.invitedUserIsValid || userUtils.userIsInvited"
+                            class="md-button md-fab md-mini md-primary"
+                            style="margin: 1em 0.5em;"
+                            >
+                    <md-icon md-font-icon="fa-user-plus" style="font-family: FontAwesome;"></md-icon>        
+                  </button> 
+
+                      </div>  
+
+                  </md-card-content>  
+                </md-card>
+              </form>
+            </md-content>
+          
+        </md-tab>  
+
+        <md-tab label="Responses">
+            <md-content class="md-padding">
+              <md-card>
+                
+                <md-card-title>
+                  <md-card-title-text>
+                    <span class="md-headline">Responses</span>
+                  </md-card-title-text>
+                </md-card-title>
+                <md-card-actions layout="row" layout-align="start center">
+                  <md-button ng-click="exportResponses()">Export CSV</md-button>
+                </md-card-actions>
+
+                <md-card-content>
+                        <table  style="
+                                        border: none;
+                                        margin: 0px auto;
+                                        box-shadow: 0 1px 3px 0 rgba(0,0,0,.2), 
+                                                    0 1px 1px 0 rgba(0,0,0,.14), 
+                                                    0 2px 1px -1px rgba(0,0,0,.12);
+                                      " 
+                                ng-if="responseDynamic"
+                        >
+                        <tr>
+                          <td   style="
+                                      border: none;
+                                      color: {{disableColor}};
+                                      text-align: center;
+                                      font-size: larger;" 
+                                colspan="{{responseDynamic.length}}"
+                          >
+                            Total: {{responsesStat.length}} responses
+                          </td>
+                        </tr>    
+                        <tr>
+                          <td ng-repeat="v in responseDynamic track by $index" 
+                            style="border: none; 
+                                width:2em;
+                                "
+                          >
+                              <div style="font-size: xx-small;
+                                                  text-align: center;
+                                                  height:1em;
+                                                  line-height: 1em;
+                                                  color:{{disableColor}};
+                                                  "
+                                      >
+                  {{(responseDynamic[$index].value>0) ? ((100*responseDynamic[$index].value).toFixed(0)+'%') :' '}}
+                                    </div>
+                          </td> 
+                        </tr>
+                        <tr>
+                          <td ng-repeat="v in responseDynamic track by $index" 
+                            style="border: none; 
+                                width:2em;
+                                "
+                          > 
+                            <div style="height:5em;">
+                                <div      
+                                       
+                                          style=" 
+                                background: {{primaryColor}};
+                                border:0.05rem solid {{(responseDynamic[$index].value>0)?primaryColor:disableColor}};
+                                                  position:relative;
+                                                  height:{{5*responseDynamic[$index].height}}em;
+                                                  top:{{5*(1-responseDynamic[$index].height)}}em; 
+                                                "
+                                      >
+                                      </div>
+                                  </div>  
+                          </td>
+                        </tr>
+                        <tr>
+                          <td ng-repeat="v in responseDynamic track by $index" 
+                            style="border: none; 
+                                width:2em;
+                                "
+                          >    
+                            <div  
+                                      style=" 
+                                              text-align: center;
+                                              line-height: 1em;
+                                              color:{{disableColor}}; 
+                                              font-size: xx-small;
+                                            "
+                                    >
+                                      {{responseDynamic[$index].title}}
+                                    </div>
+                          </td>
+                        </tr>   
+                      </table>
+                </md-card-content>
+              </md-card>  
+          </md-content>
+        </md-tab>
+      </md-tabs>
+    </md-content>
+  </div> 
+</div>   
 
 
-Requires sign in:
-Limit to 1 response
-Respondents can:
-Edit after submit
-See summary charts and text responses -->
+

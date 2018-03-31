@@ -67,8 +67,11 @@ widgetApi.factory('APIProvider', function ($rootScope, $log,
    * @param [scope.widget.instanceName] Widget's unique name
    */
   class APIProvider {
-    constructor(controllerScope) {
+    constructor(controllerScope, direct) {
       this.scope = getWidgetDirectiveScopeFromControllerScope(controllerScope);
+      if(direct) {
+        widgetSlots.set(this.scope, []);
+      }
     }
 
     /**

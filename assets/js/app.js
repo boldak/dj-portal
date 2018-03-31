@@ -149,7 +149,7 @@ app.service("$scroll",function($document,APIUser){
 
 app.config(function ($stateProvider, $urlRouterProvider, $urlMatcherFactoryProvider,
                      $locationProvider, $ocLazyLoadProvider, //$ViewScrollProvider,
-                     JSONEditorProvider, appName, defaultApp) {
+                     JSONEditorProvider, appName, defaultApp, $mdAriaProvider) {
 
   $ocLazyLoadProvider.config({
     loadedModules: ['app'],
@@ -241,6 +241,10 @@ app.config(function ($stateProvider, $urlRouterProvider, $urlMatcherFactoryProvi
       templateProvider,
       controller: 'PageController'
     });
+
+
+    $mdAriaProvider.disableWarnings();
+
 });
 
 app.factory('fullReload', function ($window) {

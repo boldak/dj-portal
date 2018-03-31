@@ -54,7 +54,7 @@ m.controller('FormQuestionController', function(
 
 
 // Load css
-$ocLazyLoad.load({files:["/widgets/v2.form.question/djform.css"]}); 
+// $ocLazyLoad.load({files:["/widgets/v2.form.question/djform.css"]}); 
 
 
 angular.extend($scope, {

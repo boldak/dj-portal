@@ -12,22 +12,35 @@ let UserList = class {
     this.scope = scope;
     this.invitedUserAdd = null;
     this.userList = userList;
+    
+    this.notInvitedUsers = this.userList.filter(u =>
+          this.scope.widget.form.config.access.users.map(item => item.email).indexOf(u.email) < 0
+    );
+
     this.userIsInvited = false;
     this.invitedUserIsValid = false;
   }
 
   getUsers(filterValue) {
     return new Promise((resolve, reject) => {
+      console.log("FILTER", this.list, filterValue, this.scope.widget.form.config.access.users)
       let result = this.userList
-        .filter(user =>
-          this.scope.widget.form.config.access.users.map(item => item.email).indexOf(user.email) < 0
+        .filter(u =>
+          this.scope.widget.form.config.access.users.map(item => item.email).indexOf(u.email) < 0
         )
-        .filter(user =>
-          user.name.toLowerCase().includes(filterValue.toLowerCase()) ||
-          user.email.toLowerCase().includes(filterValue.toLowerCase())
+        .filter(u =>
+          u.name.toLowerCase().includes(filterValue.toLowerCase()) ||
+          u.email.toLowerCase().includes(filterValue.toLowerCase())
         )
         .slice(0, 8)
+      console.log(result)  
       resolve(result)
+    })
+  }
+
+  selectAll() {
+    this.scope.widget.form.config.access.users.forEach(item => {
+      item.selected = true;
     })
   }
 
@@ -44,19 +57,46 @@ let UserList = class {
     }
 
     if (angular.isDefined(value.email)) {
-      this.scope.userIsInvited = this.scope.widget.form.config.access.users.map(item => item.email).indexOf(value.email) >= 0;
+      this.userIsInvited = this.scope.widget.form.config.access.users.map(item => item.email).indexOf(value.email) >= 0;
       return
     }
 
     this.userIsInvited = false;
   }
 
-  validInvitedUser(value) {
+  sendEmailErrors (field){
+    if(field){
+      // console.log("User validation", field)
+
+      field.$error = (field.$error) ? field.$error : {}; 
+      
+      if(this.invitedUserIsValid == false){
+        field.$error.email = true;  
+      } else {
+        field.$error.email = undefined;
+      }
+      if(this.userIsInvited == true){
+        field.$error.invited = true;  
+      } else {
+        field.$error.invited = undefined;
+      }
+      if(this.invitedUserIsValid && !this.userIsInvited){
+        field.$valid = true;
+        field.$invalid = false;
+      }
+
+    }
+  }
+
+  validInvitedUser(value, field) {
+
+    // console.log("USER VALIDATION", value)
 
     this.alreadyInvited(value);
 
     if (!value) {
       this.invitedUserIsValid = false;
+      this.sendEmailErrors(field)
       return
     }
 
@@ -67,16 +107,20 @@ let UserList = class {
         this.invitedUserAdd = value
       }
       this.invitedUserIsValid = t;
+      this.sendEmailErrors(field)
       return
     }
 
     if (angular.isDefined(value.email)) {
       this.invitedUserAdd = value;
       this.invitedUserIsValid = true;
+      this.sendEmailErrors(field)
       return
     }
 
     this.invitedUserIsValid = false;
+    this.sendEmailErrors(field)
+
   }
 
   addInvitedUser() {
@@ -104,8 +148,14 @@ let UserList = class {
     }
    
     this.invitedUserAdd = undefined;
-    this.invitedUser = undefined;
+    this.scope.invitedUser = undefined;
     this.invitedUserIsValid = false;
+    this.scope.respondentEmail = "";
+
+    this.notInvitedUsers = this.userList.filter(u =>
+          this.scope.widget.form.config.access.users.map(item => item.email).indexOf(u.email) < 0
+    );
+    
   }
 
   deleteInvitedUser(email) {
@@ -113,6 +163,10 @@ let UserList = class {
     if (index >= 0) {
       this.scope.widget.form.config.access.users.splice(index, 1)
     }
+
+    this.notInvitedUsers = this.userList.filter(u =>
+          this.scope.widget.form.config.access.users.map(item => item.email).indexOf(u.email) < 0
+    );
   }
 
   editInvitedUser(user) {
