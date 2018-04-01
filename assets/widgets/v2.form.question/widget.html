@@ -1,9 +1,5 @@
 
-<div class="row" ng-controller="FormQuestionController"
-     style="  padding: 0.5rem; 
-              margin: 0;"
-
->   
+<div class="row" ng-controller="FormQuestionController">   
 
 <!--   <div class="row">
     <div class="column small-12">
@@ -100,12 +96,12 @@
             </tr> 
             <tr>
               <td style="border:none;">
-                <label class="large" style="color:{{(config.state.options.required)?'#008CBA':'';}}"> 
+                <label class="large" style="color:{{(config.state.options.required)?accentColor:'';}}"> 
                   Required:
                 </label>  
               </td>
               <td style="border:none;>
-                <label class="large" style="color:{{(config.state.options.required)?'#008CBA':'';}}"> 
+                <label class="large" style="color:{{(config.state.options.required)?accentColor:'';}}"> 
                   <div  class="switch tiny radius left" 
                         style=" margin: 0;
                                 padding: 0;
@@ -166,71 +162,52 @@
 
 
 
-  <div 
-      class="row" 
-      style="margin:0 -0.6em;"
-      ng-if="!hidden">
+  <div class="row" ng-if="!hidden">
      
-    <div class="column small-12 small-centered" 
-         style="margin-top: 2em;
-    border-left:{{(config.state.options.required && !answer.valid) ? '1em solid #f44336' : 'none'}}"
-    >
+    <div class="column small-12 small-centered">
       
       <div class="row">
-        
-        <div  class="column small-12" 
-              style="     background: none;
-                          padding: 1em;"
-        >
-          <!-- <h5   ng-if="config.state.options.required" 
-                style=" padding: 0 3em;
-                        color: {{(answer.valid)?'#adf15f':'#f0b77e'}};
-                        text-align: right;
-                        font-size: small;
-                        font-style: italic;
-                        margin:0;
-                        padding: 0;"
-          >
-            <i class="fa fa-asterisk"></i>
-            <i>{{(answer.valid) ? 'completed': 'required'}}</i>
-          </h5>
- -->
-          <h3   style=" 
-                        margin: 1em 0 0; 
-                        text-align: justify;
-                        margin:0;"
-          >
-            <!-- <i class="fa fa-question-circle" style="font-size:xx-large; color:#e7e7e7;"></i>  -->
-            {{config.state.options.title}}
-            <i  ng-if="config.state.options.required"
-                class="fa fa-asterisk" 
-                style=" color:{{(config.state.options.required && !answer.valid) ? '#f44336' : '#e7e7e7'}}; 
-                        font-size:x-small;"
-            >
-              <span  ng-if="config.state.options.required && !answer.valid">
-                Response is required
-              </span>  
-            </i> 
-          </h3>
-          <h4   ng-if="config.state.options.note" 
-                style=" padding: 0 2em;
-                        font-size: inherit;
-                        
-                        font-style: italic;"
-          > 
-            <!-- <i  class="fa fa-info-circle" style="font-size: larger; color:#e7e7e7;"></i>  -->
-            <pre>
-              {{config.state.options.note}}
-            </pre>  
-          </h4>
 
-        </div>
-      </div>      
-    
-      <div class="row" ng-include="config.view || config.state.widget.view"></div>
-     <!--  <hr/>      --> 
-    </div>   
+        <md-content class="md-padding">
+                <md-card>
+
+                  <md-card-title>
+                    <md-card-title-text>
+                      <span   class="md-subhead dj-form-title" 
+                              ng-if="config.state.options.required" 
+                              style="
+                          color:{{(config.state.options.required && !answer.valid) ? accentColor : '#888'}};
+                          text-align: right;
+                          font-size: 12px;
+                          "
+                      >
+                        <i class="fa fa-asterisk"></i>
+                        <widget-translate>Required</widget-translate>
+                      </span>
+                      <span   class="md-headline dj-form-title" 
+                              style="
+                        color:{{(config.state.options.required && !answer.valid) ? accentColor : primaryColor}};
+                        "
+                      >
+                        {{config.state.options.title}}
+                      </span>
+                      <span class="md-subhead dj-form-title" ng-if="config.state.options.note" style="color:#888">
+                        {{config.state.options.note}}
+                      </span>
+                    </md-card-title-text>
+                  </md-card-title>
+
+                  <md-card-content>
+                    <div ng-include="config.view || config.state.widget.view"></div>
+                  </md-card-content>
+
+                </md-card> 
+        </md-content>             
+         
+      </div>
+    </div>
   </div>
 </div>
+
 
 

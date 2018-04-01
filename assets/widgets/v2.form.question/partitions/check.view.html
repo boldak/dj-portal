@@ -1,155 +1,95 @@
 
+<md-content class="md-padding">
+  <md-list>
+                          
+      <md-list-item ng-repeat="a in alternatives">
+        
+        <md-checkbox  ng-model="checkboxes[a.id]"
+                        ng-change="config.setValue(a.id)"
+                        class="md-primary"
+          >
+        </md-checkbox>
+        
+        <div class="md-list-item-text" flex>
+          <h3 style="font-size: 14px; text-align: justify;">
+            {{a.title}}
+          </h3>
+        </div>
 
-<div class="row" style="margin:1em 0 0">
-  <div class="column small-10 small-centered">
-    <table style="border:none; width:100%;">
-      <tr  ng-repeat="a in alternatives">
-        <td  style="border: none;">
-          <input 
-              id="{{a.id}}" 
-              class="checkbox" 
-              type="checkbox" 
-              name="{{'check_'+widget.ID}}"
-              ng-model="checkboxes[a.id]"
-              ng-change="config.setValue(a.id)"
-              value="{{a.id}}"
-             > 
-            <label for="{{a.id}}" style="font-size: large;">{{a.title}}</label>
-        </td>
-        <td ng-if="config.state.options.showUserInfo && a.user"  style="border: none;">
-            <i>
-              <span   style=" 
-                  background-image: url({{a.user.photo}});
-                  background-size: 2em 2em;
-                  border-radius: 50%;
-                  display: block;
-                  overflow: hidden;
-                  position: relative;
-                  height: 2em;
-                  width: 2em;
-                  float: left;
-                  margin: -0.25em 0.5em 0 3em;
-                  background-color: red;"></span>
-               <span style="float: left; font-size: smaller; margin: 0.25em 0 0 0.5em">
-                  {{a.user.name}}
-               </span>
-            </i>
-        </td>
-        <td  style="border: none;" ng-if="config.state.options.showResponsesStat && rstat">
-          <div style="width:10em;">
+        <div  class="md-list-item-text" 
+              ng-if="config.state.options.showUserInfo && a.user" 
+              flex="20"
+              style="margin-left: 2em;"
+        >
+          <md-icon  ng-if="!a.user.photo"
+                    md-font-icon="fa-user-circle"
+                    style="font-family: FontAwesome; 
+                    font-size: 2em;
+                    margin-right: 0.25em;">
+          </md-icon>
+
+                              
+          <img ng-if="a.user.photo" src="{{a.user.photo}}" class="md-avatar" />
+          <span style="font-size: 10px;">
+            {{(a.user.name) ? a.user.name : a.user.email}}
+          </span>
+        </div>
+
+          <div style="width:10em; margin-left:1em;" ng-if="config.state.options.showResponsesStat && rstat">
             <div  style="
-                    background:{{(config.isResponse(a.id))?'#FF5722':'#ffc107'}};
-                    border:0.05rem solid {{(config.isResponse(a.id))?'#FF5722':'#999'}};
+                    background:{{(config.isResponse(a.id)) ? accentColor : primaryColor}};
+                    border:0.05rem solid {{(config.isResponse(a.id)) ? accentColor : disableColor}};
                     width:{{5*rstat[a.id]}}em;
                   "
-                  class="left"
+                  class="left" 
             >
               &nbsp;
             </div>
             <div style="    margin: 0 0 0 0.5em;
-                            color: {{(config.isResponse(a.id))?'#FF5722':'#777'}};
+                            color: {{(config.isResponse(a.id)) ? accentColor : disableColor}};
                             font-size: x-small;"
                  class="left"           
             >
               {{(rstat[a.id]*100).toFixed(0)}}%
             </div>  
-          </div>    
-        </td>
-      </tr>
-      <tr>
-        <td colspan=3  style="border: none;">
-          <div class="column small-7 left" style="padding:0 0;">
-            <input  ng-model="textFields.alternative" type="text" placeholder="Your alternative...">
           </div>
-          <div class="column small-3 left">  
-            <button
-              class="large left"
-              ng-click="addPMAlternative(alternatives)"
-              ng-disabled="!textFields.alternative"
-              style=" /*color: #5f8ab9;*/
-                      background: #617e8b;
-                      margin-top: 0.16em;
-                      /* font-size: larger; */
-                      /*border: 1px solid #5f8ab9;*/
-                      border-radius: 6px;
-                      padding: 0.2em 0.5em 0.2em 0.5em;"
-            >
-              <i class=" fa fa-plus-square"/> 
-                <widget-translate>Add</widget-translate>
-            </button>
-           </div> 
-        </td>  
-      </tr>  
-    </table>  
-    
- <!--      <div  class="row" 
-            
-            ng-repeat="a in alternatives"
-      >
-        <div class="column small-12">
-          <div class="column small-9">
-            <input 
-              id="{{a.id}}" 
-              class="checkbox" 
-              type="checkbox" 
-              name="{{'check_'+widget.ID}}"
-              ng-model="checkboxes[a.id]"
-              ng-change="config.setValue(a.id)"
-              value="{{a.id}}"
-             > 
-            <label for="{{a.id}}" style="font-size: large;">{{a.title}}</label>
-          </div>
-          <div  ng-if="config.state.options.showUserInfo && a.user" 
-                class="column small-3" 
-                style="margin-top: 0;"
-          >
-            <i>
-              <span   style=" 
-                  background-image: url({{a.user.photo}});
-                  background-size: 2em 2em;
-                  border-radius: 50%;
-                  display: block;
-                  overflow: hidden;
-                  position: relative;
-                  height: 2em;
-                  width: 2em;
-                  float: left;
-                  margin: -0.25em 0.5em 0 3em;
-                  background-color: red;"></span>
-               <span style="float: left; font-size: smaller; margin: 0.25em 0 0 0.5em">
-                  {{a.user.name}}
-               </span>
-            </i>
-          </div>  
-        </div>      
-      </div>
-          
-    <div class="row" style="margin-top: 1em;" ng-if="config.state.options.addEnabled">
-      <div class="column small-11 small-centered" style="padding: 0 0.5em;">
-        <div class="column small-7 left" style="padding:0 0;">
-          <input  ng-model="textFields.alternative" type="text" placeholder="Your alternative...">
-        </div>
-        <div class="column small-3 left">  
-          <button
-            class="large left"
-            ng-click="addPMAlternative(alternatives)"
-            ng-disabled="!textFields.alternative"
-            style=" /*color: #5f8ab9;*/
-                    background: #617e8b;
-                    margin-top: 0.16em;
-                    /* font-size: larger; */
-                    /*border: 1px solid #5f8ab9;*/
-                    border-radius: 6px;
-                    padding: 0.2em 0.5em 0.2em 0.5em;"
-          >
-            <i class=" fa fa-plus-square"/> 
-              <widget-translate>Add</widget-translate>
-          </button>
-         </div> 
-      </div>  
-    </div> -->
-  </div>
-</div>
+              
 
-<!-- <pre>{{answer | json }}</pre>  -->
+      </md-list-item>
+  
+  </md-list>
+  <div  layout="row" 
+        style=" border-top: 1px solid #e9e9e9;
+                padding-top: 1.5em;"
+        ng-if="config.state.options.addEnabled"        
+  >
+    <div flex="75">
+       <md-input-container class="md-block" flex-gt-sm>
+          <label>
+              <widget-translate>
+                Your alternative...
+              </widget-translate>  
+          </label>
+          <input ng-model="textFields.alternative">
+       </md-input-container>
+    </div>
+      <div flex>  
+        <md-button  class="md-raised md-primary"
+                    ng-click="addPMAlternative(alternatives)"
+                    ng-disabled="!textFields.alternative"
+                    style="margin-top: 2em"
+           
+        >
+          
+         <!--  <md-icon  md-font-icon="fa-plus" 
+                    style="font-family: FontAwesome;"
+                    class="md-primary">
+          </md-icon>
+ -->
+          <widget-translate>Add</widget-translate>
+        </md-button>
+      </div>  
+  </div>    
+</md-content>    
+
 

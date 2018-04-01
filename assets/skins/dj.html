@@ -234,15 +234,14 @@ div.tags {
 }
 
 </style>
-<div id="scroll-container">
+<div id="scroll-container" style="background: white;">
   <div class="row" ng-if="globalConfig.designMode">
     <design-panel></design-panel>
   </div>
   <div class="row">
     <widget type="v2.topbar" instanceName="AppTopbar" skin="true" config="skinConfig"></widget>
   </div>
-  
-  </div>  
+ 
   <div class="row">
     <div id="page-view" style="margin:0 1em;">
       <application-view>

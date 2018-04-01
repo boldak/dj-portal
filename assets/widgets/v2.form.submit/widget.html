@@ -1,13 +1,13 @@
 <hr/>
 <div class="row" ng-controller="FormSubmitController" style="padding: 0.5rem; margin: 0;">
   <div class="column small-11 small-centered" ng-if="!hidden || globalConfig.designMode">
-      <button class="button large right"
-              style=" width: max-content;
-                      background: #617e8b;
-                      " 
-              ng-click="submit()"
-      >
-        <widget-translate>Submit Form</widget-translate>
-      </button>  
+      
+      <div layout="row" layout-align="end center">
+        <md-button class="md-raised md-primary"
+                   ng-click="submit()" 
+        >
+          <widget-translate>Submit Form</widget-translate>
+        </md-button>
+      </div>  
   </div>  
 </div>

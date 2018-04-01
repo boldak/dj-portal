@@ -48,7 +48,8 @@ m.controller('FormQuestionController', function(
   questionFactory,
   listEditor,
   colorUtility,
-  questionTypes
+  questionTypes,
+  $mdColors
   
 ) {
 
@@ -58,7 +59,15 @@ m.controller('FormQuestionController', function(
 
 
 angular.extend($scope, {
-  markModified : app.markModified
+  markModified : app.markModified,
+
+  primaryColor: $mdColors.getThemeColor('primary'),
+
+  accentColor: $mdColors.getThemeColor('accent'),
+
+  warnColor: $mdColors.getThemeColor('warn'),
+
+  disableColor: "#333",
 })
 
 let listEditorTools = listEditor($scope)
