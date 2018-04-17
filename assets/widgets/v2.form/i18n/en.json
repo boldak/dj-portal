@@ -63,7 +63,9 @@
    "RESPONSE_NOT_COMPLETED": "Responses is not completed",
    "CAN_SAVE": "But you save responses. This responses will be restored in next session.",
    "CONTINUE": "continue",
-   "SAVE_RESPONSES": "Save responses"
+   "SAVE_RESPONSES": "Save responses",
+   "apikey":"apikey",
+   "Notified at":"Notified at"
 
 
 

@@ -444,8 +444,8 @@ img.dialog.md-avatar {
                                 <h4>
                                   <a href="mailto:{{u.email}}" target="_blank">{{u.email}}</a>
                                 </h4>  
-                                <h4 ng-if="u.apikey">apikey: {{(u.apikey)?u.apikey : 'not used'}}</h4>
-                                <h4 ng-if="u.notifiedAt">Notified at: {{timeAgo(u.notifiedAt)}}</h4>
+                                <h4 ng-if="u.apikey"><widget-translate>apikey</widget-translate> : {{(u.apikey)?u.apikey : 'not used'}}</h4>
+                                <h4 ng-if="u.notifiedAt"><widget-translate>Notified at</widget-translate> : {{timeAgo(u.notifiedAt)}}</h4>
                               </div>
 
                               <md-icon  ng-if="!u.id"
