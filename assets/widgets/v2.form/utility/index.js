@@ -73,14 +73,13 @@ ${scope.$filter("json")(scope.answer)}
 
 `
 <p>
-  Dear <%=user.name || 'Respondent'%>!
+  Dear {{user.name || 'Respondent'}}!
 </p> 
 <p>
   We invite you to take part in the survey 
-  <a href="<%=metadata.app_url%>">
-    <%=metadata.app_title%>
-  <a>
+  <a href="{{metadata.app_url}}">
+    {{metadata.app_title}}
+  </a>
 </p>
-
 `
  ])

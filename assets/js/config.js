@@ -21,6 +21,7 @@ System.config({
     "angular": "components/angular/angular.js",
     "angular-mocks": "components/angular-mocks/angular-mocks.js",
     "angular-animate": "components/angular-animate/angular-animate.js",
+    "angular-sanitize": "components/angular-sanitize/angular-sanitize.js",
 
     "angular-aria":"components/angular-aria/angular-aria.js",
     "angular-messages":"components/angular-messages/angular-messages.js",
@@ -63,8 +64,9 @@ System.config({
     "javascript-time-ago": "components/javascript-time-ago/dist/timeago.min.js",
     // "javascript-time-ago-locale.en":"components/javascript-time-ago/locale/en/index.js",
     // "javascript-time-ago-locale.en":"components/javascript-time-ago/locale/uk/index.js",
-    "moment":"components/moment/moment.js",
-    "moment-round":"components/moment-round/dist/moment-round.js",
+    "moment":"components/moment/min/moment-with-locales.js",
+    // "ng-material-datetimepicker": "components/angular-material-datetimepicker/js/angular-material-datetimepicker.js",
+    // "moment-round":"components/moment-round/dist/moment-round.js",
     
     "jsinq": "components/jsinq/source/jsinq.js",
     "jsinq-query": "components/jsinq/source/jsinq-query.js",
@@ -117,6 +119,12 @@ System.config({
         "angular"
       ]
     },
+
+    "angular-sanitize": {
+      "deps": [
+        "angular"
+      ]
+    },
     
     "angular-aria": {
       "deps": [
@@ -136,6 +144,13 @@ System.config({
         "angular-aria"
       ]
     },
+
+    // "ng-material-datetimepicker": {
+    //   "deps": [
+    //     "angular-material",
+    //     "moment"
+    //   ]
+    // },
 
     "angular-scroll": {
       "deps": [

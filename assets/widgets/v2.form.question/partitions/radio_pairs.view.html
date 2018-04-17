@@ -1,7 +1,5 @@
-<div class="row" style="margin:1em 0 0">
-  <div class="column small-12 small-centered">
 
-    <table style="border:none; margin: 0 auto;">
+    <table style="border:none; margin: 0 auto; width:100%">
       <tr>
         <td   style=" border:none;
                       border-bottom: 1px solid #999;
@@ -10,93 +8,89 @@
           <span style="margin:0 8em;">
           </span>
         </td>
-        <td   style=" border:none;
+        <td  style=" border:none;
                       border-bottom: 1px solid #999;
-                      text-align: center;
-                      font-size:large;" 
-              ng-repeat="p in properties">
-          {{p.title}}
+                      text-align: center;">
+
+          <div layout="row" layout-align="start center">
+            <div flex ng-repeat="p in properties" layout="row" layout-align="center center">            
+              {{p.title}}
+            </div>      
+          </div>            
         </td>  
       </tr>
       <tr ng-repeat="e in entities">
-        <td   style=" border:none;
-                      border-right: 1px solid #999; font-size:large;"
-        >
-          {{e.title}}
-        </td>
-        <td ng-repeat="p in properties" style="border:none;">
-          <div 
-              style="width:60%; margin: 0.25em auto;" 
-              ng-if="!config.state.options.disables[e.id][p.id]"
+        
+          <td   style=" border:none;
+                        border-right: 1px solid #999; font-size: 14px;"
           >
-          <input 
-            type="radio" 
-            class="radio"
-            id="{{widget.ID+'_'+e.id+'_'+p.id+'_ch'}}"
-            name="{{'radio_'+widget.ID+'_'+e.id}}"
-            ng-change="config.setValue(e.id,p.id)"
-            ng-model="answerMap[e.id]"
-            value="{{p.id}}"
-          >
-          <label for="{{widget.ID+'_'+e.id+'_'+p.id+'_ch'}}" style="color:white;">.</label>
-          </div>
-          <div  ng-if="config.state.options.disables[e.id][p.id]" 
-                style=" width: 1.8rem;
-                        height: 1.8rem;"
-          >
-            &nbsp;
-          </div>  
-        </td>
+            {{e.title}}
+          </td>
+          <td style="border:none;">
+            <md-radio-group ng-model="answerMap[e.id]" ng-change="config.setValue(e.id)">
+              <div layout="row" layout-align="start center">
+                <div flex ng-repeat="p in properties" layout="row" layout-align="center center">
+                  <md-radio-button
+                        style=" margin: auto;
+                                width: 20px;"
+                        ng-if="!config.state.options.disables[e.id][p.id]"
+                        value="{{p.id}}"
+                        class="md-primary"            
+                                
+                  >
+                  </md-radio-button>
+                  <span  ng-if="config.state.options.disables[e.id][p.id]" 
+                  >
+                    &nbsp;
+                  </span>
+                </div>
+                
+              </div>
+            </md-radio-group>  
+          </td>  
+         
 
-                <td style="border:none;" ng-if="config.state.options.showResponsesStat && rstat">
+          <td style="border:none;" ng-if="config.state.options.showResponsesStat && rstat">
 
-          <table style="margin: 1em; box-shadow: 0 0.1em 0.5em 0 #607D8B;">
-            <tr>
-              <td ng-repeat="p in properties" 
-                style="border: none; 
-                    width:2em;
-                    "
-              >
-                  <div style="font-size: xx-small;
-                                      text-align: center;
-                                      height:1em;
-                                      line-height: 1em;
-                                      color:{{(config.isResponse(e.id,p.id))?'#FF5722':'#777'}};
-                                      "
-                          >
-                            {{(100*rstat[e.id][p.id]).toFixed(0)}}%
-                        </div>
-              </td> 
-            </tr>
-            <tr>
-              <td ng-repeat="p in properties" 
-                style="border: none; 
-                    width:2em;
-                    "
-              > 
-                <div style="height:5em;">
-                    <div       
-                              style=" 
-                              background:{{(config.isResponse(e.id,p.id))?'#FF5722':'#ffc107'}};
-                              border:0.05rem solid {{(config.isResponse(e.id,p.id))?'#FF5722':'#999'}};
-                                      position:relative;
-                                      height:{{5*rstat[e.id][p.id]}}em;
-                                      top:{{5*(1-rstat[e.id][p.id])}}em; 
-                                    "
-                          >
+            <table style="margin: 1em; box-shadow: 0 1px 3px 0 rgba(0,0,0,.2), 0 1px 1px 0 rgba(0,0,0,.14), 0 2px 1px -1px rgba(0,0,0,.12);">
+              <tr>
+                <td   ng-repeat="p in properties" 
+                      style="border: none; width:2em;"
+                >
+                    <div style="font-size: xx-small;
+                                        text-align: center;
+                                        height:1em;
+                                        line-height: 1em;
+                                        color:{{(config.isResponse(e.id,p.id))? accentColor : disableColor }};
+                                        "
+                            >
+                              {{(100*rstat[e.id][p.id]).toFixed(0)}}%
                           </div>
-                      </div>  
-              </td>
-            </tr>
-          </table>
-        </td>
+                </td> 
+              </tr>
+              <tr>
+                <td ng-repeat="p in properties" 
+                  style="border: none; 
+                      width:2em;
+                      "
+                > 
+                  <div style="height:5em;">
+                      <div       
+                                style=" 
+                                background:{{(config.isResponse(e.id,p.id))? accentColor : primaryColor }};
+                                border:0.05rem solid {{(config.isResponse(e.id,p.id))? accentColor : disableColor }};
+                                        position:relative;
+                                        height:{{5*rstat[e.id][p.id]}}em;
+                                        top:{{5*(1-rstat[e.id][p.id])}}em; 
+                                      "
+                            >
+                            </div>
+                        </div>  
+                </td>
+              </tr>
+            </table>
+          </td>
+        
       </tr>  
     </table>  
-
-  </div>  
-</div>
-
-   <!--  <pre>
-      {{answer | json}}
-    </pre>   -->
 

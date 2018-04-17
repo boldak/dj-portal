@@ -1,48 +1,82 @@
 
-<div class="row" style="margin:1em 0 0;">
-  <div class="column small-10 small-centered">
-    <table style="width:100%; border:none;">
-      <tr>
-        <td style="border:none;">
-          <div  class=" left" 
+<div layout="row" layout-align="start center">
+  <div flex  layout="row" style="margin-left: 2em;">
+
+          <div  
                 ng-repeat="v in config.state.options.ordinals.values"
                 style=" padding:0 0.25em; 
                         cursor:pointer;    
                         font-size: large;
                         text-align: center;
                         font-weight: bold;
+                        width:28px;
                         color:{{colorUtility.scaleColor(v.value)}}"
 
                 ng-click="config.setValue(v.value)"
           > 
-            
-              <div style=" color:{{colorUtility.scaleFontColor(v.value)}};
-                          font-size:small;
-                          "
-              >{{v.value}}
-            </div>
-              <div style="
-                    font-size:xx-large; 
-                    font-weight:bold;
-                    width:1em;
-                    height:0.5em;
-                    background: {{colorUtility.scaleColor(v.value)}};
-                    border:1px solid #999" 
+            <div layout="column" layout-align="center">
+              <div  ng-if="config.state.options.decoration.showValues"
+                    style=" color:{{colorUtility.scaleFontColor(v.value)}};
+                          font-size:small;"
               >
-                &nbsp;
+                {{v.value}}
               </div>
              
-             <!-- <i style="font-size:xx-large; font-weight:bold;" class="fa fa-pause"></i><br/> -->
-             
-             <div style=" color:{{colorUtility.scaleFontColor(v.value)}}; 
-                          font-size:xx-small;">
-              {{v.title}}
-              </div>
-          </div>
-        </td>
-        <td style="border:none; width:50%" ng-if="config.state.options.showResponsesStat && rstat">
+              <div style="
+                  height: 28px;
+                  margin-left: -2px;
+              ">
+                <div style="position: relative;">
+                  <md-icon  md-font-icon="{{config.state.options.decoration.icon}}" 
+                                style="font-family: FontAwesome;
+                                       color:{{colorUtility.scaleFontColor(v.value)}};
+                                       font-size: 26px;
+                                       position:absolute;
+                                       top: 0;
+                                       left: 0;"
+                                class="md-warn"
+                  >
+                  </md-icon>
 
-          <table style="box-shadow: 0 0.1em 0.5em 0 #607D8B;">
+                  <md-icon  md-font-icon="{{config.state.options.decoration.icon}}" 
+                                style="font-family: FontAwesome;
+                                       color:white;
+                                       font-size: 24px;
+                                       position:absolute;
+                                       top: -1px;
+                                       left: 0;"
+                                class="md-warn"
+                  >
+                  </md-icon>
+
+                  <md-icon  md-font-icon="{{config.state.options.decoration.icon}}" 
+                                style="font-family: FontAwesome;
+                                       color:{{colorUtility.scaleColor(v.value)}};
+                                       font-size: 24px;
+                                       position:absolute;
+                                       top: -1px;
+                                       left: 0;"
+                                class="md-warn"
+                  >
+                  </md-icon>
+                </div>
+              </div>  
+
+              <div  ng-if="config.state.options.decoration.showTitles"
+                    style=" color:{{colorUtility.scaleFontColor(v.value)}}; 
+                          font-size:xx-small;
+                          max-width: 4em;"
+              >
+                {{v.title}}
+              </div>
+            </div>  
+          </div>
+
+      </div>    
+
+      <div ng-if="config.state.options.showResponsesStat && rstat">
+
+          <table style="box-shadow: 0 1px 3px 0 rgba(0,0,0,.2), 0 1px 1px 0 rgba(0,0,0,.14), 0 2px 1px -1px rgba(0,0,0,.12);">
             <tr>
               <td ng-repeat="v in config.state.options.ordinals.values" 
                 style="border: none; 
@@ -53,7 +87,7 @@
                                       text-align: center;
                                       height:1em;
                                       line-height: 1em;
-                                      color:{{(config.isResponse(v.value))?'#FF5722':'#777'}};"
+                                      color:{{(config.isResponse(v.value))? accentColor : disableColor}};"
                           >
                             {{(100*rstat[v.value]).toFixed(0)}}%
                         </div>
@@ -68,8 +102,8 @@
                 <div style="height:5em;">
                     <div       
                               style=" 
-                              background:{{(config.isResponse(v.value))?'#FF5722':'#ffc107'}};
-                      border:0.05rem solid {{(config.isResponse(v.value))?'#FF5722':'#999'}};
+                              background:{{(config.isResponse(v.value))? accentColor : primaryColor }};
+                      border:0.05rem solid {{(config.isResponse(v.value))? accentColor: primaryColor}};
                                       position:relative;
                                       height:{{5*rstat[v.value]}}em;
                                       top:{{5*(1-rstat[v.value])}}em; 
@@ -90,7 +124,7 @@
                                   text-align: center;
                                   height:1em;
                                   line-height: 1em;
-                                  color:{{(config.isResponse(v.value))?'#FF5722':'#777'}}; 
+                                  color:{{(config.isResponse(v.value))? accentColor : disableColor }}; 
                                   font-size: xx-small;
                                 "
                         >
@@ -99,12 +133,8 @@
               </td>
             </tr>   
           </table>
-        </td>
-      </tr>  
-    </table>
-      
-     
-   </div>  
-</div>  
 
-<!-- <pre>{{answer | json }}</pre>  -->
+      </div>
+  </div>        
+
+ 

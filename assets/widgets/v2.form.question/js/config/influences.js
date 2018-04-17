@@ -7,7 +7,7 @@ let Influences = class extends Question {
     this.state = {
       type: { value: "influences", title: "Impact assessment" },
       widget: {
-        css: "fa fa-braille",
+        css: "fa-braille",
         view: this.prefix + "influences.view.html",
         options: this.prefix + "influences.options.html"
       },
@@ -33,10 +33,19 @@ let Influences = class extends Question {
           ]
         },
         colors:{
+          paletteIndex: 0,
+          reversePalette: false,
           pallete:["#f7fcb9", "#addd8e", "#31a354"],
           opacity: 70,
           "undefined":" #aaa"  
+        },
+        decoration:{
+          icon:"fa-star",
+          useColors: true,
+          showValues: true,
+          showTitles: true
         }
+
       }
     }
 
@@ -47,6 +56,11 @@ let Influences = class extends Question {
 
     super.configure()
     if (!previus) return;
+
+    this.state.options.title = previus.state.options.title; 
+    this.state.options.note = previus.state.options.note;
+    this.state.options.required = previus.state.options.required;
+    this.state.options.showResponsesStat = previus.state.options.showResponsesStat;
 
     // prepare question config before setting $scope.qtype variable 
     // res - next config, $scope.config - previus config
@@ -72,30 +86,49 @@ let Influences = class extends Question {
     this.normalizeAnswer();
   }
 
-  prepare() {
+  setPalette() {
+      this.state.options.colors.pallete = 
+        this.scope.colorUtility.palettes[this.state.options.colors.paletteIndex].map(item => item);
+      if(this.state.options.colors.reversePalette){
+        this.state.options.colors.pallete = this.state.options.colors.pallete.reverse();
+      }  
+    }
 
+  prepare() {
+    this.state.options.decoration = this.state.options.decoration || {
+                                                                              useColors: true,
+                                                                              showValues: true,
+                                                                              showTitles: true,
+                                                                              icon:"fa-star"
+                                                                           };
+    this.setPalette();                                                                       
     // prepare helped data structures
-    this.scope.entities = _.toPairs(this.state.options.entities)
-      .map(item => {
-        return {
-          id: item[0],
-          title: item[1].title,
-          user: item[1].user
-        }
-      })
+    this.scope.entities = this.scope.listEditorTools.createCollection(
+        _.toPairs(this.state.options.entities)
+        .map(item => {
+          return {
+            id: item[0],
+            title: item[1].title,
+            user: item[1].user
+          }
+        })
+      )
 
     if( this.state.options.useOneList ){
-      this.scope.properties = this.scope.entities      
-    } else {
-      this.scope.properties = _.toPairs(this.state.options.properties)
-                          .map(item => {
-                            return {
-                              id: item[0],
-                              title: item[1].title,
-                              user: item[1].user
-                            }
-                          })  
+      this.state.options.properties = angular.extend({},this.state.options.entities)      
     }
+
+    this.scope.properties = 
+      this.scope.listEditorTools.createCollection(
+        _.toPairs(this.state.options.properties)
+          .map(item => {
+            return {
+              id: item[0],
+              title: item[1].title,
+              user: item[1].user
+            }
+          })
+      )    
         
 
     // this.state.options.disables =  this.state.options.disables || [];
@@ -183,7 +216,33 @@ let Influences = class extends Question {
       this.scope.answer.value[index] = { entity: entity, property: property, value: value } 
     }
 
+    this.validateAnswer();
     this.scope.answer.valid = this.scope.answer.value.length > 0;
+  }
+
+  validateAnswer() {
+
+    if(!this.state.options.required) {
+      this.scope.answer.validationResult = { 
+          valid: true,
+          message: "",
+          needSaveAnswer: true,
+          needSaveForm: true 
+        }
+    } else {
+      this.scope.answer.validationResult = {
+        valid: ( this.scope.answer.value.length > 0 ),
+        message: ( this.scope.answer.value.length > 0 ) 
+                    ? ""
+                    : this.scope.message("PAIRS_VALIDATION", {
+                        question : this.scope.truncate(this.scope.config.state.options.title, 40)
+                      }),
+        needSaveAnswer: true,
+        needSaveForm: true 
+      }  
+    }
+  
+    this.scope.answer.valid =  this.scope.answer.validationResult.valid
   }
 
   getValue(entity, property) {
@@ -197,6 +256,16 @@ let Influences = class extends Question {
     }
     return (index >= 0) ? this.scope.answer.value[index].value : undefined;    
   }
+
+  getTitle(entity, property) {
+    let value = this.getValue(entity, property);
+    if (angular.isUndefined(value)) return ""
+
+    let v = this.state.options.ordinals.values.filter(item => item.value==value)[0]  
+    
+    return (v && v.title)? v.title : value  
+  }
+
 
   updateConfig() {
     //  transform helped data structures into config
@@ -216,6 +285,7 @@ let Influences = class extends Question {
   }
 
   swap() {
+    this.updateConfig()
     let buf = this.state.options.entities;
     this.state.options.entities = this.state.options.properties;
     this.state.options.properties = buf;

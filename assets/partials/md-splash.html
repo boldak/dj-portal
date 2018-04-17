@@ -1,0 +1,11 @@
+ <md-dialog> 
+   <md-dialog-content class="md-dialog-content">
+        <div  ng-if="options.htmlContent" 
+              class="md-dialog-content-body {{options.class}}" 
+              ng-bind-html="options.htmlContent"
+        ></div>  
+        <div ng-if="!options.htmlContent" class="md-dialog-content-body {{options.class}}"> 
+          <p ng-if="options.textContent">{{options.textContent}}</p> 
+        </div>
+    </md-dialog-content>  
+</md-dialog> 

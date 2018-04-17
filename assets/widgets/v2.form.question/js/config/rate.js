@@ -7,7 +7,7 @@ let Rate = class extends Question {
     this.state = {
       type: { value: "rate", title: "Rate" },
       widget: {
-        css: "fa fa-star",
+        css: "fa-star",
         view: this.prefix + "rate.view.html",
         options: this.prefix + "rate.options.html"
       },

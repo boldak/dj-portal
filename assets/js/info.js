@@ -4,9 +4,21 @@ import 'file-upload';
 import 'i18n';
 import 'ng-ace';
 import 'lodash';
+import 'angular-animate';
+import 'angular-cookies';
+import 'angular-material';
+import 'angular-sanitize';
 
 
-const info = angular.module('app.info', ['mm.foundation', 'ngFileUpload', 'app.i18n',"ng.ace"]);
+const info = angular.module('app.info', [
+            'mm.foundation', 
+            'ngFileUpload', 
+            'app.i18n',
+            "ng.ace",
+            'ngMaterial', 
+            'ngMessages',
+            'ngSanitize'
+    ]);
 
 info.directive('focused', function($timeout){
     return {
@@ -19,6 +31,112 @@ info.directive('focused', function($timeout){
             });
         }
     }
+});
+
+
+
+info.service('mdAlert', ($mdDialog) => (options) => {
+
+    options.ok = options.ok || "Close";
+
+    return new Promise((resolve,reject) => {
+                     
+        $mdDialog.show({
+            
+            controller: ($scope, $mdDialog) => {
+                
+                $scope.options = options;
+
+                $scope.hide = function() {
+                  $mdDialog.hide();
+                };
+
+                $scope.cancel = function() {
+                  $mdDialog.cancel();
+                };
+
+                $scope.answer = function(answer) {
+                  $mdDialog.hide(answer);
+                };
+            },
+
+            templateUrl: '/partials/md-alert.html',
+            parent: angular.element(document.body),
+            clickOutsideToClose:true
+        }).then(()=>{ resolve() }, ()=>{ reject() })    
+    
+    })
+})
+
+info.service('mdSplash', ($mdDialog) => (options) => {
+
+    
+    return new Promise((resolve,reject) => {
+                     
+        $mdDialog.show({
+            
+            controller: ($scope, $mdDialog, $timeout) => {
+                $scope.options = options;
+                $timeout(() => {
+                  $mdDialog.hide();  
+                }, options.delay || 1000)
+    
+            },
+
+            templateUrl: '/partials/md-splash.html',
+            parent: angular.element(document.body),
+            clickOutsideToClose:true
+        }).then(()=>{ resolve() }, ()=>{ reject() })    
+    
+    })
+})
+
+
+
+
+info.service('mdConfirm', ($mdDialog) => (options) => {
+    
+    options.ok = options.ok || "Ok";
+    options.cancel = options.cancel || "Cancel";
+
+
+    return new Promise((resolve,reject) => {
+                     
+        $mdDialog.show({
+            
+            controller: ($scope, $mdDialog) => {
+                console.log("CONFIRM", options)
+                
+                $scope.options = options;
+
+                $scope.hide = function() {
+                  $mdDialog.hide();
+                };
+
+                $scope.cancel = function() {
+                  $mdDialog.cancel();
+                };
+
+                $scope.answer = function(answer) {
+                  $mdDialog.hide(answer);
+                };
+            },
+
+            templateUrl: '/partials/md-confirm.html',
+            parent: angular.element(document.body),
+            clickOutsideToClose:true
+        })
+        .then(  (answer)    =>  { 
+                    if(answer) {
+                        resolve()
+                    } else {
+                        reject()
+                    }     
+                }, 
+                ()=>{ reject() }
+        )    
+    
+    })
 });
 
 

@@ -3,11 +3,13 @@
 import angular from 'angular';
 import 'angular-ui-tree';
 import "custom-react-directives";
+// import "ng-material-datetimepicker";
 import "d3";
 import "angular-oclazyload";
 import "tinycolor";
-import "./js/config/index.js"
-import "./js/utility/index.js"
+import "./js/config/index.js";
+import "./js/utility/index.js";
+import "moment";
 
 
 
@@ -17,8 +19,30 @@ let m = angular.module('app.widgets.v2.form.question', [
   "v2.question.factory",
   "v2.question.utility"
   // ,
+  // "ngMaterialDatePicker"
+  // ,
   // 'ngSanitize'
 ])
+
+
+let localeDateFormat = {
+  
+  "day": {
+    "en": "MMMM DD YYYY",
+    "uk": "DD MMMM YYYY р."
+  },
+
+  "date": {
+    "en": "MMMM DD YYYY",
+    "uk": "DD MMMM YYYY р."
+  },
+
+  "month": {
+    "en": "MMMM YYYY",
+    "uk": "MMMM YYYY р."
+  }
+
+}
 
 
 m.controller('FormQuestionController', function(
@@ -49,7 +73,8 @@ m.controller('FormQuestionController', function(
   listEditor,
   colorUtility,
   questionTypes,
-  $mdColors
+  $mdColors,
+  $translate
   
 ) {
 
@@ -59,6 +84,22 @@ m.controller('FormQuestionController', function(
 
 
 angular.extend($scope, {
+
+  i18n : i18n,
+
+  truncate: (value, length) => {
+    length = length || 20;
+    return ( value.toString().length <= length )
+      ? value.toString()
+      : ( (value.toString().length - length) > 10 )
+        ? value.toString().substring(0,length)+'...'
+        : value.toString();
+  },        
+
+  globalConfig: globalConfig,
+
+  randomID: randomID,
+
   markModified : app.markModified,
 
   primaryColor: $mdColors.getThemeColor('primary'),
@@ -68,33 +109,46 @@ angular.extend($scope, {
   warnColor: $mdColors.getThemeColor('warn'),
 
   disableColor: "#333",
+
+  openMenu: ($mdMenu, ev) => {
+      originatorEv = ev;
+      $mdMenu.open(ev);
+  }
+  
 })
 
-let listEditorTools = listEditor($scope)
+let listEditorTools = $scope.listEditorTools = listEditor($scope)
 
 
 angular.extend($scope,{
+
+    message : ( messageID, embedded) => {
+      _.templateSettings.interpolate = /{{([\s\S]+?)}}/g;
+      let res = _.template($translate.instant('WIDGET.V2.FORM.QUESTION.'+messageID))(embedded)
+      _.templateSettings.interpolate = /<%=([\s\S]+?)%>/g; 
+      return res; 
+    },  
 
     colorUtility: colorUtility($scope),
 
     treeOptions: listEditorTools.treeOptions(),
 
-    questionTypes:questionTypes,
+    questionTypes: questionTypes.map(item => item),
 
     _click: null,
     delete:(object,index) => { listEditorTools.delete(object,index) },
     add: (object) => { listEditorTools.add(object) },
     cselect: (value) => { listEditorTools.cselect(value) },
    
-    alternatives : [],
+    alternatives : listEditorTools.createCollection(),
     
-    entities : [],
+    entities : listEditorTools.createCollection(),
     
-    properties : [],
+    properties : listEditorTools.createCollection(),
     
-    factors : [],
+    factors : listEditorTools.createCollection(),
     
-    effects : [],
+    effects : listEditorTools.createCollection(),
     
     textFields : {
       alternative: "",
@@ -112,22 +166,32 @@ angular.extend($scope,{
     setPallete: (pallete) => { $scope.config.state.options.colors.pallete = pallete },
 
     reversePallete:() => {
+      $scope.config.state.options.colors.reversePalette = !$scope.config.state.options.colors.reversePalette;
       $scope.config.state.options.colors.pallete = $scope.config.state.options.colors.pallete.reverse()
-    }  
+    },
+
+    formatDate: () => {
+      if ( angular.isUndefined($scope.answer.value[0]) ) return "";
+      let res = moment(new Date($scope.answer.value[0]))
+        .format(localeDateFormat[$scope.config.state.options.format][i18n.locale()]); 
+      // console.log($scope.answer.value[0]
+      //   ,$scope.config.state.options.format
+      //   ,i18n.locale()
+      //   ,localeDateFormat[$scope.config.state.options.format][i18n.locale()] , res
+      //   )
+      return res
+    }
+
 
 })
 
 $scope.widgetPanel.allowConfiguring = undefined;
 $scope.widgetPanel.allowCloning = undefined;
 
-
-
-
-
-
-
   
-
+// console.log( $scope.monthDateLocale.formatDate(new Date()),
+//   $scope.monthDateLocale.parseDate($scope.monthDateLocale.formatDate(new Date()))
+// )
 
 
 
@@ -148,20 +212,36 @@ $scope.submit = () => {
   $scope.answerCompleted = false;
 }
 
+$scope.selectAllAlt = (collection) => {
+  collection.forEach(item => {
+    item._selected = true;
+  })
+}
+
+$scope.deleteAlt = (collection) => {
+  _.remove( collection, { _selected : true } )
+}
+
+$scope.percent = (v) => ((angular.isDefined(v)) ? v : 0)
+
 $scope.addPMAlternative = (collection, field) => {
   // console.log("ADD", field)
   
-  collection.push({
+  let alt = {
       id:randomID(), 
       title: $scope.textFields[(field || 'alternative')],
-      user:user, 
-      $djItemType:"embeded"
-  })
+      user:(globalConfig.designMode) ? undefined : user, 
+      _selected:true
+  };
+
+
+  $scope.listEditorTools.add(collection, alt)
   
   $scope.textFields[(field || 'alternative')] = undefined;
 
   if(!globalConfig.designMode){ 
-    (new APIUser()).invokeAll("questionMessage", {action:"add-alternative", data:$scope.widget.config})
+    (new APIUser($scope)).invokeAll("questionMessage", {action:"add-alternative", data:$scope.widget.config})
+    $scope.config.setValue(alt.id, true);
   }
 }
 
@@ -331,27 +411,28 @@ $scope.m = true;
       $scope.config.updateConfig();
       $scope.config.state.id = $scope.widget.ID;    
       $scope.widget.config = $scope.config.state;
-      (new APIUser()).invokeAll("questionMessage", {action:"update-config", data:$scope.widget.config})
+      (new APIUser($scope)).invokeAll("questionMessage", {action:"update-config", data:$scope.widget.config})
   
   }
 
 
-  let applyAnswer = () => {
+  $scope.applyAnswer = () => {
+   
     if(!$scope.config) return;
     $scope.config.applyAnswer()
   }
   
   $scope.$watch("widget.ID", updateWidget)
   $scope.$watch("config.state", updateConfig,true);
-  $scope.$watch("alternatives", updateConfig, true);
-  $scope.$watch("entities", updateConfig, true);
-  $scope.$watch("properties", updateConfig, true);
-  $scope.$watch("factors", updateConfig, true);
-  $scope.$watch("effects", updateConfig, true);
+  // $scope.$watch("alternatives", updateConfig, true);
+  // $scope.$watch("entities", updateConfig, true);
+  // $scope.$watch("properties", updateConfig, true);
+  // $scope.$watch("factors", updateConfig, true);
+  // $scope.$watch("effects", updateConfig, true);
 
   $scope.$watch("answer", (oldV, newV) => {
     if($scope.config && $scope.config.validateAnswer) $scope.config.validateAnswer();
-      (new APIUser()).invokeAll("questionMessage", {action:"change-answer", data:$scope.answer})
+      (new APIUser($scope)).invokeAll("questionMessage", {action:"change-answer", data:$scope.answer})
     
   }, true);
 
@@ -371,7 +452,10 @@ $scope.m = true;
   
         if($scope.config.state.type) $scope.qtype = $scope.config.state.type.value;
 
+        // $scope.monthDateLocale = i18n.getDateLocale(localeDateFormat.month[i18n.locale()])  
+        $scope.monthDateLocale = i18n.monthDateLocale(i18n.locale())
         $scope.config.prepare();
+
       }
     }
 
@@ -380,20 +464,27 @@ $scope.m = true;
   
   
   new APIProvider($scope)
-    .config(updateWidget)
+    .config(() => {
+      updateWidget()
+    })
 
-    .beforePresentationMode(updateConfig)
+    // .beforePresentationMode(updateConfig)
 
-    .beforeDesignMode(updateConfig)
+    // .beforeDesignMode(updateConfig)
 
     .save(updateConfig)
 
     .create((event, widget) => {
+      
+
         // console.log("Question handle create widget", widget)
 
     })
 
-    // .translate(updateWidget)
+    .translate(() => {
+      // $scope.monthDateLocale = i18n.getDateLocale(localeDateFormat.month[i18n.locale()])
+      updateWidget();
+    })
     
     .provide('formMessage', (e, context) => {
         // console.log("HANDLE MESSAGE FROM FORM", context)
@@ -406,7 +497,7 @@ $scope.m = true;
         
         if(context.action == "configure"){
             
-            (new APIUser()).invokeAll("questionMessage",{action:"init", data:$scope})
+            (new APIUser($scope)).invokeAll("questionMessage",{action:"init", data:$scope})
             return
         } 
 
@@ -418,20 +509,43 @@ $scope.m = true;
             updateWidget();
           }  
           return
-        }  
+        } 
+
+        if(context.action == "update-config"){
+          if($scope.config && $scope.config.updateConfig){
+            $scope.config.updateConfig();
+          }
+          return
+        } 
 
         if(context.action == "set-answer" && $scope.widget.ID){
+          // console.log("set-answer", $scope)
           let newAnswer = context.data.data[$scope.widget.ID];
-          angular.extend($scope.answer, angular.copy(newAnswer)); 
-          applyAnswer()
+          
+          if(newAnswer){
+            angular.extend($scope.answer, angular.copy(newAnswer)); 
+          }
+
+          $scope.applyAnswer()
+          
+          $scope.$evalAsync(() => {
+            (new APIUser($scope)).invokeAll("questionMessage", {action:"change-answer", data:$scope.answer})
+          })
+          
           return
         } 
 
         if(context.action == "responseStat" && $scope.widget.ID){
           // console.log("ResponseStat", context)
-          if(context.data && $scope.config.getResponseStat){
-            $scope.config.getResponseStat(context.data)
-          }
+          if(context.data && $scope.config) {
+            if($scope.config.getResponseStat) {
+                $scope.config.getResponseStat(context.data)
+                if($scope.config.calcAnswerIndex){
+                  // for highest isResponse performance
+                  $scope.config.calcAnswerIndex()
+                }
+            }
+          } 
           return
         }
 
@@ -449,7 +563,7 @@ $scope.m = true;
 
     .removal(() => {
       // console.log('Form question widget is destroyed');
-      (new APIUser()).invokeAll("questionMessage",{action:"remove", data:$scope})
+      (new APIUser($scope)).invokeAll("questionMessage",{action:"remove", data:$scope})
     });
 })
 

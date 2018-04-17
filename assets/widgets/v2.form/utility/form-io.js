@@ -147,12 +147,13 @@ let dps = {
 
         // exportResponses
 
-        //<?javascript
-        //    $scope.form_id = "5aa657defdaef838271d946f";
-        //
-        //?>
 
-        <?javascript
+        // <?javascript
+        //     $scope.form_id = "5ac38199e119266023685f82";
+        
+        // ?>
+
+         <?javascript
             $scope.forForm = (item) => item.form == $scope.form_id;
             $scope.isForm = (item) => item.id == $scope.form_id;
 
@@ -166,81 +167,132 @@ let dps = {
 
         <?javascript
 
-        let questions = $scope.form[0].config.questions;
-
+        let getValue = (object, prop) => {
+            return (object) ? object[prop] : "$removed";
+         };
+        
+         let questions = $scope.form[0].config.questions;
+         let accessType = $scope.form[0].config.access.type;
+         let invitedUsers = $scope.form[0].config.access.users || [];
+         
+         invitedUsers = invitedUsers.map(item => item.email); 
+        
+         let accessFilter = {
+            any: item => true,
+            users: item => item.user.id,
+            invited: item => invitedUsers.indexOf(item.user.email)>=0
+         }
+        
+         $scope.answers
+          .filter(accessFilter[accessType])
+          .forEach((a) => {
+            a.data  = _.pairs(a.data)
+                          .filter(item => questions[item[0]])
+                          .filter(item => item[1].value)
+            if ( a.data.forEach ) {
+                a.data.forEach( r => {
+              
+                    if( ["radio","check","dropdown"].indexOf(r[1].type) >= 0 ){
+                      r[1].value = r[1].value.filter(item => questions[r[0]].options.nominals[item])
+                    }
+            
+                    if( ["influences","pairs","radiopairs"].indexOf(r[1].type) >=0 ){
+                      r[1].value = r[1].value.filter(item => 
+                          questions[r[0]].options.entities[item.entity] && questions[r[0]].options.properties[item.property]
+                      )
+                    }
+            
+                    if( ["scales"].indexOf(r[1].type) >= 0 ){
+                        r[1].value = r[1].value.filter(item => questions[r[0]].options.entities[item.entity])
+                    }
+                    
+                    if( ["datetime","range"].indexOf(r[1].type) >= 0 ){
+                        r[1].value = r[1].value.map( item => item)
+                    }
+                })    
+            } 
+            
+        
+         })
+         
+         
         let answers = $scope.answers.map ((a) => {
-          a.data = _.pairs(a.data).map(d => {
-            d[1].title = questions[d[0]].options.title;
             
-            d[1].id = d[0];
-            
-            if (!d[1].value) {
-              return d[1]
-            }
-            
-            if( ["influences"].indexOf(d[1].type) >=0 ){
-              d[1].value = d[1].value.map(v => {
-                return {
-                  entity_id: v.entity,
-                  entity_title: questions[d[0]].options.entities[v.entity].title,
-                  property_id: v.property,
-                  property_title: questions[d[0]].options.properties[v.property].title,
-                  value:v.value
-                }
-              }) 
-            }
-
-            if( ["pairs","radiopairs"].indexOf(d[1].type) >=0 ){
-              d[1].value = d[1].value.map(v => {
-                return {
-                  entity_id: v.entity,
-                  entity_title: questions[d[0]].options.entities[v.entity].title,
-                  property_id: v.property,
-                  property_title: questions[d[0]].options.properties[v.property].title,
-                  value:1
-                }
-              }) 
-            }
-
-            if( ["radio","check","dropdown"].indexOf(d[1].type) >= 0 ){
-              d[1].value = d[1].value.map(v => {
-                return {
-                  entity_id: v,
-                  entity_title: questions[d[0]].options.nominals[v].title,
-                  property_id: "",
-                  property_title:"",
-                  value:1
-                }
-              }) 
-            }
-            
-            if( ["scales"].indexOf(d[1].type) >= 0 ){
-              d[1].value = d[1].value.map(v => {
-                return {
-                  entity_id: v.entity,
-                  entity_title: questions[d[0]].options.entities[v.entity].title,
-                  property_id: "",
-                  property_title:"",
-                  value:v.value
-                }
-              }) 
-            }
-            
-            
-            if( ["text","rate","range","datetime","scale"].indexOf(d[1].type) >= 0 ){
-              d[1].value = d[1].value.map(v => {
-                return {
-                  entity_id: "",
-                  entity_title: "",
-                  property_id: "",
-                  property_title:"",
-                  value:(d[1].type=="datetime")? _util.format.date(new Date(v), "DD/MM/YY HH:mm") : v
-                }
-              }) 
-            }
-            
-            return d[1];
-          })
+            if( a.data.map ){
+                a.data = a.data.map(d => {
+                    d[1].title = questions[d[0]].options.title;
+                    
+                    d[1].id = d[0];
+                    
+                    if (!d[1].value) {
+                      return d[1]
+                    }
+                    
+                    if( ["influences"].indexOf(d[1].type) >=0 ){
+                      d[1].value = d[1].value.map(v => {
+                        return {
+                          entity_id: v.entity,
+                          entity_title: getValue(questions[d[0]].options.entities[v.entity],"title"),
+                          property_id: v.property,
+                          property_title: getValue(questions[d[0]].options.properties[v.property],"title"), 
+                          value:v.value
+                        }
+                      }) 
+                    }
+        
+                    if( ["pairs","radiopairs"].indexOf(d[1].type) >=0 ){
+                      d[1].value = d[1].value.map(v => {
+                        return {
+                          entity_id: v.entity,
+                          entity_title: getValue(questions[d[0]].options.entities[v.entity],"title"),
+                          property_id: v.property,
+                          property_title: getValue(questions[d[0]].options.properties[v.property],"title"), 
+                          value:1
+                        }
+                      }) 
+                    }
+        
+                    if( ["radio","check","dropdown"].indexOf(d[1].type) >= 0 ){
+                      d[1].value = d[1].value.map(v => {
+                        return {
+                          entity_id: v,
+                          entity_title: getValue(questions[d[0]].options.nominals[v], "title"),
+                          property_id: "",
+                          property_title:"",
+                          value:1
+                        }
+                      }) 
+                    }
+                    
+                    if( ["scales"].indexOf(d[1].type) >= 0 ){
+                      d[1].value = d[1].value.map(v => {
+                        return {
+                          entity_id: v.entity,
+                          entity_title: getValue(questions[d[0]].options.entities[v.entity], "title"),
+                          property_id: "",
+                          property_title:"",
+                          value:v.value
+                        }
+                      }) 
+                    }
+                    
+                    
+                    if( ["text","rate","range","datetime","scale"].indexOf(d[1].type) >= 0 ){
+                      d[1].value = d[1].value.map(v => {
+                        return {
+                          entity_id: "",
+                          entity_title: "",
+                          property_id: "",
+                          property_title:"",
+                          value:(d[1].type=="datetime")? _util.format.date(new Date(v) , "DD/MM/YY HH:mm") : v
+                        }
+                      }) 
+                    }
+                    
+                    return d[1];
+                  })      
+            }        
+          
           return a;
         });
 
@@ -251,27 +303,29 @@ let dps = {
         let responses = [];
 
         answers = answers.forEach( a => {
-            a.data.forEach( d => {
-              if(d.value){
-                d.value.forEach( v => {
-                    responses.push({
-                      response_id:a.id,
-                      updatedAt: _util.format.date(a.updatedAt, "DD/MM/YY HH:mm"),
-                      form:a.form,
-                      respondent:(a.user.email)? a.user.email : "",
-                      question_id: d.id,
-                      question_title: d.title,
-                      question_type: d.type,
-                      valid:(d.valid)? 1 : 0,
-                      entity_id: v.entity_id,
-                      entity_title:v.entity_title,
-                      property_id:v.property_id,
-                      property_title:v.property_title,
-                      value:v.value     
-                    })
-                  })    
-              } 
-            })
+            if(a.data.forEach){
+                a.data.forEach( d => {
+                  if(d.value){
+                    d.value.forEach( v => {
+                        responses.push({
+                          response_id:a.id,
+                          updatedAt: _util.format.date(a.updatedAt, "DD/MM/YY HH:mm"),
+                          form:a.form,
+                          respondent:(a.user.email)? a.user.email : "",
+                          question_id: d.id,
+                          question_title: d.title,
+                          question_type: d.type,
+                          valid:(d.valid)? 1 : 0,
+                          entity_id: v.entity_id,
+                          entity_title:v.entity_title,
+                          property_id:v.property_id,
+                          property_title:v.property_title,
+                          value:v.value     
+                        })
+                      })    
+                  } 
+                })    
+            }
         });
 
         $scope.responses = responses;
@@ -285,8 +339,14 @@ let dps = {
     `,
     loadAllResponses:
     `
-      // loadAllResponses    
-        <?javascript
+// loadAllResponses
+
+        // <?javascript
+        //     $scope.form_id = "5ac38199e119266023685f82";
+        
+        // ?>
+
+         <?javascript
             $scope.forForm = (item) => item.form == $scope.form_id;
             $scope.isForm = (item) => item.id == $scope.form_id;
 
@@ -300,81 +360,132 @@ let dps = {
 
         <?javascript
 
-        let questions = $scope.form[0].config.questions;
-
+        let getValue = (object, prop) => {
+            return (object) ? object[prop] : "$removed";
+         };
+        
+         let questions = $scope.form[0].config.questions;
+         let accessType = $scope.form[0].config.access.type;
+         let invitedUsers = $scope.form[0].config.access.users || [];
+         
+         invitedUsers = invitedUsers.map(item => item.email); 
+        
+         let accessFilter = {
+            any: item => true,
+            users: item => item.user.id,
+            invited: item => invitedUsers.indexOf(item.user.email)>=0
+         }
+        
+         $scope.answers
+          .filter(accessFilter[accessType])
+          .forEach((a) => {
+            a.data  = _.pairs(a.data)
+                          .filter(item => questions[item[0]])
+                          .filter(item => item[1].value)
+            if ( a.data.forEach ) {
+                a.data.forEach( r => {
+              
+                    if( ["radio","check","dropdown"].indexOf(r[1].type) >= 0 ){
+                      r[1].value = r[1].value.filter(item => questions[r[0]].options.nominals[item])
+                    }
+            
+                    if( ["influences","pairs","radiopairs"].indexOf(r[1].type) >=0 ){
+                      r[1].value = r[1].value.filter(item => 
+                          questions[r[0]].options.entities[item.entity] && questions[r[0]].options.properties[item.property]
+                      )
+                    }
+            
+                    if( ["scales"].indexOf(r[1].type) >= 0 ){
+                        r[1].value = r[1].value.filter(item => questions[r[0]].options.entities[item.entity])
+                    }
+                    
+                    if( ["datetime","range"].indexOf(r[1].type) >= 0 ){
+                        r[1].value = r[1].value.map( item => item)
+                    }
+                })    
+            } 
+            
+        
+         })
+         
+         
         let answers = $scope.answers.map ((a) => {
-          a.data = _.pairs(a.data).map(d => {
-            d[1].title = questions[d[0]].options.title;
             
-            d[1].id = d[0];
-            
-            if (!d[1].value) {
-              return d[1]
-            }
-            
-            if( ["influences"].indexOf(d[1].type) >=0 ){
-              d[1].value = d[1].value.map(v => {
-                return {
-                  entity_id: v.entity,
-                  entity_title: questions[d[0]].options.entities[v.entity].title,
-                  property_id: v.property,
-                  property_title: questions[d[0]].options.properties[v.property].title,
-                  value:v.value
-                }
-              }) 
-            }
-
-            if( ["pairs","radiopairs"].indexOf(d[1].type) >=0 ){
-              d[1].value = d[1].value.map(v => {
-                return {
-                  entity_id: v.entity,
-                  entity_title: questions[d[0]].options.entities[v.entity].title,
-                  property_id: v.property,
-                  property_title: questions[d[0]].options.properties[v.property].title,
-                  value:1
-                }
-              }) 
-            }
-
-            if( ["radio","check","dropdown"].indexOf(d[1].type) >= 0 ){
-              d[1].value = d[1].value.map(v => {
-                return {
-                  entity_id: v,
-                  entity_title: questions[d[0]].options.nominals[v].title,
-                  property_id: "",
-                  property_title:"",
-                  value:1
-                }
-              }) 
-            }
-            
-            if( ["scales"].indexOf(d[1].type) >= 0 ){
-              d[1].value = d[1].value.map(v => {
-                return {
-                  entity_id: v.entity,
-                  entity_title: questions[d[0]].options.entities[v.entity].title,
-                  property_id: "",
-                  property_title:"",
-                  value:v.value
-                }
-              }) 
-            }
-            
-            
-            if( ["text","rate","range","datetime","scale"].indexOf(d[1].type) >= 0 ){
-              d[1].value = d[1].value.map(v => {
-                return {
-                  entity_id: "",
-                  entity_title: "",
-                  property_id: "",
-                  property_title:"",
-                  value:(d[1].type=="datetime")? _util.format.date(new Date(v), "DD/MM/YY HH:mm") : v
-                }
-              }) 
-            }
-            
-            return d[1];
-          })
+            if( a.data.map ){
+                a.data = a.data.map(d => {
+                    d[1].title = questions[d[0]].options.title;
+                    
+                    d[1].id = d[0];
+                    
+                    if (!d[1].value) {
+                      return d[1]
+                    }
+                    
+                    if( ["influences"].indexOf(d[1].type) >=0 ){
+                      d[1].value = d[1].value.map(v => {
+                        return {
+                          entity_id: v.entity,
+                          entity_title: getValue(questions[d[0]].options.entities[v.entity],"title"),
+                          property_id: v.property,
+                          property_title: getValue(questions[d[0]].options.properties[v.property],"title"), 
+                          value:v.value
+                        }
+                      }) 
+                    }
+        
+                    if( ["pairs","radiopairs"].indexOf(d[1].type) >=0 ){
+                      d[1].value = d[1].value.map(v => {
+                        return {
+                          entity_id: v.entity,
+                          entity_title: getValue(questions[d[0]].options.entities[v.entity],"title"),
+                          property_id: v.property,
+                          property_title: getValue(questions[d[0]].options.properties[v.property],"title"), 
+                          value:1
+                        }
+                      }) 
+                    }
+        
+                    if( ["radio","check","dropdown"].indexOf(d[1].type) >= 0 ){
+                      d[1].value = d[1].value.map(v => {
+                        return {
+                          entity_id: v,
+                          entity_title: getValue(questions[d[0]].options.nominals[v], "title"),
+                          property_id: "",
+                          property_title:"",
+                          value:1
+                        }
+                      }) 
+                    }
+                    
+                    if( ["scales"].indexOf(d[1].type) >= 0 ){
+                      d[1].value = d[1].value.map(v => {
+                        return {
+                          entity_id: v.entity,
+                          entity_title: getValue(questions[d[0]].options.entities[v.entity], "title"),
+                          property_id: "",
+                          property_title:"",
+                          value:v.value
+                        }
+                      }) 
+                    }
+                    
+                    
+                    if( ["text","rate","range","datetime","scale"].indexOf(d[1].type) >= 0 ){
+                      d[1].value = d[1].value.map(v => {
+                        return {
+                          entity_id: "",
+                          entity_title: "",
+                          property_id: "",
+                          property_title:"",
+                          value:(d[1].type=="datetime")? _util.format.date(new Date(v) , "DD/MM/YY HH:mm") : v
+                        }
+                      }) 
+                    }
+                    
+                    return d[1];
+                  })      
+            }        
+          
           return a;
         });
 
@@ -385,27 +496,29 @@ let dps = {
         let responses = [];
 
         answers = answers.forEach( a => {
-            a.data.forEach( d => {
-              if(d.value){
-                d.value.forEach( v => {
-                    responses.push({
-                      response_id:a.id,
-                      updatedAt: _util.format.date(a.updatedAt, "DD/MM/YY HH:mm"),
-                      form:a.form,
-                      respondent:(a.user.email)? a.user.email : "",
-                      question_id: d.id,
-                      question_title: d.title,
-                      question_type: d.type,
-                      valid:(d.valid)? 1 : 0,
-                      entity_id: v.entity_id,
-                      entity_title:v.entity_title,
-                      property_id:v.property_id,
-                      property_title:v.property_title,
-                      value:v.value     
-                    })
-                  })    
-              } 
-            })
+            if(a.data.forEach){
+                a.data.forEach( d => {
+                  if(d.value){
+                    d.value.forEach( v => {
+                        responses.push({
+                          response_id:a.id,
+                          updatedAt: _util.format.date(a.updatedAt, "DD/MM/YY HH:mm"),
+                          form:a.form,
+                          respondent:(a.user.email)? a.user.email : "",
+                          question_id: d.id,
+                          question_title: d.title,
+                          question_type: d.type,
+                          valid:(d.valid)? 1 : 0,
+                          entity_id: v.entity_id,
+                          entity_title:v.entity_title,
+                          property_id:v.property_id,
+                          property_title:v.property_title,
+                          value:v.value     
+                        })
+                      })    
+                  } 
+                })    
+            }
         });
 
         $scope.responses = responses;
@@ -413,6 +526,10 @@ let dps = {
         ?>
 
         get("responses")
+        
+        
+        
+        // export({{filename}})
 
     `,
     findUserProfile: `
@@ -610,18 +727,21 @@ let FormIO = class {
   }
 
   sendMails() {
-    
-    let templateStr = `sendmail({{o<%= index %>}});
-                      ` 
     let state = {}
     let script = "";
-   
+    this.scope.widget.form.config.access.users
+      .filter(item => item.selected)
+      .forEach((u, index) => {
+        script += `sendmail({{o${index}}});
+        `
+      })  
+    
+    // set {{}} template delimiters 
+    _.templateSettings.interpolate = /{{([\s\S]+?)}}/g;
+
     this.scope.widget.form.config.access.users
       .filter(item => item.selected)
       .forEach((u,index) => {
-      
-      script += _.template(templateStr)({index:index})
-      
       state[("o"+index)] = {
         from: this.scope.widget.form.config.access.notiificator,
         to: u.email,
@@ -630,7 +750,10 @@ let FormIO = class {
                 (this.prepareContext(u))
       }
     })
-  
+
+    // back to default template delimiters
+    _.templateSettings.interpolate = /<%=([\s\S]+?)%>/g;
+    
    
 // TODO Comments 3 lines below for production mode
    // return new Promise((resolve) => {

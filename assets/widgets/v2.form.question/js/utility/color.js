@@ -1,16 +1,33 @@
 import angular from 'angular';
 import "d3";
 import "tinycolor";
+import colorbrewer from "./colorbrewer.js";
+
+
+let palettes = [];
+  for (var i in colorbrewer) {
+    for (var j in colorbrewer[i]) {
+      palettes.push(colorbrewer[i][j]);
+    }
+  }
+
+palettes = palettes.filter(item => item.length >= 9);  
+
+// console.log(palettes)  
 
 let ColorUtility = class {
+	
 	constructor(scope){
 		this.scope = scope;
+		this.palettes = palettes;
 	}
 
 
-	getColor(pallete, opacity, range, value, invert) {
+	getColor(pallete, opacity, range, value, invert, defaultColor) {
 
+	      
 	      if (angular.isDefined(value)){
+	      	if( defaultColor ) return defaultColor;
 	        let pc;
 	        let s = d3.scale.linear().domain([range.min,range.max]).rangeRound([0,pallete.length-1])
 	        pc = pallete[s(value)]
@@ -40,19 +57,23 @@ let ColorUtility = class {
               ? ((value >= this.scope.config.state.options.ordinals.range.min)
                   && (value < this.scope.answer.value[0])
                 ) 
-                ? this.getColor(
+                ? (this.scope.config.state.options.decoration.useColors)
+                	? this.getColor(
                         this.scope.config.state.options.colors.pallete,
                         this.scope.config.state.options.colors.opacity,
                         this.scope.config.state.options.ordinals.range,
-                        value)
+                        value, false)
+                	: this.scope.primaryColor
                 : ((value >= this.scope.config.state.options.ordinals.range.min)
                     && (value == this.scope.answer.value[0])
                   )
-                  ? this.getColor(
+                  ? (this.scope.config.state.options.decoration.useColors)
+                	? this.getColor(
                         this.scope.config.state.options.colors.pallete,
                         this.scope.config.state.options.colors.opacity,
                         this.scope.config.state.options.ordinals.range,
-                        value)
+                        value, false)
+                	: this.scope.primaryColor
                   : "#e7e7e7"
               : "#e7e7e7";
         
@@ -100,19 +121,23 @@ let ColorUtility = class {
 		              ? ((value >= this.scope.config.state.options.ordinals.range.min)
 		                  && (value < this.scope.answer.value[index].value)
 		                ) 
-		                ? this.getColor(
+		                ? (this.scope.config.state.options.decoration.useColors)
+		                	? this.getColor(
 		                        this.scope.config.state.options.colors.pallete,
 		                        this.scope.config.state.options.colors.opacity,
 		                        this.scope.config.state.options.ordinals.range,
-		                        value)
+		                        value, false)
+		                	: this.scope.primaryColor
 		                : ((value >= this.scope.config.state.options.ordinals.range.min)
 		                    && (value == this.scope.answer.value[index].value)
 		                  )
-		                  ? this.getColor(
+		                  ? (this.scope.config.state.options.decoration.useColors)
+		                	? this.getColor(
 		                        this.scope.config.state.options.colors.pallete,
 		                        this.scope.config.state.options.colors.opacity,
 		                        this.scope.config.state.options.ordinals.range,
-		                        value)
+		                        value, false)
+		                	: this.scope.primaryColor
 		                  : "#e7e7e7"
 		              : "#e7e7e7"              
 	}

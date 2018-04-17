@@ -1,88 +1,85 @@
-<div class="row" style="margin:1em 0 0">
-  <div class="column small-10 small-centered">
-    <table style="border: none; width:100%">
-      <tr>
-        <td style="border:none;">
-          <div class="column small-8">
-            <input 	type="range" 
-            			ng-model="answer.value[0]" 
-            			min="{{config.state.options.range.min}}"  
-            			max="{{config.state.options.range.max}}" 
-            			step="{{config.state.options.step}}"
-            >
-            <span 	class="label right" 
-            			style="background: #5f8ab9; color:#e7e7e7" 
-            			ng-if="answer.value[0]"
-            >
-        		{{answer.value[0]}}
-        		</span>
-          </div>
-        </td>
-        <td style="border:none; width:50%" ng-if="config.state.options.showResponsesStat && rstat">
+<div layout="row" layout-align="start center">
+  <div>
+      <md-input-container flex>
+        <md-slider-container style="width: 22em;">
+          <md-slider 
+                      md-discrete 
+                      aria-label="Master"
+                      ng-model="answer.value[0]" 
+                      min="{{config.state.options.range.min}}"  
+                      max="{{config.state.options.range.max}}" 
+                      step="{{config.state.options.step}}"
 
-          <table style="box-shadow: 0 0.1em 0.5em 0 #607D8B;">
-            <tr>
-              <td ng-repeat="v in rstat track by $index" 
-                style="border: none; 
-                    width:2em;
-                    "
-              >
-                  <div style="font-size: xx-small;
-                                      text-align: center;
-                                      height:1em;
-                                      line-height: 1em;
-                                      color:{{(config.isResponse($index))?'#FF5722':'#777'}};"
-                          >
-                            {{(100*rstat[$index].value).toFixed(0)}}%
-                        </div>
-              </td> 
-            </tr>
-            <tr>
-              <td ng-repeat="v in rstat track by $index" 
-                style="border: none; 
-                    width:2em;
-                    "
-              > 
-                <div style="height:5em;">
-                    <div       
-                              style=" 
-                              background:{{(config.isResponse($index))?'#FF5722':'#ffc107'}};
-                      border:0.05rem solid {{(config.isResponse($index))?'#FF5722':'#999'}};
-                                      position:relative;
-                                      height:{{5*rstat[$index].value}}em;
-                                      top:{{5*(1-rstat[$index].value)}}em; 
-                                    "
-                          >
-                          </div>
-                      </div>  
-              </td>
-            </tr>
-            <tr>
-              <td ng-repeat="v in rstat track by $index" 
-                style="border: none; 
-                    width:2em;
-                    "
-              >    
-                <div  
-                          style=" 
-                                  text-align: center;
-                                  height:1em;
-                                  line-height: 1em;
-                                  color:{{(config.isResponse($index))?'#FF5722':'#777'}}; 
-                                  font-size: xx-small;
-                                "
-                        >
-                          {{rstat[$index].title}}
-                        </div>
-              </td>
-            </tr>   
-          </table>
+                      class="md-primary"
+          >
+            
+          </md-slider>
+          <input  type="number" 
+                  ng-model="answer.value[0]" 
+                  style="width:4em;"
+          >
+        </md-slider-container>
+      </md-input-container>
+  </div>
+  <span flex></span>                      
+  <div ng-if="config.state.options.showResponsesStat && rstat">
+    <table style="box-shadow: 0 1px 3px 0 rgba(0,0,0,.2), 0 1px 1px 0 rgba(0,0,0,.14), 0 2px 1px -1px rgba(0,0,0,.12);">
+      <tr>
+        <td ng-repeat="v in rstat track by $index" 
+          style="border: none; 
+              width:2em;
+              "
+        >
+            <div style="font-size: xx-small;
+                                text-align: center;
+                                height:1em;
+                                line-height: 1em;
+                                color:{{(config.isResponse($index))? accentColor : disableColor}};"
+                    >
+                      {{(100*rstat[$index].value).toFixed(0)}}%
+                  </div>
+        </td> 
+      </tr>
+      <tr>
+        <td ng-repeat="v in rstat track by $index" 
+          style="border: none; 
+              width:2em;
+              "
+        > 
+          <div style="height:5em;">
+              <div       
+                        style=" 
+                        background:{{(config.isResponse($index))? accentColor: primaryColor}};
+                border:0.05rem solid {{(config.isResponse($index))? accentColor : disableColor}};
+                                position:relative;
+                                height:{{5*rstat[$index].value}}em;
+                                top:{{5*(1-rstat[$index].value)}}em; 
+                              "
+                    >
+                    </div>
+                </div>  
         </td>
       </tr>
-    </table>        
-  </div>
-</div> 
+      <tr>
+        <td ng-repeat="v in rstat track by $index" 
+          style="border: none; 
+              width:2em;
+              "
+        >    
+          <div  
+                    style=" 
+                            text-align: center;
+                            height:1em;
+                            line-height: 1em;
+                            color:{{(config.isResponse($index))? accentColor : disableColor}}; 
+                            font-size: xx-small;
+                          "
+                  >
+                    {{rstat[$index].title}}
+                  </div>
+        </td>
+      </tr>   
+    </table>
+  </div>  
+</div>  
 
-<!-- <pre>
-	{{ answer | json}}
-</pre>	 -->

@@ -4,58 +4,8 @@ import "./utility/index.js";
 
 
 let m = angular.module('app.widgets.v2.form', [
-  'app', 'app.dps', "oc.lazyLoad", "ngAnimate", "formUtility"
+  'app', 'app.dps', "oc.lazyLoad", "ngAnimate", "formUtility", 'app.i18n'
 ])
-
-
-
-m.controller("ToastController", ($scope, APIProvider) => {
-  (new APIProvider($scope, true))
-    .provide("toast-message", ( e, data ) => {
-      $scope.toastData = data;
-      $scope.toastData.top = "50px";
-    })
-})
-
-m.config(($mdToastProvider) => {
-  
-  $mdToastProvider.addPreset('testPreset', {
-    options: function() {
-      return {
-        template:
-          `
-          <md-toast style="position:fixed; top:{{toastData.top}};">
-            <div class="md-toast-content form-toast" style="color:{{toastData.color}};">
-              <md-progress-circular 
-                ng-if="toastData.progress"
-                class="md-accent"
-                style="margin-right:1em;" 
-                md-diameter="20px"
-              >
-              </md-progress-circular>
-              <img ng-if="toastData.image"
-                src="{{toastData.image}}" class="md-avatar"/>
-              <md-icon ng-if="toastData.icon"
-                       md-font-icon="{{toastData.icon}}"
-                       style="  font-family: FontAwesome; 
-                                font-size: 32px;
-                                margin-right: 0.25em;
-                                color:{{toastData.color}};"
-              > 
-              </md-icon>  
-              {{toastData.message}}
-            </div>
-          </md-toast>
-          `,
-        position: "top right",
-        // parent: document.getElementById("skin-top"),
-        hideDelay: false,
-        controller: 'ToastController'
-
-      };
-    }
-  });
-});
 
 
 
@@ -63,6 +13,7 @@ m.controller('FormController', function(
   $scope,
   APIProvider,
   APIUser,
+  EventEmitter,
   app,
   i18n,
   $dps,
@@ -94,26 +45,36 @@ m.controller('FormController', function(
   pageURI,
   $translate,
   $mdColors,
-  $mdToast,
-  formToast,
-  $timeout
+  $timeout,
+  $sce,
+  $mdDialog,
+  mdConfirm,
+  mdAlert,
+  mdSplash,
+  logIn
   
 ) {
 
 
-// $mdColors.getThemeColor('primary-600');
-
-
-// $ocLazyLoad.load({files:["/widgets/v2.form.question/djform.css"]}); 
-
-
-// console.log(pageURI)
-// console.log("query", queryString(pageURI))
-// console.log("access for user", user)
 
 angular.extend($scope, {
 
-  primaryColor: "#f3f3f3",//$mdColors.getThemeColor('primary'),
+  appUrls: appUrls,
+
+  http: $http,
+  
+  __script:'',
+
+  getEditorTemplate : () => $scope.__script,
+
+  templateEditorOptions: {
+    mode:'html', 
+    theme:'tomorrow',
+    onChange: e => { $scope.__script = e[1].getSession().getValue() }
+  },
+
+
+  primaryColor: $mdColors.getThemeColor('primary'),
 
   accentColor: $mdColors.getThemeColor('accent-500'),
 
@@ -121,12 +82,6 @@ angular.extend($scope, {
 
   disableColor: "#333",
 
-  showToast: (e) => {
-    return $mdToast.show($mdToast.testPreset());
-  },
-
-  hideToast: () => { $mdToast.hide() },
-  
   APIUser: APIUser,
 
   timeout: $timeout,
@@ -148,6 +103,8 @@ angular.extend($scope, {
   formatDate: (date) => i18n.formatDate(new Date(date)),
 
   timeAgo: (date) => i18n.timeAgo(new Date(date)),
+
+  i18n: i18n,
   
   modified: {
       form:false,
@@ -175,11 +132,11 @@ angular.extend($scope, {
 
   metadataTools: formMetadata($scope),
 
-  formToast: formToast($scope),
-
   transport: formIO($scope,$dps),
 
   answerUtils: formAnswerUtils($scope),
+
+  
 
   defaultNotificationTemplate: defaultNotificationTemplate,
 
@@ -195,10 +152,67 @@ angular.extend($scope, {
 
 })
 
+
+$scope.userUtils  = formUserUtils($scope);
+
+
+$scope.updateMessagePreview = () => {
+    
+    if(     !$scope.widget
+        ||  !$scope.widget.form
+        ||  !$scope.widget.form.config 
+        ||  !$scope.widget.form.config.access
+        ||  !$scope.widget.form.config.access.users
+    ) return;    
+    
+    _.templateSettings.interpolate = /{{([\s\S]+?)}}/g;
+      
+    let u;
+    
+    if( $scope.widget.form.config.access.users.length > 0 ){
+
+      let l = $scope.widget.form.config.access.users.filter((item => item.selected))
+
+      if(l.length > 0){
+
+        u =l[0];
+
+      } else {
+
+        u = $scope.widget.form.config.access.users[0];
+
+      }
+    } else {
+
+      u = {
+        name: "User Name Example",
+        email: 'user@example.com' ,
+        apikey:'apikey'
+      }
+
+    }
+
+    try {
+      $scope.messagePreview = $sce.trustAsHtml(_.template($scope.getEditorTemplate())($scope.transport.prepareContext(u)))
+    } catch (e) {
+      $scope.messagePreview = $sce.trustAsHtml('<span style="color:{{warnColor}}">Preview is not available</span>');
+    }
+    
+    
+    
+    _.templateSettings.interpolate = /<%=([\s\S]+?)%>/g;
+    
+  }
+
+if($scope.globalConfig.designMode){
+  
+  $scope.$watch('__script', $scope.updateMessagePreview)
+
+}
+
 console.log("QUERY STRING", pageURI, queryString(pageURI));
 
 $scope.user.apikey = queryString(pageURI).apikey 
-// console.log("USER !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!", $scope.user)
 
 
 $scope.widgetPanel.allowConfiguring = undefined;
@@ -267,21 +281,12 @@ let scopeFor = widgetInstanceName => instanceNameToScope.get(widgetInstanceName)
         }
     })
     .then(form => {
-      // console.log(form.fields.file.value,
-      //     form.fields.encoding.value)
+    
       $scope.transport.loadLocalFile(
           form.fields.file.value,
           form.fields.encoding.value
       )
-      .then(text => {
-        // console.log("READ TEXT: ", text)
-      })
-      // runDPSwithFile(form.fields.file.value, {
-      //   script: form.fields.script.value,
-      //   state: {
-      //     format: "osa"
-      //   }
-      // })
+      .then(text => {})
     })
   }
 
@@ -297,69 +302,25 @@ let scopeFor = widgetInstanceName => instanceNameToScope.get(widgetInstanceName)
 
   $scope.userNotification = () => {
     
-    // $scope.transport
-      // .updateForm($scope.widget.form)
-      // .then(() => {$scope.processing = false;})
 
-
-    $scope.widget.form.config.access.lastNotificatedAt = new Date();
-    saveForm();
+    $scope.widget.form.config.access.notificationTemplate = $scope.getEditorTemplate();
     
-    if($scope.widget.form.config.access.type != 'invited') return
-    dialog({
-      title:"Notify Respondents",
-      fields:{
-       
-        subject:{
-          title:"Subject",
-          type:"text",
-          value:$scope.widget.form.config.access.notificationSubject || "DJ-FORM",
-          editable:true,
-          required:true
-        },
-        template: {
-          title:"Template",
-          type:"textarea",
-          value:$scope.widget.form.config.access.notificationTemplate || $scope.defaultNotificationTemplate,
-          rows:5,
-          editable:true,
-          required:true
-        }
-        
-      }
-    })
-    .then(form => {
-      
-      $scope.widget.form.config.access.notificationTemplate = form.fields.template.value;
-      $scope.widget.form.config.access.notificationSubject = form.fields.subject.value;
-      $scope.widget.form.config.access.notiificator = "wdc.kpi.team@gmail.com";
-      $scope.widget.form.config.access.lastNotificatedAt = new Date();
-      $scope.widget.form.config.access.users = 
+    $scope.widget.form.config.access.lastNotificatedAt = new Date();
+    $scope.widget.form.config.access.users = 
         $scope.widget.form.config.access.users.map( item => 
           angular.extend(item,{notifiedAt:new Date()})
         )
       
-      $scope.transport.sendMails()
-        .then(res => {
-          console.log(res)
-        }) 
-
-
-    })
-  }
-
-  $scope.changeAccess = () => {
-    // console.log("change access", $scope.widget.form.config.access.type)
-    $scope.widget.form.config.access.enabled = !$scope.widget.form.config.access.enabled;
+    $scope.transport.sendMails().then(res => {})
     
     saveForm();
-
-
-    if($scope.widget.form.config.access.type == 'invited') $scope.userNotification();
-  
   }
 
-  // $scope.$watch(widget.config.access.enabled, userNotification)
+  $scope.changeAccess = () => { 
+    $scope.widget.form.config.access.lastNotificatedAt = new Date();
+    saveForm() 
+  }
+
   
   let cloneForm = $scope.cloneForm = () => {
     $scope.transport
@@ -387,10 +348,13 @@ let scopeFor = widgetInstanceName => instanceNameToScope.get(widgetInstanceName)
           note: {value: "Form note...", required:true, editable:true}
         },
         config:{
+          locale: i18n.locale(),
           access:{
             type:"any", // ["any","users", "invited"]
             enabled:false,
-            users:[]
+            users:[],
+            notificationTemplate: defaultNotificationTemplate,
+            notificationSubject: "JD-FORMS"
           },
           questions:[]
         }
@@ -410,14 +374,11 @@ let scopeFor = widgetInstanceName => instanceNameToScope.get(widgetInstanceName)
       $scope.transport.loadResponseStat(formId)
       .then(res => {
         $scope.responsesStat = res.data;
-        // (new APIUser()).invokeAll("formMessage", {action:"responseStat", data:res.data});
         if($scope.responsesStat){
           let dyna = $scope.responsesStat.filter(item => item)
           dyna.push({date: new Date(), v:1})
           $scope.responseDynamic = $scope.answerUtils.getResponseDynamic(dyna);
         }
-
-        // console.log("responseSTAT",$scope.answerUtils.getResponseDynamic(dyna));
       })
     }
 
@@ -432,8 +393,9 @@ let scopeFor = widgetInstanceName => instanceNameToScope.get(widgetInstanceName)
 
 
     let accessIsAlowed =  () => {
-        // console.log("CHECK ACCESS FOR", angular.extend({},$scope.user), $scope.widget.form.config.access)
-        
+
+        let _invited;
+
         if($scope.widget.form.config.access.type != 'any'){
           if(!$scope.user.id && $scope.user.apikey){
             let index = $scope.widget.form.config.access.users.map(item => item.apikey).indexOf($scope.user.apikey)
@@ -445,14 +407,20 @@ let scopeFor = widgetInstanceName => instanceNameToScope.get(widgetInstanceName)
 
        if( $scope.widget.form.config.access.enabled && $scope.widget.form.config.access.type == "users"){
           if(!$scope.user.id){
-            $scope.formToast.show({
-              state: "disabled",
-              message: "Only users can access to form.",
-              color: $scope.warnColor,
-              icon: "fa-times-circle",
-              notInterrupted: true,
-              delay:5000
-            })
+            
+            mdConfirm({
+              title: $translate.instant('WIDGET.V2.FORM.ACCESS_FOR_LOGGED_USERS'),
+              icon: 'fa-exclamation-circle',
+              class: 'md-accent',
+              textContent: $translate.instant('WIDGET.V2.FORM.IF_YOU_NEED'),
+              ok: $translate.instant('WIDGET.V2.FORM.LOGIN_WITH_GOOGLE'),
+              cancel: $translate.instant('WIDGET.V2.FORM.CANCEL')
+            }).then(function() {
+                  app.unmarkModified();
+                  logIn();
+                }, function() {}
+              );
+
             return false;
           }
         }
@@ -460,56 +428,53 @@ let scopeFor = widgetInstanceName => instanceNameToScope.get(widgetInstanceName)
 
         if( $scope.widget.form.config.access.enabled && $scope.widget.form.config.access.type == "invited"){
           if(!$scope.widget.form.config.access.users){
-            $scope.formToast.show({
-              state: "disabled",
-              message: "Only invited respondents can access to form.",
-              color: $scope.warnColor,
-              icon: "fa-times-circle",
-              notInterrupted: true,
-              delay:5000
+
+            mdAlert({
+              title: $translate.instant('WIDGET.V2.FORM.ACCESS_IS_DENIED'),
+              icon: 'fa-times-circle',
+              class: 'md-warn',
+              textContent: $translate.instant('WIDGET.V2.FORM.ONLY_INVITED'),
+              ok: $translate.instant('WIDGET.V2.FORM.CLOSE')
             })
+
             return false;
           }
+
           let u = $scope.widget.form.config.access.users.filter(item => {
             if(item.id && $scope.user.id ) return item.id == $scope.user.id;
             if(item.apikey && $scope.user.apikey ) return item.apikey == $scope.user.apikey;
             return false
           })
-          if(u.length == 0){
-            $scope.formToast.show({
-              state: "disabled",
-              message: "Only invited respondents can access to form.",
-              color: $scope.warnColor,
-              icon: "fa-times-circle",
-              notInterrupted: true,
-              delay:5000
+
+          if( u.length == 0 ) {
+            
+            mdAlert({
+              title: $translate.instant('WIDGET.V2.FORM.ACCESS_IS_DENIED'),
+              icon: 'fa-times-circle',
+              class: 'md-warn',
+              textContent: $translate.instant('WIDGET.V2.FORM.ONLY_INVITED'),
+              ok: $translate.instant('WIDGET.V2.FORM.CLOSE')
             })
             return false;
+          } else {
+             _invited = angular.extend({}, u[0])
           }
         }
 
         if( !$scope.widget.form.config.access.enabled && !$scope.user.isOwner && !$scope.user.isCollaborator ){
             
-            $scope.formToast.show({
-              state: "disabled",
-              message: "The form is closed.",
-              color: $scope.warnColor,
-              icon: "fa-times-circle",
-              notInterrupted: true,
-              delay:5000
+            mdAlert({
+              title: $translate.instant('WIDGET.V2.FORM.ACCESS_IS_DENIED'),
+              icon: 'fa-times-circle',
+              class: 'md-warn',
+              textContent: $translate.instant('WIDGET.V2.FORM.FORM_IS_CLOSED'),
+              ok: $translate.instant('WIDGET.V2.FORM.CLOSE')
             })
+
             return false;
         }
 
-        $scope.formToast.show({
-              state: "success",
-              message: `Respondent ${($scope.user.name) ? $scope.user.name : $scope.user.email } is logged`,
-              color: $scope.primaryColor,
-              icon: ($scope.user.photo) ? undefined : "fa-user-circle",
-              image: ($scope.user.photo) ? $scope.user.photo : undefined,
-              notInterrupted: true,
-              delay:5000
-            })
+        (new APIUser($scope)).invokeAll("formMessage", {action:"login", data: (_invited || $scope.user)});
         return true;
     }
 
@@ -517,26 +482,23 @@ let scopeFor = widgetInstanceName => instanceNameToScope.get(widgetInstanceName)
 
       $scope.blockMessages = true;
 
-      $scope.formToast.show({
-              state: "process",
-              message: `Load form...`,
-              color: $scope.primaryColor,
-              progress:true,
-              delay:3000
-            })
-
-
-
       $scope.transport
       .loadForm($scope.widget.form.id)    
       .then(res => {
 
+
         loadAllResponses($scope.widget.form.id)  
         
         let availableAccess = accessIsAlowed();
-        
+
+        $scope.widget.form.config.access.notificationTemplate = $scope.widget.form.config.access.notificationTemplate || $scope.defaultNotificationTemplate;
+        $scope.widget.form.config.access.notificationSubject = $scope.widget.form.config.access.notificationSubject || "DJ-FORM";
+
+
+
+
         if( availableAccess == true ){
-          (new APIUser()).invokeAll("formMessage", {action:"show"});
+          (new APIUser($scope)).invokeAll("formMessage", {action:"show"});
         }  
 
         $scope.formLoaded = true;
@@ -545,7 +507,18 @@ let scopeFor = widgetInstanceName => instanceNameToScope.get(widgetInstanceName)
         $scope.widget.form.config.access.users = $scope.widget.form.config.access.users || [];
         $scope.widget.form.config.questions = $scope.widget.form.config.questions || {};  
         
-        (new APIUser()).invokeAll("formMessage", {action:"update", data:$scope.widget.form});
+        $scope.widget.form.config.locale = $scope.widget.form.config.locale || i18n.locale();
+        
+        // console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!", $scope.widget.form.config.locale, i18n.locale())
+        // if($scope.widget.form.config.locale != i18n.locale()){
+          // console.log(angular.extend({},i18n))
+          i18n.setLocale($scope.widget.form.config.locale)
+        // }
+
+        $scope.$evalAsync(() => {
+          (new APIUser($scope)).invokeAll("formMessage", {action:"update", data:$scope.widget.form});  
+        })
+        
         
         $scope.metadataTools.prepaire();
 
@@ -554,46 +527,36 @@ let scopeFor = widgetInstanceName => instanceNameToScope.get(widgetInstanceName)
 
 
         if ($scope.widget.form.config.access.type == "any") {
+          
           $scope.answer = $scope.answerUtils.create()
           $scope.processing = false;
           $scope.blockMessages = false;
           
-          $scope.formToast.show({
-              state: "none",
-              message: `Prepare form...`,
-              color: $scope.primaryColor,
-              progress:true,
-              delay:1000
-            })
-
         } else {
             if (      $scope.widget.form.config.access.type == "users" 
                   ||  $scope.widget.form.config.access.type == "invited") {
+              
               $scope.transport
                 .loadAnswer($scope.user,$scope.widget.form.id)
                 .then( res => {
+                  
                   if(res.data){
+                    
                     $scope.answer = ( res.data.length == 0)
                       ? $scope.answerUtils.create()
                       : $scope.answerUtils.normalize(res.data[0]);
-                    (new APIUser()).invokeAll("formMessage", {action:"set-answer", data:$scope.answer});
+                    
+                    (new APIUser($scope)).invokeAll("formMessage", {action:"set-answer", data:$scope.answer});
                     
                   } else {
+                       
                        $scope.answer = $scope.answerUtils.create();
+                  
                   }
 
                   $scope.processing = false;
                   $scope.blockMessages = false;
-
-                  if( availableAccess == true ){
-                    $scope.formToast.show({
-                      state: "none",
-                      message: `Prepare form...`,
-                      color: $scope.primaryColor,
-                      progress:true,
-                      delay:1000
-                    })
-                  }  
+                    
               })
             }
         }        
@@ -608,6 +571,10 @@ let scopeFor = widgetInstanceName => instanceNameToScope.get(widgetInstanceName)
       if($scope.widget.form){
         $scope.metadataTools.prepaire()
         loadResponseStat($scope.widget.form.id)
+        loadAllResponses($scope.widget.form.id)
+        $scope.$evalAsync(() => {
+          (new APIUser($scope)).invokeAll("formMessage", {action:"update", data:$scope.widget.form});  
+        })
         return  
       }  
     } else {
@@ -640,37 +607,86 @@ let scopeFor = widgetInstanceName => instanceNameToScope.get(widgetInstanceName)
   let updateConfig = () => {
     if($scope.widget.form){
       $scope.metadataTools.update();
+      (new APIUser($scope)).invokeAll("formMessage", {action:"update-config"})
+
+      $scope.widget.form.config.questions = {};
+
+      pageWidgets()
+        .filter(item => item.type === "v2.form.question")
+        .filter(item => item.config)
+        .forEach(item => {
+          $scope.widget.form.config.questions[item.config.id] = item.config;
+        })
     }
   }
 
 
-  $http
-      .get(appUrls.usersList)
-      .then(result => { $scope.userUtils = formUserUtils($scope,result.data) })
+ 
     
   $scope.$watch("metadata", $scope.markModified, true);
 
-  $scope.saveAnswers = () => {
-    console.log("SAVE ANSWERS", $scope.formToast)
-
-    if(["none", "disabled"].indexOf($scope.formToast.state) >= 0) return;
+  let getResponseValidatiion = () => {
+     
+     let responseValidationList = 
+        _.toPairs($scope.answer.data)
+         // .filter(item => item[1].validationResult)
+         .map(item => {
+          return item[1]
+         })
+     
     
-    $scope.formToast.show({
-              state: "process",
-              message: `Save responses...`,
-              color: $scope.primaryColor,
-              progress:true,
-              delay:3000
-            })
+     if(responseValidationList.length > 0){
+        
+        let formValid = {valid:true , messages:[]};
+        
+        responseValidationList.forEach(( item ) => {
+            formValid.valid = formValid.valid && item.valid && item.validationResult.valid,
+            formValid.messages.push((item.validationResult.message) ? `<li>${item.validationResult.message}</li>` : '')
+        })
 
+        return formValid;
+     }    
+     
+     return {
+          valid: true,
+          messages: []
+     }     
+  
+  }
 
+  $scope.saveAnswers = () => {
+    let formValidation = getResponseValidatiion();
+    if(formValidation.valid){
+      $scope.doSaveAnswers()
+      return
+    }
+
+    mdConfirm({
+              title: $translate.instant('WIDGET.V2.FORM.RESPONSE_NOT_COMPLETED'),
+              icon: 'fa-exclamation-circle',
+              class: 'md-accent',
+              htmlContent: `<ol>${formValidation.messages.join("\n")}</ol><p>
+                  ${$translate.instant('WIDGET.V2.FORM.CAN_SAVE')}</p>`,
+              ok: $translate.instant('WIDGET.V2.FORM.SAVE_RESPONSES'),
+              cancel: $translate.instant('WIDGET.V2.FORM.CONTINUE')
+            }).then(function() {
+                  $scope.doSaveAnswers()
+                }, function() {}
+              );
+  }
+
+  $scope.doSaveAnswers = () => {
+    
     if(!$scope.widget.form.config.access.enabled){
       
-      $info(testMessage($scope), "The form is started in test mode")
-      // .then(()=> {
-      //   $scope.formToast.state("none");    
-      // })
-
+      mdAlert({
+              title: 'The form is started in test mode',
+              icon: 'fa-exclamation-circle',
+              class: 'md-primary',
+              htmlContent: `<pre> ${testMessage($scope)} </pre>`,
+              ok: 'Continue'
+            })
+  
     } else {
 
 
@@ -680,7 +696,7 @@ let scopeFor = widgetInstanceName => instanceNameToScope.get(widgetInstanceName)
 
       if($scope.modified.form){
         saveFormPromise = $q(( resolve, reject ) => {
-    
+          updateConfig();
           $scope.modified.form = false;
           $scope.transport
           .extendForm($scope.widget.form)
@@ -688,15 +704,14 @@ let scopeFor = widgetInstanceName => instanceNameToScope.get(widgetInstanceName)
             $scope.transport
             .loadForm($scope.widget.form.id)  
             .then(res => {
-              // console.log("invokeAll update")
               $scope.formLoaded = true;
               $scope.widget.form = res.data[0];
               
-              (new APIUser()).invokeAll("formMessage", {action:"update", data:$scope.widget.form});
+              (new APIUser($scope)).invokeAll("formMessage", {action:"update", data:$scope.widget.form});
               
               $scope.metadataTools.prepaire();
 
-              (new APIUser()).invokeAll("formMessage", {action:"set-answer", data:$scope.answer});
+              (new APIUser($scope)).invokeAll("formMessage", {action:"set-answer", data:$scope.answer});
               
               resolve(true)
             
@@ -710,9 +725,9 @@ let scopeFor = widgetInstanceName => instanceNameToScope.get(widgetInstanceName)
             .then(res => {
 
               $scope.widget.form = res.data[0];
-              (new APIUser()).invokeAll("formMessage", {action:"update", data:$scope.widget.form});
+              (new APIUser($scope)).invokeAll("formMessage", {action:"update", data:$scope.widget.form});
               $scope.metadataTools.prepaire();
-              (new APIUser()).invokeAll("formMessage", {action:"set-answer", data:$scope.answer});
+              (new APIUser($scope)).invokeAll("formMessage", {action:"set-answer", data:$scope.answer});
               resolve(true)
             })
           resolve(true)
@@ -726,14 +741,14 @@ let scopeFor = widgetInstanceName => instanceNameToScope.get(widgetInstanceName)
             .loadForm($scope.widget.form.id)  
             .then(res => {
               $scope.widget.form = res.data[0];
-              (new APIUser()).invokeAll("formMessage", {action:"update", data:$scope.widget.form});
+              (new APIUser($scope)).invokeAll("formMessage", {action:"update", data:$scope.widget.form});
               $scope.metadataTools.prepaire();
-              (new APIUser()).invokeAll("formMessage", {action:"set-answer", data:$scope.answer});
+              (new APIUser($scope)).invokeAll("formMessage", {action:"set-answer", data:$scope.answer});
               $scope.transport
               .updateAnswer($scope.answer)
               .then((res) => {
                 $scope.answer = $scope.answerUtils.normalize((angular.isArray(res.data))? res.data[0] : res.data);
-                (new APIUser()).invokeAll("formMessage", {action:"set-answer", data:$scope.answer});
+                (new APIUser($scope)).invokeAll("formMessage", {action:"set-answer", data:$scope.answer});
                 resolve(true)
               })
             })    
@@ -744,9 +759,9 @@ let scopeFor = widgetInstanceName => instanceNameToScope.get(widgetInstanceName)
             .loadForm($scope.widget.form.id)  
             .then(res => {
               $scope.widget.form = res.data[0];
-              (new APIUser()).invokeAll("formMessage", {action:"update", data:$scope.widget.form});
+              (new APIUser($scope)).invokeAll("formMessage", {action:"update", data:$scope.widget.form});
               $scope.metadataTools.prepaire();
-              (new APIUser()).invokeAll("formMessage", {action:"set-answer", data:$scope.answer});
+              (new APIUser($scope)).invokeAll("formMessage", {action:"set-answer", data:$scope.answer});
               resolve(true)
             })  
         })
@@ -756,13 +771,6 @@ let scopeFor = widgetInstanceName => instanceNameToScope.get(widgetInstanceName)
         .then(() => {
           loadAllResponses($scope.widget.form.id)
           $scope.$evalAsync(() => {
-            $scope.formToast.show({
-              state: "completed",
-              message: `Changes saved successfully!`,
-              color: $scope.primaryColor,
-              icon: "fa-check",
-              delay:3000
-            })
             $scope.blockMessages = false;  
             app.unmarkModified();
           },100)
@@ -772,41 +780,31 @@ let scopeFor = widgetInstanceName => instanceNameToScope.get(widgetInstanceName)
 
 
   let validateFormConfig = (data) => {
-    // console.log("VALIDATE")
-    $scope.formToast.show({
-              state: "list",
-              message: `You added an alternative to the "${truncString(data.options.title)}" question. Click to save changes.`,
-              color: $scope.warnColor,
-              icon: "fa-pencil",
-              delay:3000
-            })
     $scope.modified.form = true;        
   }          
 
-  // // $scope.fanButton.state("process")
-
+ 
   let saveForm =  () => {
       $scope.processing = true;
       updateConfig();
-      $scope.widget.form.config.questions = {};
+      $scope.widget.form.config.access.notificationTemplate = $scope.getEditorTemplate();
+      // $scope.widget.form.config.questions = {};
 
-      pageWidgets()
-        .filter((item) => item.type === "v2.form.question")
-        .forEach((item) => {
-          $scope.widget.form.config.questions[item.config.id] = item.config;
-        })
+      // pageWidgets()
+      //   .filter((item) => item.type === "v2.form.question")
+      //   .forEach((item) => {
+      //     $scope.widget.form.config.questions[item.config.id] = item.config;
+      //   })
 
       $scope.transport
-      .updateForm($scope.widget.form)
-      .then(() => {$scope.processing = false;})
+        .updateForm($scope.widget.form)
+        .then(() => {$scope.processing = false;})
   }
 
   new APIProvider($scope)
-    .config(() => {
-      updateWidget()  
-    })
 
-    .save(saveForm)
+    .config( updateWidget )
+    .save( saveForm )
 
     // .translate(updateWidget)
 
@@ -825,7 +823,6 @@ let scopeFor = widgetInstanceName => instanceNameToScope.get(widgetInstanceName)
     })
 
     .appReconfig ((c) => {
-          // todo
           $scope.widget.form.metadata.app_name.value = config.name;
           $scope.widget.form.metadata.app_title.value = config.title;
           $scope.widget.form.metadata.app_url.value = $window.location.href,
@@ -837,12 +834,8 @@ let scopeFor = widgetInstanceName => instanceNameToScope.get(widgetInstanceName)
 
     .provide('questionMessage', (e, context) => {
       
-      if ($scope.blockMessages) {
-        // console.log("Block MESSAGE FROM QUESTION")
-        return;
-      } 
-
-      // console.log("HANDLE MESSAGE FROM QUESTION", context)
+      if ($scope.blockMessages) return;
+      
       
         if(context.action == 'init'){
             initQuestion(context.data)
@@ -850,7 +843,6 @@ let scopeFor = widgetInstanceName => instanceNameToScope.get(widgetInstanceName)
         }
 
         if(context.action == 'remove'){
-            // console.log('remove',$scope.widget.form.config.questions[context.data.widget.ID])
             $scope.widget.form.config.questions[context.data.widget.ID] = undefined;
             return
         }
@@ -860,6 +852,7 @@ let scopeFor = widgetInstanceName => instanceNameToScope.get(widgetInstanceName)
             $scope.answer = $scope.answer || $scope.answerUtils.create()   
             $scope.answer.data[context.data.question] = context.data;
             $scope.answerUtils.validateAnswers();
+
           }  
           return 
         }
@@ -893,11 +886,7 @@ let scopeFor = widgetInstanceName => instanceNameToScope.get(widgetInstanceName)
         }
     })
 
-    .beforePresentationMode(() => {
-      // console.log("beforePresentationMode")
-      saveForm();
-
-    })  
+    // .beforePresentationMode( saveForm )  
 
     .provide('formMessage', (e, context) => {
         if((context.action == "remove") && ($scope.widget.instanceName != context.data.widget.instanceName)){
@@ -905,14 +894,11 @@ let scopeFor = widgetInstanceName => instanceNameToScope.get(widgetInstanceName)
         }
     })  
 
-    .provide("formSubmit", () => {
-      // console.log("formSubmit")
-      $scope.saveAnswers()
-    })
+    .provide( "formSubmit", $scope.saveAnswers )
     
 
     .removal(() => {
-      (new APIUser()).invokeAll("formMessage", {action:"remove", data:$scope});
+      (new APIUser($scope)).invokeAll("formMessage", {action:"remove", data:$scope});
       
       $scope.processing = true;
       if($scope.widget.form){

@@ -6,11 +6,20 @@ import 'angular-translate-storage-local';
 import 'date-and-time';
 import 'javascript-time-ago';
 import timegoUkLocale from '../components/javascript-time-ago/locales/uk.js';
+import 'angular-material';
+import 'moment';
 
 
-const i18n = angular.module('app.i18n', ['app','pascalprecht.translate']);
+const i18n = angular.module('app.i18n', ['app','pascalprecht.translate','ngMaterial', 'ngMessages']);
 
-i18n.config(function ($translateProvider) {
+let monthDateFormat = {
+  "en": "MMMM YYYY",
+  "uk": "MMMM YYYY р."
+}
+
+
+
+i18n.config(function ($translateProvider, $mdDateLocaleProvider) {
   i18n.translateProvider = $translateProvider; 
   $translateProvider
     .useSanitizeValueStrategy('escape')
@@ -24,6 +33,34 @@ i18n.config(function ($translateProvider) {
     })
     .determinePreferredLanguage()
     .useLocalStorage();
+
+     $mdDateLocaleProvider.formatDate = function(date) {
+      return date ? moment(date).format('DD-MM-YYYY') : null;
+    };
+
+    $mdDateLocaleProvider.parseDate = function(dateString) {
+      var m = moment(dateString, 'DD-MM-YYYY', true);
+      return m.isValid() ? m.toDate() : new Date(NaN);
+    };
+
+    
+
+    moment.locale('uk');
+
+    // Set month and week names for the general $mdDateLocale service
+    var localeData = moment.localeData();
+    $mdDateLocaleProvider.months      = localeData._months;
+    $mdDateLocaleProvider.shortMonths = moment.monthsShort();
+    $mdDateLocaleProvider.days        = localeData._weekdays;
+    $mdDateLocaleProvider.shortDays   = localeData._weekdaysMin;
+    // Optionaly let the week start on the day as defined by moment's locale data
+    $mdDateLocaleProvider.firstDayOfWeek = localeData._week.dow;
+    $mdDateLocaleProvider.monthHeaderFormatter = function(date) {
+          return moment(date).format(monthDateFormat["uk"])
+    };
+
+    // setMonthDateLocale('uk')
+
 });
 
 
@@ -32,11 +69,15 @@ i18n.run(function ($translate) {
   // This caused problems - see
   // https://github.com/angular-translate/angular-translate/issues/1075
   $translate.fallbackLanguage(['en', 'uk']);
+
+  // setMonthDateLocale(($translate.use() || "en"))
+
 });
 
 i18n.constant('i18nTemp',{});
   
-i18n.service('i18n',function($translate,config, i18nTemp, APIProvider, APIUser){
+i18n.service('i18n',function($translate,config, i18nTemp, APIProvider, APIUser, $mdDateLocale){
+  
   
   this.timeago = timeago;
   this.timeago.register('uk', timegoUkLocale);
@@ -306,6 +347,68 @@ i18n.service('i18n',function($translate,config, i18nTemp, APIProvider, APIUser){
       }
       // console.log("BEFORE invokeAll TRANSLATE")
       user.invokeAll(APIProvider.TRANSLATE_SLOT);
+    },
+
+
+
+    setLocale: (l) => {
+      
+      // console.log("SET LOCALE!!!!!!!!!!!!!", l)
+      
+      $translate.use(l);
+      $translate.refresh().then(() => { this.refresh() });
+
+      $mdDateLocale.formatDate = function(date) {
+        return date ? moment(date).format('DD-MM-YYYY') : null;
+      };
+
+      $mdDateLocale.parseDate = function(dateString) {
+        var m = moment(dateString, 'DD-MM-YYYY', true);
+        return m.isValid() ? m.toDate() : new Date(NaN);
+      };
+
+      moment.locale(l);
+        // Set month and week names for the general $mdDateLocale service
+      let localeDate = moment.localeData();
+      
+      $mdDateLocale.months      = localeDate._months;
+      $mdDateLocale.shortMonths = moment.monthsShort();
+      $mdDateLocale.days        = localeDate._weekdays;
+      $mdDateLocale.shortDays   = localeDate._weekdaysMin;
+      // Optionaly let the week start on the day as defined by moment's locale data
+      $mdDateLocale.firstDayOfWeek = localeDate._week.dow;
+      
+      $mdDateLocale.longDateFormatter = (date) => {
+        // Example: 'Thursday June 18 2015'
+        return moment(date).format("MMMM DD YYYY")
+      }
+      
+      $mdDateLocale.monthHeaderFormatter = function(date) {
+          return moment(date).format(monthDateFormat["uk"])
+      };
+
+
+    },
+
+    monthDateLocale: (locale) => {
+      let formatString = monthDateFormat[locale]
+      
+      return {
+        
+        formatDate: function(date) {
+          if (date) return moment(date).format(formatString);
+          else return null;
+        },
+        
+        parseDate: function(dateString) {
+          if (dateString) {
+            var m = moment(dateString, formatString, true);
+            return m.isValid() ? m.toDate() : new Date(NaN);
+          } else return null;
+        }
+      }
     }
+
+    
   })
 })  

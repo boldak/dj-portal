@@ -11,30 +11,33 @@ let UserList = class {
   constructor(scope, userList) {
     this.scope = scope;
     this.invitedUserAdd = null;
-    this.userList = userList;
     
-    this.notInvitedUsers = this.userList.filter(u =>
-          this.scope.widget.form.config.access.users.map(item => item.email).indexOf(u.email) < 0
-    );
-
+    this.userListLoaded = this.scope.http
+                          .get(this.scope.appUrls.usersList)
+                          .then( result => {
+                            this.userList = result.data;
+                            return this.userList;
+                          })
+    
     this.userIsInvited = false;
     this.invitedUserIsValid = false;
   }
 
   getUsers(filterValue) {
     return new Promise((resolve, reject) => {
-      console.log("FILTER", this.list, filterValue, this.scope.widget.form.config.access.users)
-      let result = this.userList
-        .filter(u =>
-          this.scope.widget.form.config.access.users.map(item => item.email).indexOf(u.email) < 0
-        )
-        .filter(u =>
-          u.name.toLowerCase().includes(filterValue.toLowerCase()) ||
-          u.email.toLowerCase().includes(filterValue.toLowerCase())
-        )
-        .slice(0, 8)
-      console.log(result)  
-      resolve(result)
+          this.userListLoaded.then( ()=> {
+            let result = this.userList
+              .filter(u => !this.scope.widget.form.config.access.users
+                              .map(item => item.email)
+                              .indexOf(u.email) >= 0
+              )
+              .filter(u =>
+                u.email.toLowerCase().includes(filterValue.toLowerCase())
+              )
+              .slice(0, 8)
+            resolve(result)
+          })
+       
     })
   }
 
@@ -48,20 +51,27 @@ let UserList = class {
 
     if (!value) {
       this.userIsInvited = false;
-      return
+      return this.userIsInvited
     }
 
     if (angular.isString(value)) {
-      this.userIsInvited = this.scope.widget.form.config.access.users.map(item => item.email).indexOf(value) >= 0;
-      return
+      value = value.trim();
+      let t = emailRegex.test(value);
+      if (t) {
+        this.userIsInvited = this.scope.widget.form.config.access.users.map(item => item.email).indexOf(value) >= 0;
+        return this.userIsInvited
+      }
+      this.userIsInvited = false;
+      return this.userIsInvited         
     }
 
     if (angular.isDefined(value.email)) {
       this.userIsInvited = this.scope.widget.form.config.access.users.map(item => item.email).indexOf(value.email) >= 0;
-      return
+      return this.userIsInvited
     }
 
     this.userIsInvited = false;
+    return this.userIsInvited
   }
 
   sendEmailErrors (field){
@@ -89,8 +99,6 @@ let UserList = class {
   }
 
   validInvitedUser(value, field) {
-
-    // console.log("USER VALIDATION", value)
 
     this.alreadyInvited(value);
 
@@ -129,6 +137,7 @@ let UserList = class {
         let invited = { 
           email: this.invitedUserAdd,
           apikey: apikey(),
+          selected:true,
           find: true 
         }
         this.scope.widget.form.config.access.users.push(invited);
@@ -144,6 +153,7 @@ let UserList = class {
         })
     
     } else {
+      this.invitedUserAdd.selected = true;
       this.scope.widget.form.config.access.users.push(this.invitedUserAdd)
     }
    
@@ -213,7 +223,5 @@ let UserList = class {
   }   
 
 }
-
-
 
 module.exports = UserList;

@@ -1,14 +1,147 @@
+<style>
+  table {
+    margin-bottom: 0;
+  }
+  /*.md-virtual-repeat-container {
+    border: 1px solid #ddd;
+    width:100%;
+  }*/
+</style>
 
-<div class="row" ng-controller="FormQuestionController">   
 
-<!--   <div class="row">
-    <div class="column small-12">
-      <pre> {{widget | json}}
-    </div>  
-  </div>   -->
-  <!-- #{{widget.ID}} -->
+<div class="row" ng-controller="FormQuestionController" style="padding: 0; margin: 0;">
+  <div  ng-cloak 
+        ng-if="globalConfig.designMode">
+    <md-content>
+      <md-tabs md-dynamic-height md-border-bottom>
+        
+        <md-tab>
+          <md-tab-label>
+            <widget-translate>
+              General
+            </widget-translate>
+          </md-tab-label>
+          <md-tab-body class="md-padding">
+           
+              <md-card>
+                <md-card-title>
+                  <md-card-title-text>
+                    <span class="md-headline">
+                     <widget-translate>
+                        General Options
+                      </widget-translate>
+                    </span>
+                    </md-card-title-text>
+                  </md-card-title>
+                  
+                  <md-card-content>
+                    
+                    <md-input-container style="padding-bottom: 2em;">
+                      <label>
+                        <widget-translate>Question type</widget-translate>
+                      </label>
+                      <md-select 
+                        ng-model="qtype"
+                        ng-change="selectQtype(qtype)"
+                      >
+                        <md-option  ng-repeat="q in questionTypes" value="{{q.type.value}}">
+                          <md-icon  md-font-icon="{{q.widget.css}}"
+                                    style=" font-family: FontAwesome; 
+                                            font-size: 1.2em;
+                                            margin-right: 0.25em;"
+                            >
+                          </md-icon>
+                         
+                          {{'WIDGET.V2.FORM.QUESTION.'+q.type.title | translate}}
+                          
+                        </md-option>
+                      </md-select>
 
-  <h3   ng-if="disabled" 
+                    </md-input-container> 
+
+                    <md-switch  ng-model="config.state.options.required" 
+                                class="md-primary"
+                                style="padding-bottom: 2em;"
+                    >
+                      <div layout="column">
+                        <span>
+                          <widget-translate>Required</widget-translate>
+                        </span>  
+                        <span style="font-size: 12px; color: #999;">
+                            {{'WIDGET.V2.FORM.QUESTION.'+((config.state.options.required) ? 'Validate response': 'Not validate response') | translate}}
+                        </span>  
+                      </div>
+                    </md-switch>
+
+                    <md-switch  ng-model="config.state.options.showResponsesStat" 
+                                class="md-primary"
+                    >
+                      <div layout="column">
+                        <span>
+                          <widget-translate>Statistical hints</widget-translate>
+                        </span>  
+                        <span style="font-size: 12px; color: #999;">
+                            {{'WIDGET.V2.FORM.QUESTION.'+((config.state.options.showResponsesStat) ? 'Response Stat': 'Not Response Stat') | translate}}
+                        </span>  
+                      </div>
+                    </md-switch>
+
+                  </md-card-content>
+
+              </md-card>
+          </md-tab-body>
+        </md-tab>
+
+        <md-tab ng-if="config">
+          <md-tab-label>
+            <widget-translate>
+              Question
+            </widget-translate>
+          </md-tab-label>
+          <md-tab-body class="md-padding">
+           
+              <md-card>
+                <md-card-title>
+                  <md-card-title-text>
+                    <span class="md-headline">
+                      <widget-translate>Question options</widget-translate>: 
+                    </span>
+                   </md-card-title-text>
+                </md-card-title>
+                <md-card-content>
+                  
+                  <md-input-container class="md-block">
+                    <label>
+                      <widget-translate>Question</widget-translate>
+                    </label>
+                    <textarea ng-model="config.state.options.title"  rows="5">
+                    </textarea>
+                  </md-input-container>
+
+                  <md-input-container class="md-block">
+                    <label>
+                      <widget-translate>Note</widget-translate>
+                    </label>
+                    <textarea ng-model="config.state.options.note"  rows="5">
+                    </textarea>
+                  </md-input-container>
+
+                </md-card-content>
+              </md-card>
+          
+          </md-tab-body>
+        </md-tab>
+
+        <section ng-include="config.state.widget.options"></section>
+
+      </md-tabs>
+    </md-content>
+  </div>
+
+
+<!-- </div> -->
+
+<!--   <h3   ng-if="disabled" 
         style="color: #f08a24;" 
         class="fi-alert"> 
       Question is disabled. You canot use 'v2.form-question' widgets without "v2.form" widget.
@@ -19,7 +152,6 @@
     
     <div class="columns small-12">
 
-    <!-- container -->
 
 
       <div class="row">
@@ -88,11 +220,6 @@
                   </li>
                 </ul>
               </td>
-             <!--  <td style="border:none;">
-                  <label class="large" style="color:#008CBA;">
-                    {{defaultQuestionConfig[qtype].type.title}}
-                  </label>
-              </td>   -->
             </tr> 
             <tr>
               <td style="border:none;">
@@ -145,7 +272,6 @@
         </div>
       </div>
 
-      <!-- <pre>{{config | json}}</pre>  -->
       
       <div class="row">
         <div class="column small-12" ng-include="config.state.widget.options"></div>
@@ -155,9 +281,8 @@
       
 
 
-    <!-- end of container -->
     </div>  
-  </div>  
+  </div>   -->
 
 
 
@@ -168,7 +293,7 @@
       
       <div class="row">
 
-        <md-content class="md-padding">
+        <md-content>
                 <md-card>
 
                   <md-card-title>
@@ -198,12 +323,12 @@
                   </md-card-title>
 
                   <md-card-content>
+                    
                     <div ng-include="config.view || config.state.widget.view"></div>
+                                                        
                   </md-card-content>
-
                 </md-card> 
-        </md-content>             
-         
+          </md-content>
       </div>
     </div>
   </div>

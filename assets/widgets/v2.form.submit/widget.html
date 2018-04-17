@@ -1,13 +1,16 @@
-<hr/>
-<div class="row" ng-controller="FormSubmitController" style="padding: 0.5rem; margin: 0;">
-  <div class="column small-11 small-centered" ng-if="!hidden || globalConfig.designMode">
-      
-      <div layout="row" layout-align="end center">
+
+<!-- <div class="row" ng-controller="FormSubmitController" style="padding: 0.5rem; margin: 0;">
+  <div class="column small-12" ng-if="!hidden || globalConfig.designMode">
+ -->      
+      <div ng-controller="FormSubmitController"
+      		layout="row" layout-align="end center">
         <md-button class="md-raised md-primary"
-                   ng-click="submit()" 
+                   ng-click="submit()"
+                    ng-disabled="globalConfig.designMode" 
+                    ng-if="!hidden || globalConfig.designMode"
         >
           <widget-translate>Submit Form</widget-translate>
         </md-button>
       </div>  
-  </div>  
-</div>
+<!--   </div>  
+</div> -->

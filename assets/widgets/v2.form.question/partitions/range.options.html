@@ -1,32 +1,54 @@
-<hr/>
-<h4> Range options</h4>
-<div class="row">
-	<div class="column small-6 left" style="width:auto;">
-		<label class="large">
-			Min
-		</label>
-		<input 	type="number" 
-	   			ng-model="config.state.options.range.min"
-	   			max="{{config.state.options.range.max}}"
-	   	>
-	</div>
-	<div class="column small-6 left" style="width:auto;">
-		<label class="large">
-			Max
-		</label>
-		<input 	type="number" 
-	   			ng-model="config.state.options.range.max"
-	   			min="{{config.state.options.range.min}}"
-	   			
-	   	>
-	</div>
-	<div class="column small-6 left" style="width:auto;">
-		<label class="large">
-			Step
-		</label>
-		<input 	type="number" 
-	   			ng-model="config.state.options.step"
-	   			
-	   	>
-	</div>
-</div>		
+<md-tab>
+  <md-tab-label>
+    <widget-translate>
+      Constraints
+    </widget-translate>
+  </md-tab-label>
+  <md-tab-body class="md-padding">
+   
+	      <md-card>
+	        
+	        <md-card-title>
+	          <md-card-title-text>
+	            <span class="md-headline">
+	              <widget-translate>Constraints</widget-translate> 
+	            </span>
+	           </md-card-title-text>
+	        </md-card-title>
+	        
+	        <md-card-content>
+	        	<md-input-container>
+		            <label>
+		              <widget-translate>Min</widget-translate>
+		            </label>
+		            <input  type="number" 
+		                    ng-model="config.state.options.range.min"
+		   					max="{{config.state.options.range.max}}"
+		            >
+	            </md-input-container>
+
+	            <md-input-container>
+		            <label>
+		              <widget-translate>Max</widget-translate>
+		            </label>
+		            <input 	type="number" 
+			                ng-model="config.state.options.range.max"
+			   				min="{{config.state.options.range.min}}"
+		            >
+	            </md-input-container>
+
+	            <md-input-container>
+		            <label>
+		              <widget-translate>Step</widget-translate>
+		            </label>
+		            <input 	type="number" 
+			                ng-model="config.state.options.step"		   				
+		            >
+	            </md-input-container>
+
+	        </md-card-content>    
+
+	    </md-card>
+	</md-tab-body>
+</md-tab>
+

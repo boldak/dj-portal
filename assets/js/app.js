@@ -905,7 +905,7 @@ app.controller('MetaInfoController', function ($scope, $rootScope, appName, app,
 app.controller('MainController', function ($scope, $location, $cookies, $window, $translate,
                                            alert, app, config, user, appUrls, globalConfig,
                                            fullReload, hotkeys,splash,appHotkeysInfo,
-                                           APIProvider, APIUser) {
+                                           APIProvider, APIUser, fullReload, $stateParams) {
   
   if(user.isOwner || user.isCollaborator){
     // console.log("Add hotkeys")
@@ -952,6 +952,10 @@ app.controller('MainController', function ($scope, $location, $cookies, $window,
       description: 'Switch mode',
       callback: function(event) {
         event.preventDefault();
+        // console.log("ALT-D", globalConfig, config.name, $stateParams.href)
+        // if( globalConfig.designMode ) {
+        //   fullReload(appUrls.app(config.name, $stateParams.href));
+        // }
         globalConfig.designMode = !globalConfig.designMode;
       }
     });

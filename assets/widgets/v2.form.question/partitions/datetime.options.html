@@ -1,34 +1,183 @@
-<hr/>
-<h4>Format:
-		<span 	class="button"
-				style="padding:0.5em;"
-			   	dropdown-toggle="{{'#' + widget.ID + '_dfmt'}}"
-        >
-			{{(config.state.options.format)}}
-		</span>
-		<ul id="{{widget.ID + '_dfmt'}}" 
-	        class="f-dropdown"
-	    >
-	        <li class="large" 
-	        	ng-click="config.state.options.format = 'date'"
-	        	style="padding:0.5em 1em;"
-	        >
-	        		Date
-	        </li>	
-	        
-	        <li class="large" 
-	        	ng-click="config.state.options.format = 'month'"
-	        	style="padding:0.5em 1em;"
-	        >
-	        		Month
-	        </li>
-	        
-	        <li class="large" 
-	        	ng-click="config.state.options.format = 'time'"
-	        	style="padding:0.5em 1em;"
-	        >
-	        		Time
-	        </li>
+<md-tab>
+          <md-tab-label>
+            <widget-translate>
+              Settings
+            </widget-translate>
+          </md-tab-label>
 
-	    </ul>
-</h4>	       	
+          <md-tab-body class="md-padding">
+           
+              <md-card>
+                <md-card-title>
+                  <md-card-title-text>
+                    <span class="md-headline">
+                      <widget-translate>Settings</widget-translate> 
+                    </span>
+                   </md-card-title-text>
+                </md-card-title>
+                
+                <md-card-content>
+                	<md-input-container>
+                    <label>
+                      {{'WIDGET.V2.FORM.QUESTION.DateMode' | translate}}
+                    </label>
+                    <md-select ng-model="config.state.options.format">
+                      <md-option value="day">
+                        <widget-translate>Day</widget-translate>
+                      </md-option>
+                      <md-option value="month">
+                        <widget-translate>Month</widget-translate>
+                      </md-option>
+                    </md-select>
+                  </md-input-container>
+                  
+                  <div layout="row" ng-if="config.state.options.format == 'day'">
+                      <div flex layout="column" layout-align="center">
+                        <div>
+                          <label style="  font-size: 0.75rem;
+                                          color: rgba(0,0,0,0.54);
+                                          overflow: hidden;
+                                          text-overflow: ellipsis;
+                                          white-space: nowrap;
+                                          width: 100%;
+                                          -webkit-font-smoothing: antialiased;
+                                          padding-left: 3px;
+                                          padding-right: 0;
+                                          max-width: 100%;
+                                ">
+                                <widget-translate>Min date</widget-translate>
+                          </label>
+                          
+                          <md-input-container style="margin:0;">
+                            <div  class="md-whiteframe-z1">
+                              <md-calendar  ng-model="config.state.options.constraints.minDate">
+                              </md-calendar>
+                            </div>
+                          </md-input-container>
+                        </div>
+
+                        <div layout="row" layout-align="start center">
+                          <md-button  class="md-primary md-raised"
+                                      ng-disabled="!config.state.options.constraints.minDate"
+                                      ng-click="config.state.options.constraints.minDate = undefined"
+                          >
+                            <widget-translate>Clear</widget-translate>
+                          </md-button>
+                        </div>      
+
+                      </div>
+                      
+                      <div flex layout="column" layout-align="center">
+                        <div>
+                          <label style="  font-size: 0.75rem;
+                                          color: rgba(0,0,0,0.54);
+                                          overflow: hidden;
+                                          text-overflow: ellipsis;
+                                          white-space: nowrap;
+                                          width: 100%;
+                                          -webkit-font-smoothing: antialiased;
+                                          padding-left: 3px;
+                                          padding-right: 0;
+                                          max-width: 100%;
+                                ">
+                                <widget-translate>Max date</widget-translate>
+                          </label>
+                          
+                          <md-input-container style="margin:0;">
+                            <div  class="md-whiteframe-z1">
+                              <md-calendar  ng-model="config.state.options.constraints.maxDate">
+                              </md-calendar>
+                            </div>  
+                          </md-input-container>
+                        </div>
+
+                        <div layout="row" layout-align="start center">
+                          <md-button  class="md-primary md-raised"
+                                      ng-disabled="!config.state.options.constraints.maxDate"
+                                      ng-click="config.state.options.constraints.maxDate = undefined"
+                          >
+                            <widget-translate>Clear</widget-translate>
+                          </md-button>
+                        </div>        
+                      
+                      </div>
+                  </div>
+
+                  <div layout="row" ng-if="config.state.options.format == 'month'">
+                      <div flex layout="column" layout-align="center">
+                        <div>
+                          <label style="  font-size: 0.75rem;
+                                          color: rgba(0,0,0,0.54);
+                                          overflow: hidden;
+                                          text-overflow: ellipsis;
+                                          white-space: nowrap;
+                                          width: 100%;
+                                          -webkit-font-smoothing: antialiased;
+                                          padding-left: 3px;
+                                          padding-right: 0;
+                                          max-width: 100%;
+                                ">
+                                <widget-translate>Min date</widget-translate>
+                          </label>
+                          
+                          <md-input-container style="margin:0;">
+                            <md-datepicker  ng-model="config.state.options.constraints.minDate"
+                                            md-mode="month"
+                                            md-date-locale="monthDateLocale"
+                                            
+                                            md-open-on-focus="true">
+                            </md-datepicker>
+                          </md-input-container>
+                        </div>
+                        <div layout="row" layout-align="start center">
+                          <md-button  class="md-primary md-raised"
+                                      ng-disabled="!config.state.options.constraints.minDate"
+                                      ng-click="config.state.options.constraints.minDate = undefined"
+                          >
+                            <widget-translate>Clear</widget-translate>
+                          </md-button>
+                        </div>       
+                      </div>
+                      <div flex layout="column" layout-align="center">
+                        <div>
+                          <label style="  font-size: 0.75rem;
+                                          color: rgba(0,0,0,0.54);
+                                          overflow: hidden;
+                                          text-overflow: ellipsis;
+                                          white-space: nowrap;
+                                          width: 100%;
+                                          -webkit-font-smoothing: antialiased;
+                                          padding-left: 3px;
+                                          padding-right: 0;
+                                          max-width: 100%;
+                                ">
+                                <widget-translate>Max date</widget-translate>
+                          </label>
+                          
+                          <md-input-container style="margin:0;">
+                            <md-datepicker  ng-model="config.state.options.constraints.maxDate"
+                                            md-mode="month"
+                                            md-date-locale="monthDateLocale"
+                                           
+                                            md-open-on-focus="true">
+                            </md-datepicker>
+                          </md-input-container>
+                        </div>
+
+                        <div layout="row" layout-align="start center">
+                          <md-button  class="md-primary md-raised"
+                                      ng-disabled="!config.state.options.constraints.maxDate"
+                                      ng-click="config.state.options.constraints.maxDate = undefined"
+                          >
+                            <widget-translate>Clear</widget-translate>
+                          </md-button>
+                        </div>
+
+                      </div>
+                  </div>
+
+                </md-card-content>
+              </md-card>
+          </md-tab-body>
+</md-tab>                	
+

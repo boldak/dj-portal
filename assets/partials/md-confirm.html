@@ -1,0 +1,29 @@
+<md-dialog> 
+   <md-toolbar class="{{::options.class}}">
+      <div class="md-toolbar-tools">
+        <md-icon 
+             
+            md-font-icon="{{::options.icon}}" 
+            style="font-family: FontAwesome;  margin-right: 0.25em; font-size:40px;" 
+        >
+        </md-icon>
+        <span>{{options.title}}</span>
+        <span flex></span>
+      </div>
+    </md-toolbar>
+
+    <md-dialog-content class="md-dialog-content">
+        <div ng-if="options.htmlContent" class="md-dialog-content-body" ng-bind-html="options.htmlContent"></div>  
+        <div ng-if="!options.htmlContent" class="md-dialog-content-body"> 
+          <p ng-if="options.textContent">{{options.textContent}}</p> 
+        </div>
+    </md-dialog-content>  
+    <md-dialog-actions> 
+        <md-button ng-click="answer(false)" class="md-primary md-cancel-button"> 
+            {{options.cancel}} 
+        </md-button>
+        <md-button ng-click="answer(true)" class="md-primary md-confirm-button" md-autofocus> 
+            {{options.ok}} 
+        </md-button>  
+    </md-dialog-actions> 
+</md-dialog> 

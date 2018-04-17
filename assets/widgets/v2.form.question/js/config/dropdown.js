@@ -7,7 +7,7 @@ let Dropdown = class extends Question {
     this.state = {
       type: { value: "dropdown", title: "Dropdown" },
       widget: {
-        css: "fa fa-list",
+        css: "fa-list",
         view: this.prefix + "dropdown.view.html",
         options: this.prefix + "dropdown.options.html"
       },

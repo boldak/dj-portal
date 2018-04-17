@@ -1,119 +1,112 @@
-<div class="row" style="margin:1em 0 0">
-  <div class="column small-10 small-centered">
-  	<table style="width:100%; border:none;">
-  		<tr>
-  			<td style="border:none;">
-			    <div class="column small-3" style="width:auto;">
-			      <input 	type="{{config.state.options.format}}" 
-			      			ng-model="answer.value[0]"
-			       />
-			    </div>
-			</td>
-			<td style="border:none; width:75%" ng-if="config.state.options.showResponsesStat && rstat">
 
-				<table style="box-shadow: 0 0.1em 0.5em 0 #607D8B;">
-					<tr>
-						<td ng-repeat="v in rstat track by $index" 
-							style="border: none; 
-									width:2em;
-									"
-						>
-								<div style="font-size: xx-small;
-				                            text-align: center;
-				                            height:1em;
-				                            line-height: 1em;
-				                            color:{{(config.isResponse($index))?'#FF5722':'#777'}};
-				                            "
-				                >
-				                  {{(100*rstat[$index].value).toFixed(0)}}%
-				              </div>
-						</td>	
-					</tr>
-					<tr>
-						<td ng-repeat="v in rstat track by $index" 
-							style="border: none; 
-									width:2em;
-									"
-						>	
-							<div style="height:5em;">
-								  <div       
-					                  style=" 
-					           background:{{(config.isResponse($index))?'#FF5722':'#ffc107'}};
-					           border:0.05rem solid {{(config.isResponse($index))?'#FF5722':'#999'}};
-					                          position:relative;
-					                          height:{{5*rstat[$index].value}}em;
-					                          top:{{5*(1-rstat[$index].value)}}em; 
-					                        "
-					              >
-					              </div>
-				            </div>  
-						</td>
-					</tr>
-					<tr>
-						<td ng-repeat="v in rstat track by $index" 
-							style="border: none; 
-									width:2em;
-									"
-						>    
-							<div  
-			                  style=" 
-			                          text-align: center;
-			                          height:1em;
-			                          line-height: 1em;
-			                          color:{{(config.isResponse($index))?'#FF5722':'#777'}}; 
-			                          font-size: xx-small;
-			                        "
-			            	  >
-			              		{{rstat[$index].title}}
-			              	</div>
-						</td>
-					</tr>		
-				</table>
+<div layout="row" layuot-align="start center">
+	<div flex layout="column" layout-align="center">
+		<div>
+			<label style="	font-size: 0.75rem;
+							    color: rgba(0,0,0,0.54);
+							    overflow: hidden;
+							    text-overflow: ellipsis;
+							    white-space: nowrap;
+							    width: 100%;
+							    -webkit-font-smoothing: antialiased;
+							    padding-left: 3px;
+							    padding-right: 0;
+							    max-width: 100%;
+    				">
+    				<widget-translate>You select</widget-translate> : 
+    				<span ng-if="config.state.options.format == 'day'">{{formatDate()}}</span>
+			</label>
+			<md-input-container style="margin:0;">
+				
+				<div 	class="md-whiteframe-z1"
+						ng-if=" (config.state.options.format == 'day')"
+				>		
+					<md-calendar 	
+									ng-model="answer.value[0]" 
+									ng-change="config.setValue(answer.value[0])"
+									md-mode="{{config.state.options.format}}"
+									md-min-date="config.state.options.constraints.minDate"
+									md-max-date="config.state.options.constraints.maxDate"
+					>
+					</md-calendar>
+				</div>	
+				
+				<md-datepicker  ng-if="(config.state.options.format == 'month') "
+								ng-model="answer.value[0]"
+								ng-change="config.setValue(answer.value[0])"
+		                      	md-mode="month"
+		                     	md-date-locale="monthDateLocale"
+		                     	md-min-date="config.state.options.constraints.minDate"
+								md-max-date="config.state.options.constraints.maxDate"
+		                      	md-open-on-focus="true">
+         		</md-datepicker>
+         		
+			</md-input-container>
 
-	        <!--   <div style="height: 6em; width:{{4*rstat.length}}em; font-size:xx-small;">
-	            <div  class="left" 
-	                  ng-repeat="v in rstat track by $index"
-	            >
-	              <div style="font-size: xx-small;
-	                            position: relative;
-	                            top: {{5*(1-rstat[$index].value)}}em;
+
+		</div>	
+	</div>
+	     
+
+	  <div flex ng-if="config.state.options.showResponsesStat && rstat" layout="column" layout-align="center center">
+	    <table style="box-shadow: 0 1px 3px 0 rgba(0,0,0,.2), 0 1px 1px 0 rgba(0,0,0,.14), 0 2px 1px -1px rgba(0,0,0,.12);">
+	      <tr>
+	        <td ng-repeat="v in rstat track by $index" 
+	          style="border: none; 
+	              width:2em;
+	              "
+	        >
+	            <div style="font-size: xx-small;
+	                                text-align: center;
+	                                height:1em;
+	                                line-height: 1em;
+	                                color:{{(config.isResponse($index))? accentColor : disableColor}};"
+	                    >
+	                      {{(100*rstat[$index].value).toFixed(0)}}%
+	                  </div>
+	        </td> 
+	      </tr>
+	      <tr>
+	        <td ng-repeat="v in rstat track by $index" 
+	          style="border: none; 
+	              width:2em;
+	              "
+	        > 
+	          <div style="height:5em;">
+	              <div       
+	                        style=" 
+	                        background:{{(config.isResponse($index))? accentColor: primaryColor}};
+	                border:0.05rem solid {{(config.isResponse($index))? accentColor : disableColor}};
+	                                position:relative;
+	                                height:{{5*rstat[$index].value}}em;
+	                                top:{{5*(1-rstat[$index].value)}}em; 
+	                              "
+	                    >
+	                    </div>
+	                </div>  
+	        </td>
+	      </tr>
+	      <tr>
+	        <td ng-repeat="v in rstat track by $index" 
+	          style="border: none; 
+	              width:2em;
+	              "
+	        >    
+	          <div  
+	                    style=" 
 	                            text-align: center;
 	                            height:1em;
 	                            line-height: 1em;
-	                            color:#777;"
-	                >
-	                  {{(100*rstat[$index].value).toFixed(0)}}%
-	              </div>
-	              <div       
-	                  style=" background:#ffc107;
-	                          border:0.05rem solid #999;
-	                          position:relative;
-	                          height:{{5*rstat[$index].value}}em;
-	                          top:{{5*(1-rstat[$index].value)}}em; 
-	                          width:4em;
-	                        "
-	              >
-	              </div>
-	              <div       
-	                  style=" position:relative;
-	                          top:5.25em;
-	                          text-align: center;
-	                          height:1em;
-	                          line-height: 1em;
-	                          color:#777; 
-	                          font-size: xx-small;
-	                        "
-	              >
-	              	{{rstat[$index].title}}
-	              </div>
- -->
-	            <!-- {{100/properties.length+'%'}} -->
-<!-- 	            </div>  
-	          </div>  
- -->	        </td>
-		</tr>
-	</table>		    
-  </div>
-</div> 
-<!-- 
-<pre>{{answer | json}}</pre> -->
+	                            color:{{(config.isResponse($index))? accentColor : disableColor}}; 
+	                            font-size: xx-small;
+	                          "
+	                  >
+	                    {{rstat[$index].title}}
+	                  </div>
+	        </td>
+	      </tr>   
+	    </table>
+	  </div>  
+	
+</div>	
+

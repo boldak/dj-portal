@@ -1,0 +1,64 @@
+
+<div 	class="row" 
+		ng-controller="FormRespondentInfoController" 
+		style=" padding: 1rem;
+				margin: 0;
+    		  "
+    	layout="row"
+    	layout-align="end"		
+>
+  <div layout="column" layout-align="start" ng-if="!hidden || globalConfig.designMode">
+
+ 
+  	  <h3>
+  	  	<widget-translate>Respondent Info</widget-translate>
+  	  </h3>
+
+	  <div layout="row" layout-align="left center" style="color: #555;">
+	  	<div>
+		  	<img 	class = "md-user-avatar" 
+		    		ng-if = "respondent.photo" 
+		    		src = "{{respondent.photo}}"
+		    		style = "	margin-top: 8px;
+							    margin-bottom: 8px;
+							    margin-right: 16px;
+							    border-radius: 50%;
+							    box-sizing: content-box;
+							    flex: none;
+							    width: 40px;
+							    height: 40px;
+							"
+		    />
+		    <md-icon 	ng-if="!respondent.photo"
+		                md-font-icon="fa-user-circle"
+		                style="	font-family: FontAwesome;
+		                		margin-top: 8px;
+							    margin-bottom: 8px;
+							    margin-right: 16px;
+							    border-radius: 50%;
+							    box-sizing: content-box;
+							    flex: none;
+							    font-size: 40px;
+                ">
+           </md-icon>
+		</div>
+		<div layout="column">
+		    <span class="md-title">{{(respondent.name) ? respondent.name : respondent.email}}</span>
+		    <span class="md-title" ng-if="respondent.id" style="font-size: 14px;">
+		    	<widget-translate>Logged User</widget-translate>
+		    </span>
+		    <span class="md-title" ng-if="!respondent.id" style="font-size: 14px;">
+		    	<widget-translate>Invited Respondent</widget-translate>
+		    </span>
+		    
+		    <span 	class = "md-subhead" 	
+		    		ng-if = "respondent.name"
+		    		style = "font-size: 10px;"
+		    >
+				{{respondent.email}}
+			</span>
+		</div>
+	  </div>
+
+  </div>	
+</div>	                  	

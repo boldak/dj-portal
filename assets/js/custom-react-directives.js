@@ -353,6 +353,3 @@ m.directive( 'palettePeacker', function( reactDirective ) {
   return reactDirective( 'PalAlt' );
 });
 
-
-
-

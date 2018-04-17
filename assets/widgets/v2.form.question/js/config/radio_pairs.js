@@ -7,7 +7,7 @@ let RadioPairs = class extends Question {
     this.state = {
       type: { value: "radiopairs", title: "One for Each" },
       widget: {
-        css: "fa fa-th",
+        css: "fa-th",
         view: this.prefix + "radio_pairs.view.html",
         options: this.prefix + "radio_pairs.options.html"
       },
@@ -28,7 +28,13 @@ let RadioPairs = class extends Question {
   configure(previus) {
 
     super.configure()
+    
     if (!previus) return;
+
+    this.state.options.title = previus.state.options.title; 
+    this.state.options.note = previus.state.options.note;
+    this.state.options.required = previus.state.options.required;
+    this.state.options.showResponsesStat = previus.state.options.showResponsesStat;
 
     // prepare question config before setting $scope.qtype variable 
     // res - next config, $scope.config - previus config
@@ -61,27 +67,33 @@ let RadioPairs = class extends Question {
   prepare() {
 
     // prepare helped data structures
-    this.scope.entities = _.toPairs(this.state.options.entities)
-      .map(item => {
-        return {
-          id: item[0],
-          title: item[1].title,
-          user: item[1].user
-        }
-      })
+    this.scope.entities = 
+      this.scope.listEditorTools.createCollection(
+        _.toPairs(this.state.options.entities)
+        .map(item => {
+          return {
+            id: item[0],
+            title: item[1].title,
+            user: item[1].user
+          }
+        })
+      )
 
     if( this.state.options.useOneList ){
-      this.scope.properties = this.scope.entities      
-    } else {
-      this.scope.properties = _.toPairs(this.state.options.properties)
-                          .map(item => {
-                            return {
-                              id: item[0],
-                              title: item[1].title,
-                              user: item[1].user
-                            }
-                          })  
-    }
+      this.state.options.properties = angular.extend({},this.state.options.entities)      
+    }  
+
+    this.scope.properties = 
+      this.scope.listEditorTools.createCollection(
+        _.toPairs(this.state.options.properties)
+          .map(item => {
+            return {
+              id: item[0],
+              title: item[1].title,
+              user: item[1].user
+            }
+          })
+      )    
         
 
     // this.state.options.disables =  this.state.options.disables || [];
@@ -155,9 +167,12 @@ let RadioPairs = class extends Question {
     this.setReverseDisabled()
   }
 
-  setValue(entity, property) {
+  setValue(entity) {
 
+    let property = this.scope.answerMap[entity];
     
+    console.log("set value", entity, property);
+
     let index = this.scope.answer.value.map(item => item.entity).indexOf(entity)
 
     if (index < 0) {
@@ -166,7 +181,34 @@ let RadioPairs = class extends Question {
       this.scope.answer.value[index].property = property;
     }
 
-    this.scope.answer.valid = this.scope.answer.value.length == this.scope.entities.length;
+    this.validateAnswer();
+
+    // this.scope.answer.valid = this.scope.answer.value.length == this.scope.entities.length;
+  }
+
+  validateAnswer() {
+
+    if(!this.state.options.required) {
+      this.scope.answer.validationResult = { 
+          valid: true,
+          message: "",
+          needSaveAnswer: true,
+          needSaveForm: true 
+        }
+    } else {
+      this.scope.answer.validationResult = {
+        valid: ( this.scope.answer.value.length == this.scope.entities.length),
+        message: ( this.scope.answer.value.length == this.scope.entities.length) 
+                    ? ""
+                    : this.scope.message("PAIRS_VALIDATION", {
+                        question : this.scope.truncate(this.scope.config.state.options.title, 40)
+                      }),
+        needSaveAnswer: true,
+        needSaveForm: true 
+      }  
+    }
+  
+    this.scope.answer.valid =  this.scope.answer.validationResult.valid
   }
 
   getValue(entity, property) {
@@ -199,6 +241,7 @@ let RadioPairs = class extends Question {
   }
 
   swap() {
+    this.updateConfig()
     let buf = this.state.options.entities;
     this.state.options.entities = this.state.options.properties;
     this.state.options.properties = buf;

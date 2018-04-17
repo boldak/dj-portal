@@ -1,27 +1,71 @@
 {
-  "RESULT": "Result",
-  "DESCRIPTION": "Data Manager Search Result widget",
-  "NOTE": "Note",
-  "LAST_UPDATE":"Updated at",
-  "SOURCE": "Source",
-  "TOPICS":"Topics",
-  "Available_Datasets":"Available Datasets",
-  "DOWNLOAD" : "Download",
-  "UpdatedAt" : "Updated at: ",
-  "Keywords" : "Keywords: ",
-   "NO_INFO_AVAILABLE":"No Info Available",
-   "Data": "Data:",
-   "items": "items",
-   "geo": "Geocode",
-   "time":"Time",
-   "metric":"Metric",
-   "Periodicity":"Periodicity:",
-   "day":"day",
-   "month":"month",
-   "hour":"hour",
-   "minute":"minute",
-   "second":"second",
-   "Units":"Units:",
-   "Metadata":"Metadata"
+
+   "Metadata":"Metadata",
+   "Form":"Form",
+   "Locale":"Locale",
+
+
+   "General": "General",
+   "Access": "Access",
+   "Metadata":"Metadata",
+   "Created at":"Created at",
+   "Updated at":"Updated at",
+   "Import":"Import",
+   "Clone":"Clone",
+   "Page and Form mismatch":"Page and Form mismatch",
+   "Form metadata":"Form metadata",
+   "Key":"Key",
+   "Value":"Value",
+   "Metadata key":"Metadata key",
+   "Metadata value":"Metadata value",
+
+   "Form Access":"Form Access",
+   "Access mode":"Access mode",
+   "ManageInvitedRespondents": "Manage you invited respondents on the tab \"Invited respondents\"",
+    "For any respondents":"For any respondents",
+    "For logged users":"For logged users",
+    "For invited respondents":"For invited respondents",
+    "was opened":"was opened", 
+    "was closed":"was closed",
+    "Invited Respondents": "Invited respondents",
+    "Total": "Total",
+    "Select All": "Select All",
+    "Notify":"Notify",
+    "RespondentEmailAddress":"Respondent email address",
+    "Invalid email address":"Invalid email address",
+    "Respondent already invited":"Respondent already invited",
+    "Invitation template editor":"Invitation template editor",
+    "Subject":"Subject",
+    "Message":"Message",
+    "Message Preview":"Message Preview",
+    "Responses":"Responses",
+    "Export CSV":"Export CSV",
+    "Current app url is":"Current app url is ",
+    "But form metadata is":"But form metadata is ",
+    "For clone form click" : "For clone form click \"Clone\" or ignore this message",
+
+
+
+
+
+
+
+   "ACCESS_FOR_LOGGED_USERS" : "Access alowed for logged users!",
+   "IF_YOU_NEED": "If you need to access login with Google.",
+   "LOGIN_WITH_GOOGLE" : "Login to Google",
+   "CANCEL": "Cancel",
+
+   "ACCESS_IS_DENIED": "Access is denied",
+   "ONLY_INVITED": "Only invited respondents can access to form.",
+   "CLOSE": "Close",
+   "FORM_IS_CLOSED" : "The form is closed. Try access to form later.",
+   
+   "RESPONSE_NOT_COMPLETED": "Responses is not completed",
+   "CAN_SAVE": "But you save responses. This responses will be restored in next session.",
+   "CONTINUE": "continue",
+   "SAVE_RESPONSES": "Save responses"
+
+
+
   
 }

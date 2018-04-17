@@ -53,25 +53,25 @@ let AnswerUtils  = class {
     let nvc = a.filter((item) => !item[1].valid).length;
     let vc = a.length - nvc;
     if (nvc == 0) {
-       this.scope.formToast.show({
-                      state: "success",
-                      message: "The form is completed. Save changes.",
-                      color: this.scope.primaryColor,
-                      icon:"fa-check",
-                      delay:2000
-                    })      
+       // this.scope.formToast.show({
+       //                state: "success",
+       //                message: "The form is completed. Save changes.",
+       //                color: this.scope.primaryColor,
+       //                icon:"fa-check",
+       //                delay:2000
+       //              })      
     } else {
       if ((a.length - nvc) > 0) {
 
-        this.scope.formToast.show({
-                      state: "warning",
-                      message: `You can save the response. 
-                               But ${nvc} out of ${a.length} responses are not completed.
-                               Click to save changes.`,
-                      color: this.scope.warnColor,
-                      icon:"fa-exclamation",
-                      delay:2000
-                    })
+        // this.scope.formToast.show({
+        //               state: "warning",
+        //               message: `You can save the response. 
+        //                        But ${nvc} out of ${a.length} responses are not completed.
+        //                        Click to save changes.`,
+        //               color: this.scope.warnColor,
+        //               icon:"fa-exclamation",
+        //               delay:2000
+        //             })
       } else {
         // this.scope.fanButton.state("none");
       }

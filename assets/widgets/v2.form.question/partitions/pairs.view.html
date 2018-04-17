@@ -1,7 +1,5 @@
-<div class="row" style="margin:1em 0 0">
-  <div class="column small-12 small-centered">
 
-    <table style="border:none; margin: 0 auto;">
+    <table style="border:none; margin: 0 auto; width:100%">
       <tr>
         <td   style=" border:none;
                       border-bottom: 1px solid #999;
@@ -11,44 +9,41 @@
           </span>
         </td>
         <td   style=" border:none;
+                      color:#555;
                       border-bottom: 1px solid #999;
                       text-align: center;
-                      font-size:large;" 
+                      max-width: 10em;
+                      font-size: 14px;" 
               ng-repeat="p in properties">
           {{p.title}}
         </th>  
       </tr>
       <tr ng-repeat="e in entities">
         <td   style=" border:none;
+                      color:#555;
                       border-right: 1px solid #999;
-                      font-size: large;"
+                      font-size: 14px;"
         >
           {{e.title}}
         </td>
-        <td ng-repeat="p in properties" style="border:none;">
-          <div 
-              style="width:60%; margin: 0.25em auto;" 
-              ng-if="!config.state.options.disables[e.id][p.id]"
-          >
-          <input 
-            type="checkbox" 
-            class="checkbox"
-            ng-checked="config.getValue(e.id,p.id)" 
-            id="{{widget.ID+'_'+e.id+'_'+p.id+'_ch'}}"
-            ng-click="config.setValue(e.id,p.id)"
-          >
-          <label for="{{widget.ID+'_'+e.id+'_'+p.id+'_ch'}}" style="color:white;">.</label>
+        <td ng-repeat="p in properties" style="border:none; text-align: center;">
+          <div ng-if="!config.state.options.disables[e.id][p.id]" >
+
+            <md-checkbox  ng-checked="config.getValue(e.id,p.id)"
+                          ng-click="config.setValue(e.id,p.id)"
+                          class="md-primary"
+                          style="margin: auto;"
+              >
+            </md-checkbox>
+
           </div>
-          <div  ng-if="config.state.options.disables[e.id][p.id]" 
-                style=" width: 1.8rem;
-                        height: 1.8rem;"
-          >
+          <div  ng-if="config.state.options.disables[e.id][p.id]">
             &nbsp;
           </div>  
         </td>
         <td style="border:none;" ng-if="config.state.options.showResponsesStat && rstat">
 
-          <table style="margin: 1em; box-shadow: 0 0.1em 0.5em 0 #607D8B;">
+          <table style="margin: 1em; box-shadow: 0 1px 3px 0 rgba(0,0,0,.2), 0 1px 1px 0 rgba(0,0,0,.14), 0 2px 1px -1px rgba(0,0,0,.12);">
             <tr>
               <td ng-repeat="p in properties" 
                 style="border: none; 
@@ -59,7 +54,7 @@
                                       text-align: center;
                                       height:1em;
                                       line-height: 1em;
-                                      color:{{(config.isResponse(e.id,p.id))?'#FF5722':'#777'}};"
+                                      color:{{(config.isResponse(e.id,p.id))? accentColor: disableColor}};"
                           >
                             {{(100*rstat[e.id][p.id]).toFixed(0)}}%
                         </div>
@@ -74,8 +69,8 @@
                 <div style="height:5em;">
                     <div       
                               style=" 
-                              background:{{(config.isResponse(e.id,p.id))?'#FF5722':'#ffc107'}};
-                              border:0.05rem solid {{(config.isResponse(e.id,p.id))?'#FF5722':'#999'}};
+                              background:{{(config.isResponse(e.id,p.id))? accentColor: primaryColor}};
+                              border:0.05rem solid {{(config.isResponse(e.id,p.id))? accentColor: disableColor}};
                                       position:relative;
                                       height:{{5*rstat[e.id][p.id]}}em;
                                       top:{{5*(1-rstat[e.id][p.id])}}em; 
@@ -90,11 +85,3 @@
       </tr>  
     </table>  
 
-  </div>  
-</div>
-
-    <!-- <pre>
-      {{answer | json}}
-    </pre>  
-
- -->

@@ -84,19 +84,28 @@ span.md-subhead.dj-form-title {
     margin-left: 3em;
 }
 
-/*.md-toast-open-top .md-button.md-fab-top-left,
-.md-toast-open-top .md-button.md-fab-top-right {
-  -webkit-transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
-  transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
-  -webkit-transform: translate3d(0, 84px, 0);
-          transform: translate3d(0, 84px, 0); }
-  .md-toast-open-top .md-button.md-fab-top-left:not([disabled]).md-focused, .md-toast-open-top .md-button.md-fab-top-left:not([disabled]):hover,
-  .md-toast-open-top .md-button.md-fab-top-right:not([disabled]).md-focused,
-  .md-toast-open-top .md-button.md-fab-top-right:not([disabled]):hover {
-    -webkit-transform: translate3d(0, 82px, 0);
-            transform: translate3d(0, 82px, 0); }
- md-toast.md-top {
-      top: 50px; }*/
+img.dialog.md-avatar {
+    margin: 8px 16px;
+    border-radius: 50%;
+    box-sizing: content-box;
+    width: 40px;
+    height: 40px;
+}
+
+.editor {
+      width: 100%;
+      height: 12em;
+      margin: 0;
+      font-size: 1em;
+      line-height: 0.9;
+      border: 1px solid #e9e9e9;
+      margin-bottom: 1em;
+  }
+
+.highlighter {
+    line-height: 1;
+}
+
 </style>
 
 
@@ -104,127 +113,64 @@ span.md-subhead.dj-form-title {
 
 <div class="row" ng-controller="FormController" style="padding: 0.5rem; margin: 0;">
 
-<pre>{{toastData | json}}</pre>    
-
-
-<!-- <pre>{{user | json}}</pre> -->
-   
-  <!-- <div class="row" style="font-size: small;">
-      <div class="column small-12">
-          <div class="column small-6">
-            <h4>Form</h4>
-            <pre> {{ widget | json }} </pre>
-          </div>
-          <div class="column small-6">
-            <h4>Answer</h4>
-            <pre> {{ answer | json }} </pre>
-          </div>
-      </div>  
-  </div>  
-  <hr/>
- 
-    <div ng-if="bool" class="fade">
-    Show and hide me
-  </div> -->
- <!--  <button ng-click="reload()">REload</button>
- <pre> {{widget.form.config.access | json}} </pre> -->
-<!--   <div  class="fan-btn top fade" 
-        ng-if="!globalConfig.designMode && fanButton._state"
-
-  >
-    
-        <div>
-           <span   style="   color: white;
-                              background: {{fanButton._state.color}};
-                           "
-                    ng-mouseenter="fanButton.showTooltip()"
-                    ng-mouseleave="fanButton.hideTooltip()"
-                    ng-click="saveAnswers()"
-                   
-                    
-            >
-                <i ng-class="fanButton._state.class"/>  
-            </span>
-        </div>
-
-
-
-          <div  class="fantip fade"
-                ng-if="fanButton._showFantip" 
-                style=" background: #ffffff;
-                        color: {{fanButton._state.color}};"
-          >
-            
-            <table style="border:none; margin: 0;" 
-                  ng-if="widget.form.config.access.type == 'invited' || widget.form.config.access.type == 'users'"
-            >
-              <tr>
-                
-                <td style="border:none;">
-                  <div  class="left"
-                        style=" 
-                          background-image: url({{user.photo}});
-                          background-size: 3em 3em;
-                          
-                          border-radius: 50%;
-                          display: block;
-                          overflow: hidden;
-                          position: relative;
-                          height: 3em;
-                          width: 3em;
-                          "
-                        ng-if="user.photo"
-                  >
-                  </div>
-                  <i    ng-if="!user.photo"
-                        class="fa fa-user-circle"
-                        style="     font-size: 2.75em;
-                                      padding: 0 0 0 0.16em;
-                                      color: #cedded;"
-                  />
-                </td>
-                <td style="border:none;">
-                  <label class="large">
-                    {{user.name || user.email}}!
-                  </label>  
-                </td>
-              </tr>  
-            </table>  
-              
-            <div style="margin:0 1em;">
-              {{fanButton._state.tooltip}}
-            </div>
-          </div>  
-    
-  </div>  -->
-
-
   <div ng-cloak ng-show="globalConfig.designMode">
     
     <md-content>
       <md-tabs md-dynamic-height md-border-bottom>
         
-        <md-tab label="General">
-          <md-content class="md-padding">
+        <md-tab>
+          <md-tab-label>
+            <widget-translate>General</widget-translate>
+          </md-tab-label>  
+          <md-tab-body class="md-padding">
            
               <md-card>
                 <md-card-title>
                   <md-card-title-text>
-                    <span class="md-headline">Form: {{widget.form.id}}</span>
+                    <span class="md-headline">
+                      <widget-translate>Form</widget-translate>: 
+                      {{widget.form.id}}
+                    </span>
                     <span class="md-subhead">
-                        Created at {{formatDate(widget.form.createdAt)}}
+                        <widget-translate>Created at</widget-translate> {{formatDate(widget.form.createdAt)}}
                         <br/>
-                        Updated at {{formatDate(widget.form.updatedAt)}}
+                        <widget-translate>Updated at</widget-translate> {{formatDate(widget.form.updatedAt)}}
                     </span>
                   </md-card-title-text>
+                 
+                  <md-input-container>
+                    <label>
+                      <widget-translate>Locale</widget-translate>
+                    </label>
+                    <md-select 
+                      ng-model="widget.form.config.locale"
+                      ng-change="i18n.setLocale(widget.form.config.locale)"
+                    >
+                      <md-option value="en">
+                        <img src="/img/en.png" class="md-avatar"/>
+                        English
+                      </md-option>
+                      <md-option value="uk">
+                        <img src="/img/uk.png" class="md-avatar"/>
+                        Українська
+                      </md-option>
+                    </md-select>
+                  </md-input-container> 
+
                 </md-card-title>
                 <md-card-actions layout="row" layout-align="start center">
-                  <md-button>Import</md-button>
+                  <md-button>
+                    <widget-translate>
+                      Import
+                    </widget-translate>  
+                  </md-button>
                   <md-button  class="md-warn"
                               ng-click="cloneForm()"
                               ng-if="pageLocation != widget.form.metadata.app_url.value"
                   >
-                    Clone
+                    <widget-translate>
+                      Clone
+                    </widget-translate>  
                   </md-button>
                 </md-card-actions>
                 <md-card-content  ng-if="pageLocation != widget.form.metadata.app_url.value"
@@ -236,40 +182,50 @@ span.md-subhead.dj-form-title {
                             class="md-warn"
                   >
                   </md-icon>
-                  Page and Form mismatch!
+                  <widget-translate>Page and Form mismatch</widget-translate>
                   </h3>
                   <p class="md-warn">
-                    Current app url is <a src="{{pageLocation}}" target="_blank">{{pageLocation}}</a>
+                    <widget-translate>Current app url is</widget-translate>
+                     <a src="{{pageLocation}}" target="_blank">{{pageLocation}}</a>
                     <br/>
-                    But form metadata "app_url" is 
+                    <widget-translate>But form metadata is</widget-translate> 
                     <a src="{{ ( widget.form.metadata.app_url.value ) ? widget.form.metadata.app_url.value : '#' }}">
                       {{ ( widget.form.metadata.app_url.value ) ? widget.form.metadata.app_url.value : 'empty' }}
-                    </a>  
+                    </a>.  
                     <br/>
-                    For clone form click "CLONE" button above or ignore this message.
+                    <widget-translate>
+                      For clone form click
+                    </widget-translate>.
                   </p> 
                 </md-card-content>
               </md-card>
            
 
 
-          </md-content>
+          </md-tab-body>
         </md-tab>
 
         
 
-        <md-tab label="{{'Metadata' | translate}}">
-          <md-content class="md-padding">
+        <md-tab>
+          <md-tab-label>
+            <widget-translate>Metadata</widget-translate>
+          </md-tab-label>  
+          <md-tab-body class="md-padding">
             <form name="formMetadata">
               <md-card>
                   
                   <md-card-title>
                     <md-card-title-text>
-                      <span class="md-headline">Form metadata</span>
+                      <span class="md-headline">
+                        <widget-translate>Form metadata</widget-translate>
+                      </span>
                     </md-card-title-text>
                   </md-card-title>
 
                   <md-card-content>
+
+                  
 
                   <table style="width:100%; border:none; margin:0 auto; background: transparent;">
                     <tr>
@@ -278,14 +234,14 @@ span.md-subhead.dj-form-title {
                                                     padding: 0;
                                                     float:none;
                       ">
-                        Key
+                        <widget-translate>Key</widget-translate>
                       </th>
                       <th  class="md-tab" style="   border: none;
                                                     width: 65%;
                                                     padding: 0;
                                                     float: none;
                       ">
-                        Value
+                        <widget-translate>Value</widget-translate>
                       </th>  
                     </tr>
                     <tr ng-repeat="m in metadataTools.metadata">
@@ -310,7 +266,11 @@ span.md-subhead.dj-form-title {
                     <tr>
                       <td style="border:none;">
                         <md-input-container class="md-block with-placeholder">
-                          <label>Metadata key</label>
+                          <label>
+                            <widget-translate>
+                              Metadata key
+                            </widget-translate>  
+                          </label>
                           <input ng-model="textFields.key" ng-value="textFields.key" name="metadataKey" required>
 
                           <div ng-messages="formMetadata.metadataKey.$error">
@@ -322,7 +282,11 @@ span.md-subhead.dj-form-title {
                       </td>
                       <td style="border:none;">
                         <md-input-container class="md-block with-placeholder">
-                          <label>Metadata value</label>
+                          <label>
+                            <widget-translate>
+                              Metadata value
+                            </widget-translate>
+                          </label>
                           <input ng-model="textFields.value" ng-value="textFields.value">
                         </md-input-container>
                       </td>
@@ -340,46 +304,64 @@ span.md-subhead.dj-form-title {
                 </md-card-content>
               
               </md-card>
-            </form>  
-          </md-content>
+            </form>
+
+            
+
+          </md-tab-body>
         
         </md-tab>
 
-        <md-tab label="Access">
-          <md-content class="md-padding">
+        <md-tab>
+          <md-tab-label>
+            <widget-translate>Access</widget-translate>
+          </md-tab-label>
+            
+          <md-tab-body class="md-padding">
 
             <md-card>
                 
                 <md-card-title>
                   <md-card-title-text>
-                    <span class="md-headline">Form Access</span>
+                    <span class="md-headline">
+                      <widget-translate>Form Access</widget-translate>
+                    </span>
                   </md-card-title-text>
                 </md-card-title>
 
                 <md-card-content>
                   <md-switch  ng-model="widget.form.config.access.enabled" 
-                              ng-change="userNotification()"
+                              ng-change="changeAccess()"
                               class="md-primary"
                   >
-                    Access {{(widget.form.config.access.enabled)? "was opened": "was closed" }} 
+                    <widget-translate>Access</widget-translate>
+                    &nbsp;
+                    <widget-translate ng-if="widget.form.config.access.enabled">was opened</widget-translate>
+                    &nbsp;
+                    <widget-translate ng-if="!widget.form.config.access.enabled">was closed</widget-translate>
+                    &nbsp;
                     <span ng-if="widget.form.config.access.lastNotificatedAt">
-                      ({{timeAgo(widget.form.config.access.lastNotificatedAt)}})
+                      {{timeAgo(widget.form.config.access.lastNotificatedAt)}}
                     </span>  
                   </md-switch>
 
                   <md-input-container>
-                    <label>Access mode</label>
+                    <label>
+                      <widget-translate>Access mode</widget-translate>
+                    </label>
                     <md-select ng-model="widget.form.config.access.type">
                       <md-option ng-repeat="t in accessTypes" 
                           ng-click="setAccessType(t.type)" 
                           ng-value="t.type"
                       >
-                        {{t.title}}
+                        {{('WIDGET.V2.FORM.'+t.title) | translate}}
                       </md-option>
                     </md-select>
                   </md-input-container>
                   <p ng-if="widget.form.config.access.type == 'invited'">
-                    Manage the list of respondents in the "Invited Respondents" tab.
+                    <widget-translate>
+                      ManageInvitedRespondents
+                    </widget-translate>.
                   </p>  
 
                 </md-card-content>  
@@ -387,145 +369,235 @@ span.md-subhead.dj-form-title {
 
 
           
-          </md-content>
+          </md-tab-body>
         </md-tab>
-        <md-tab label="Invited Respondents" ng-if="widget.form.config.access.type == 'invited'">
-            <md-content class="md-padding">
+
+        <md-tab ng-if="widget.form.config.access.type == 'invited'">
+          <md-tab-label>
+            <widget-translate>Invited Respondents</widget-translate>
+          </md-tab-label>  
+            <md-tab-body class="md-padding">
               <form name="formInvite">
                 <md-card>
                   
                   <md-card-title>
                     <md-card-title-text>
-                      <span class="md-headline">Invited Respondents</span>
+                      <span class="md-headline">
+                        <widget-translate>  
+                          Invited Respondents
+                        </widget-translate>  
+                      </span>
                     </md-card-title-text>
                   </md-card-title>
 
-                  <md-card-content>
+                  <md-card-content layout="row">
                     
-                    <div flex-gt-sm="50" flex>
-                      <md-toolbar layout="row" class="md-hue-3" ng-if="widget.form.config.access.users.length > 0">
-                        <div class="md-toolbar-tools">
-                          <span>Total {{widget.form.config.access.users.length}} respondents</span>
-                        </div>
-                        <span flex></span>
-                        <md-button ng-click="userUtils.selectAll()">
-                          Select All
-                        </md-button>
-                        <md-button ng-click="userNotification()">
-                          Notify
-                        </md-button>
+                    <div flex-gt-sm="50" layout="column" flex layout-margin>
+                      
+                        <md-toolbar layout="row" class="md-hue-3" ng-if="widget.form.config.access.users.length > 0">
+                          <div class="md-toolbar-tools">
+                            <span>
+                              <widget-translate>Total</widget-translate>: 
+                              {{widget.form.config.access.users.length}}
+                            </span>
+                          </div>
+                          <span flex></span>
+                          <md-button ng-click="userUtils.selectAll()" style="font-size: 12px;">
+                            <widget-translate>Select All</widget-translate>
+                          </md-button>
+                          <md-button ng-click="userNotification()" style="font-size: 12px;">
+                            <widget-translate>Notify</widget-translate>
+                          </md-button>
+                        </md-toolbar>
+
+                        <md-content style="
+                                    max-height: 21em;
+                                    border:{{(widget.form.config.access.users.length > 0) ? '1px solid #e9e9e9' : 'none'}};
+                        ">
+
+                          <md-list class="md-dense" flex ng-if="widget.form.config.access.users.length > 0">
+                            
+                            <md-list-item class="md-3-line" ng-repeat="u in widget.form.config.access.users">
+                              
+                              <md-checkbox class="md-primary" ng-model="u.selected">
+                              </md-checkbox>
+                              
+                              <div layout-align="space-around" style="margin:auto;" ng-if="u.find">
+                                <md-progress-circular class="md-hue-2" md-diameter="20px">
+                                </md-progress-circular>
+                              </div>
+
+                              <md-icon  ng-if="!u.photo && !u.find"
+                                        md-font-icon="fa-user-circle"
+                                        style="font-family: FontAwesome; 
+                                        font-size: 2.5em;
+                                        margin-right: 0.25em;">
+                              </md-icon>
+
+                                
+                              <img ng-if="u.photo && !u.find" src="{{u.photo}}" class="md-avatar" />
+                              
+                              <div class="md-list-item-text" layout="column">
+                                <h3 style="font-size: large;">
+                                  {{(u.name)? u.name : u.email}}
+                                </h3>
+                                <h4>
+                                  <a href="mailto:{{u.email}}" target="_blank">{{u.email}}</a>
+                                </h4>  
+                                <h4 ng-if="u.apikey">apikey: {{(u.apikey)?u.apikey : 'not used'}}</h4>
+                                <h4 ng-if="u.notifiedAt">Notified at: {{timeAgo(u.notifiedAt)}}</h4>
+                              </div>
+
+                              <md-icon  ng-if="!u.id"
+                                        class="md-primary"
+                                        ng-click="userUtils.editInvitedUser(u)"
+                                        md-font-icon="fa-address-card"
+                                        style="font-family: FontAwesome; margin-right: 1em;">
+                              </md-icon>
+
+                              <md-icon  ng-click="userUtils.deleteInvitedUser(u.email)"  
+                                        md-font-icon="fa-times"
+                                        class="md-accent"
+                                        style="font-family: FontAwesome;">
+                              </md-icon>
+                            
+                            </md-list-item>
+                          </md-list>
+                        </md-content>
+                          <div layout="row">
+                                                        
+                              <md-autocomplete flex required
+                                  md-input-name="respondentEmail"
+                                  md-selected-item="invitedUser"
+                                  md-search-text="respondentEmail"
+                                  md-items="cu in userUtils.getUsers(formInvite.respondentEmail.$viewValue)" 
+                                  md-item-text="cu.email"
+                                  md-search-text-change="userUtils.validInvitedUser(respondentEmail,formInvite.respondentEmail)"
+                                  md-selected-item-change="userUtils.validInvitedUser(invitedUser,formInvite.respondentEmail)"
+                                  md-floating-label="{{'WIDGET.V2.FORM.RespondentEmailAddress' | translate}}"
+                                  md-clear-button="true"
+                                  md-no-cache
+                                  md-menu-class="autocomplete-custom-template"
+                              >
+                                <md-item-template style="max-width:200px;">
+                                  <span class="item-title">
+                                    <img src="{{cu.photo}}" class="md-avatar" />
+                                    {{cu.email}}
+
+                                  </span>
+                                </md-item-template>
+                                <div  ng-messages="formInvite.respondentEmail.$error" 
+                                      ng-if="formInvite.respondentEmail.$touched"
+                                >
+                                  <div ng-message="email">
+                                    <widget-translate>
+                                      Invalid email address
+                                    </widget-translate>.
+                                  </div>
+                                  <div ng-message="invited">
+                                    <widget-translate>
+                                      Respondent already invited
+                                    </widget-translate>.
+                                  </div>
+                                </div>
+                              </md-autocomplete>
+                        <button   ng-click="userUtils.addInvitedUser()" 
+                                  ng-disabled="!userUtils.invitedUserIsValid || userUtils.userIsInvited"
+                                  class="md-button md-fab md-mini md-primary"
+                                  style="margin: 1em 0.5em;"
+                                  >
+                          <md-icon md-font-icon="fa-user-plus" style="font-family: FontAwesome;"></md-icon>        
+                        </button>
+                      </div>  
+                        
+                        
+                     
+                    </div>
+                    
+
+                    <div flex-gt-sm="50" flex layout="column"  layout-align="top" layout-margin ng-if="widget.form.config.access.users.length > 0">
+                      <md-toolbar layout="row" class="md-hue-3">
+                          <div class="md-toolbar-tools">
+                            <widget-translate>Invitation template editor</widget-translate>
+                          </div>
+                          <span flex></span>
                       </md-toolbar>
 
-                      <md-content style="max-height: 25em;">
-
-                        <md-list class="md-dense" flex ng-if="widget.form.config.access.users.length > 0">
-                          
-                          <md-list-item class="md-3-line" ng-repeat="u in widget.form.config.access.users">
-                            
-                            <md-checkbox class="md-primary" ng-model="u.selected">
-                            </md-checkbox>
-                            
-                            <div layout-align="space-around" style="margin:auto;" ng-if="u.find">
-                              <md-progress-circular class="md-hue-2" md-diameter="20px">
-                              </md-progress-circular>
-                            </div>
-
-                            <md-icon  ng-if="!u.photo && !u.find"
-                                      md-font-icon="fa-user-circle"
-                                      style="font-family: FontAwesome; 
-                                      font-size: 2.5em;
-                                      margin-right: 0.25em;">
-                            </md-icon>
-
-                              
-                            <img ng-if="u.photo && !u.find" src="{{u.photo}}" class="md-avatar" />
-                            
-                            <div class="md-list-item-text" layout="column">
-                              <h3 style="font-size: large;">
-                                {{(u.name)? u.name : u.email}}
-                              </h3>
-                              <h4>
-                                <a href="mailto:{{u.email}}" target="_blank">{{u.email}}</a>
-                              </h4>  
-                              <h4 ng-if="u.apikey">apikey: {{(u.apikey)?u.apikey : 'not used'}}</h4>
-                              <h4 ng-if="u.notifiedAt">Notified at: {{timeAgo(u.notifiedAt)}}</h4>
-                            </div>
-
-                            <md-icon  ng-if="!u.id"
-                                      class="md-primary"
-                                      ng-click="userUtils.editInvitedUser(u)"
-                                      md-font-icon="fa-address-card"
-                                      style="font-family: FontAwesome; margin-right: 1em;">
-                            </md-icon>
-
-                            <md-icon  ng-click="userUtils.deleteInvitedUser(u.email)"  
-                                      md-font-icon="fa-times"
-                                      class="md-accent"
-                                      style="font-family: FontAwesome;">
-                            </md-icon>
-                          
-                          </md-list-item>
-                        </md-list>
+                      <md-input-container class="md-block no-error">
+                        <label>
+                          <widget-translate>Subject</widget-translate>
+                        </label>
+                        <input ng-model="widget.form.config.access.notificationSubject">
+                      </md-input-container>
                       
-                      </md-content>
-                    </div>        
-                    <div flex-gt-sm="50" flex layout="row">
-                  
+                      <div style="
+                          font-size: 12px;
+                          color: rgba(0,0,0,0.54);
+                          margin: 0 1em;
+                          display: block;
+                          font-weight: normal;
+                          line-height: 1.5;
+                      ">
 
-                  <md-autocomplete flex required
-                      md-input-name="respondentEmail"
-                      md-selected-item="invitedUser"
-                      md-search-text="respondentEmail"
-                      md-items="cu in userUtils.notInvitedUsers"
-                      md-item-text="cu.email"
-                      md-search-text-change="userUtils.validInvitedUser(respondentEmail,formInvite.respondentEmail)"
-                      md-selected-item-change="userUtils.validInvitedUser(invitedUser,formInvite.respondentEmail)"
-                      md-floating-label="Respondent Email Address"
-                      md-clear-button="true"
-                      md-menu-class="autocomplete-custom-template"
-                  >
-                    <md-item-template>
-                      <span class="item-title">
-                        <img src="{{cu.photo}}" class="md-avatar" />
-                        {{cu.email}}
-                      </span>
-                    </md-item-template>
-                    <div  ng-messages="formInvite.respondentEmail.$error" 
-                          ng-if="formInvite.respondentEmail.$touched"
-                    >
-                      <div ng-message="email">Invalid email address.</div>
-                      <div ng-message="invited">Respondent already invited.</div>
-                    </div>
-                  </md-autocomplete>
+                        <widget-translate>Message</widget-translate>
+                      </div>
 
-                  <button   ng-click="userUtils.addInvitedUser()" 
-                            ng-disabled="!userUtils.invitedUserIsValid || userUtils.userIsInvited"
-                            class="md-button md-fab md-mini md-primary"
-                            style="margin: 1em 0.5em;"
-                            >
-                    <md-icon md-font-icon="fa-user-plus" style="font-family: FontAwesome;"></md-icon>        
-                  </button> 
+                      <!-- <md-content style="max-height: 25em;"> -->
+                        
+                        <div 
+                              class="editor" 
+                              ng-ace 
+                              data="widget.form.config.access.notificationTemplate" 
+                              options="templateEditorOptions">
+                        </div>
+                        <div style="
+                            font-size: 12px;
+                            color: rgba(0,0,0,0.54);
+                            margin: 0 1em;
+                            display: block;
+                            font-weight: normal;
+                            line-height: 1.5;
+                        ">
+                          <widget-translate>Message Preview</widget-translate>
+                        </div>
+                        <div  style="
+                                max-height: 14em; 
+                                overflow: auto;
+                                border: 1px solid #e9e9e9;
+                                padding: 2em;" 
+                                ng-bind-html = "messagePreview"
+                        >
+                        </div>  
 
-                      </div>  
+                      <!-- </md-content>   -->
+                        
+                    </div>  
 
                   </md-card-content>  
                 </md-card>
               </form>
-            </md-content>
+            </md-tab-body>
           
         </md-tab>  
 
-        <md-tab label="Responses">
-            <md-content class="md-padding">
+        <md-tab>
+          <md-tab-label>
+            <widget-translate>Responses</widget-translate>
+          </md-tab-label>  
+            <md-tab-body class="md-padding">
               <md-card>
                 
                 <md-card-title>
                   <md-card-title-text>
-                    <span class="md-headline">Responses</span>
+                    <span class="md-headline">
+                      <widget-translate>Responses</widget-translate>
+                    </span>
                   </md-card-title-text>
                 </md-card-title>
                 <md-card-actions layout="row" layout-align="start center">
-                  <md-button ng-click="exportResponses()">Export CSV</md-button>
+                  <md-button ng-click="exportResponses()">
+                    <widget-translate>Export CSV</widget-translate>
+                  </md-button>
                 </md-card-actions>
 
                 <md-card-content>
@@ -546,7 +618,7 @@ span.md-subhead.dj-form-title {
                                       font-size: larger;" 
                                 colspan="{{responseDynamic.length}}"
                           >
-                            Total: {{responsesStat.length}} responses
+                            <widget-translate>Total</widget-translate>: {{responsesStat.length}}
                           </td>
                         </tr>    
                         <tr>
@@ -608,7 +680,7 @@ span.md-subhead.dj-form-title {
                       </table>
                 </md-card-content>
               </md-card>  
-          </md-content>
+          </md-tab-body>
         </md-tab>
       </md-tabs>
     </md-content>

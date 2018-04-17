@@ -7,7 +7,7 @@ let Pairs = class extends Question {
     this.state = {
       type: { value: "pairs", title: "Matching pairs" },
       widget: {
-        css: "fa fa-th",
+        css: "fa-th",
         view: this.prefix + "pairs.view.html",
         options: this.prefix + "pairs.options.html"
       },
@@ -25,10 +25,18 @@ let Pairs = class extends Question {
     this.configure(previus)
   }
 
+
   configure(previus) {
 
     super.configure()
     if (!previus) return;
+
+    this.state.options.title = previus.state.options.title; 
+    this.state.options.note = previus.state.options.note;
+    this.state.options.required = previus.state.options.required;
+    this.state.options.showResponsesStat = previus.state.options.showResponsesStat;
+
+
 
     // prepare question config before setting $scope.qtype variable 
     // res - next config, $scope.config - previus config
@@ -55,40 +63,36 @@ let Pairs = class extends Question {
   }
 
   prepare() {
-
+  
     // prepare helped data structures
-    this.scope.entities = _.toPairs(this.state.options.entities)
-      .map(item => {
-        return {
-          id: item[0],
-          title: item[1].title,
-          user: item[1].user
-        }
-      })
+    this.scope.entities = 
+      this.scope.listEditorTools.createCollection(
+        _.toPairs(this.state.options.entities)
+          .map(item => {
+            return {
+              id: item[0],
+              title: item[1].title,
+              user: item[1].user
+            }
+          })
+      )    
 
     if( this.state.options.useOneList ){
-      this.scope.properties = this.scope.entities      
-    } else {
-      this.scope.properties = _.toPairs(this.state.options.properties)
-                          .map(item => {
-                            return {
-                              id: item[0],
-                              title: item[1].title,
-                              user: item[1].user
-                            }
-                          })  
+      this.state.options.properties = angular.extend({},this.state.options.entities)      
     }
-        
 
-    // this.state.options.disables =  this.state.options.disables || [];
-    // this.scope.disables = {};
-    
-    // this.state.options.disables.forEach(item => {
-    //   this.scope.disables[item.entity] = this.scope.disables[item.entity] || {}
-    //   this.scope.disables[item.entity][item.property] = true;
-    // })
-
-
+    this.scope.properties = 
+      this.scope.listEditorTools.createCollection(
+        _.toPairs(this.state.options.properties)
+          .map(item => {
+            return {
+              id: item[0],
+              title: item[1].title,
+              user: item[1].user
+            }
+          })
+      )    
+  
     this.scope.answer = {
       valid: false,
       question: this.scope.widget.ID,
@@ -136,7 +140,6 @@ let Pairs = class extends Question {
     let p = this.scope.properties;
     let e = this.scope.entities;
 
-
     for(let i=0; i<e.length; i++){
       for(let j=i+1; j<p.length; j++){
         this.setDisable(e[i].id,p[j].id)
@@ -147,8 +150,6 @@ let Pairs = class extends Question {
   }
 
   setValue(entity, property) {
-
-    
 
     let index = -1;
     for (let i = 0; i < this.scope.answer.value.length; i++) {
@@ -165,7 +166,33 @@ let Pairs = class extends Question {
       this.scope.answer.value.splice(index, 1)
     }
 
+    this.validateAnswer();
     this.scope.answer.valid = this.scope.answer.value.length > 0;
+  }
+
+  validateAnswer() {
+
+    if(!this.state.options.required) {
+      this.scope.answer.validationResult = { 
+          valid: true,
+          message: "",
+          needSaveAnswer: true,
+          needSaveForm: true 
+        }
+    } else {
+      this.scope.answer.validationResult = {
+        valid: ( this.scope.answer.value.length > 0 ),
+        message: ( this.scope.answer.value.length > 0 ) 
+                    ? ""
+                    : this.scope.message("PAIRS_VALIDATION", {
+                        question : this.scope.truncate(this.scope.config.state.options.title, 40)
+                      }),
+        needSaveAnswer: true,
+        needSaveForm: true 
+      }  
+    }
+  
+    this.scope.answer.valid =  this.scope.answer.validationResult.valid
   }
 
   getValue(entity, property) {
@@ -198,11 +225,13 @@ let Pairs = class extends Question {
   }
 
   swap() {
+    this.updateConfig()
     let buf = this.state.options.entities;
     this.state.options.entities = this.state.options.properties;
     this.state.options.properties = buf;
     this.state.options.disables = {};
     this.prepare();
+    // console.log(this.state.options.entities, this.state.options.properties)
   }
 
   normalizeAnswer() {
@@ -231,38 +260,36 @@ let Pairs = class extends Question {
   setMode(value){
     this.state.options.disables = {};
     this.prepare();
+    this.updateConfig();
   }
 
-  generateValues() {
-    // let values = this.scope.config.state.options.ordinals.values;
-    // let range = this.scope.config.state.options.ordinals.range;
-    // let lowTitle = values[0].title;
-    // let highTitle = values[values.length-1].title;
-    // let newValues = []
-    // for(let i=range.min; i<=range.max; i++) newValues.push({value:i})
-    // newValues[0].title = lowTitle;
-    // newValues[newValues.length-1].title = highTitle;
-    // this.scope.config.state.options.ordinals.values = newValues;   
-  }
+  generateValues() {}
 
 
-    getResponseStat(responses) {
-      if(!responses) return;
-    let RStat = {};
-    this.scope.entities.forEach(e => {
-      RStat[e.id] = {}
-      this.scope.properties.forEach(p => {
-        RStat[e.id][p.id] = responses.filter(r => {
-          if ( (r.entity_id == e.id) && (r.property_id == p.id) ){
-              return true
-            }else{
-              return false
-            }
-        }).length;
+  getResponseStat(responses) {
+    if(!responses) return;
+      let RStat = {};
+      this.scope.entities.forEach(e => {
+        RStat[e.id] = {}
+        this.scope.properties.forEach(p => {
+          RStat[e.id][p.id] = responses.filter(r => {
+            if ( (r.entity_id == e.id) && (r.property_id == p.id) ){
+                return true
+              }else{
+                return false
+              }
+          }).length;
+        })
       })
-    })
-    // console.log(RStat)
-    _.toPairs(RStat).forEach(e => {
+      // console.log(RStat)
+    let pairs = _.toPairs(RStat)
+
+    if(pairs.length == 0){
+      this.scope.rstat = undefined;
+      return;  
+    }
+
+    pairs.forEach(e => {
         let values = _.toPairs(e[1]);
         // console.log(values)
         let v = values.map(item => item[1])

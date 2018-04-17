@@ -18,11 +18,26 @@ let ListEditorTools  = class {
 	
 	}
 
-	add(object) {
-	    
-	    object.push({id:this.scope.randomID(), $djItemType:"embeded"});
-	    this.scope.markModified();
-	
+
+	createCollection(array) {
+		array = array || [];
+		let res = array.map(item => item);
+		res.$$collectionId = this.scope.randomID();
+		res.forEach(item => {
+			item.$$collectionId = res.$$collectionId;
+			item.$djItemType = "embedded"
+		})
+		return res;
+	}
+
+	add( collection, value ) {
+	    if (angular.isObject(value)){
+	    	if(!collection.$$collectionId) collection = this.createCollection(collection);
+	    	value.$$collectionId = collection.$$collectionId;
+	    	value.$djItemType = "embedded"
+	    	collection.push(value)
+	    }
+	    return collection;
 	}
 
 	cselect(value) {
@@ -44,10 +59,11 @@ let ListEditorTools  = class {
 			      // event.source.nodeScope.$$childHead.drag = true;
 			  },
 			  accept: (sourceNodeScope, destNodesScope, destIndex) => {
+			  	// console.log("start",startDest,"source",sourceNodeScope, "dest",destNodesScope)
 			    if(dest != destNodesScope){
 			        dest = destNodesScope;
 			    }
-			    return startDest == dest;
+			    return sourceNodeScope.$modelValue.$$collectionId == dest.$modelValue.$$collectionId;
 			  }
 		}
 	}		  

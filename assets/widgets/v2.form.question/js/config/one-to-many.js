@@ -1,13 +1,16 @@
 import angular from 'angular';
 import Question from "./question.js"
 
+       
+
+
 let OneToMany = class extends Question {
 	constructor(scope, previus) {
 		super(scope, previus)
 		this.state  = {
 	      type:{value:"radio", title:"Оne of many"}, 
 	      widget:{
-	        css:"fa fa-stop-circle", 
+	        css:"fa-stop-circle", 
 	        view:this.prefix+"radio.view.html", 
 	        options:this.prefix+"radio.options.html"
 	      },
@@ -32,6 +35,13 @@ let OneToMany = class extends Question {
 
           // prepare question config before setting $scope.qtype variable 
           // res - next config, $scope.config - previus config
+
+          this.state.options.title = previus.state.options.title; 
+          this.state.options.note = previus.state.options.note;
+          this.state.options.required = previus.state.options.required;
+          this.state.options.showResponsesStat = previus.state.options.showResponsesStat;
+
+
           if(["dropdown","check"].indexOf(previus.state.type.value) < 0) return;
           
           this.state.options.nominals = {};
@@ -51,14 +61,23 @@ let OneToMany = class extends Question {
     prepare() {
 
           // prepare helped data structures
-          this.scope.alternatives = _.toPairs(this.state.options.nominals)
-                                  .map(item => {
-                                    return {
-                                      id:item[0],
-                                      title:item[1].title,
-                                      user:item[1].user
-                                    }
-                                  })
+          this.scope.alternatives = 
+              this.scope.listEditorTools.createCollection(
+                _.toPairs(this.state.options.nominals)
+                  .map(item => {
+                    return {
+                      id:item[0],
+                      title:item[1].title,
+                      user:item[1].user
+                    }
+                  })
+                  .filter( item =>  {
+                    if(this.scope.globalConfig.designMode) return true;
+                    if (this.state.options.userCollaboration) return true;
+                    if(item.user) return item.user.email == this.scope.user.email;
+                    return true
+                  })
+              )    
           
           this.scope.checkboxes = {};
           for(let item of this.scope.alternatives){
@@ -75,16 +94,56 @@ let OneToMany = class extends Question {
         }
 
         setValue(value) {
-        	this.scope.answer.valid = (angular.isDefined(this.scope.answer.value[0]))	
+          if(angular.isDefined(value)){
+            this.scope.answer.value[0] = value;
+          }
+          this.validateAnswer();
+        	// this.scope.answer.valid = (angular.isDefined(this.scope.answer.value[0]))	
+        }
+
+        validateAnswer() {
+
+          if(!this.state.options.required) {
+            this.scope.answer.validationResult = { 
+                valid: true,
+                message: "",
+                needSaveAnswer: true,
+                needSaveForm: true 
+              }
+          } else {
+            this.scope.answer.validationResult = {
+              valid: ( angular.isDefined(this.scope.answer.value[0]) ),
+              message: ( angular.isDefined(this.scope.answer.value[0]) ) 
+                          ? ""
+                          : this.scope.message("O2M_VALIDATION", {
+                              question : this.scope.truncate(this.scope.config.state.options.title, 40)
+                            }),
+              needSaveAnswer: true,
+              needSaveForm: true 
+            }  
+          }
+        
+          this.scope.answer.valid =  this.scope.answer.validationResult.valid
         }
 
        
         updateConfig() {
+
           //  transform helped data structures into config
-          this.state.options.nominals = {};
+          if(this.scope.globalConfig.designMode){
+            this.state.options.nominals = {};
+          } 
+          // update exists nominals and add new nominals
+          this.state.options.nominals = this.state.options.nominals || {};
+          // console.log("UPDATE CONFIG",this.scope.globalConfig.designMode, this.state.options.nominals, this.scope.alternatives )
           for( let item of this.scope.alternatives ){
             this.state.options.nominals[item.id] = {title: item.title, user:item.user}; 
           }
+          //  transform helped data structures into config
+          // this.state.options.nominals = {};
+          // for( let item of this.scope.alternatives ){
+          //   this.state.options.nominals[item.id] = {title: item.title, user:item.user}; 
+          // }
         }
 
           getResponseStat(responses) {
@@ -102,7 +161,10 @@ let OneToMany = class extends Question {
             })
             // console.log("RSTAT!!!!!!!!!!!!", RStat)
             let pairs = _.toPairs(RStat)
-            console.log(pairs)
+            if(pairs.length == 0){
+              this.scope.rstat = undefined;
+              return;  
+            }
             let values = pairs.map(item => item[1])
             let sum = values.reduce((item,sum) => {return sum+item})
             if(sum==0){

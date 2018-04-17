@@ -7,7 +7,7 @@ let Range = class extends Question {
     this.state = {
       type: { value: "range", title: "Range" },
       widget: {
-        css: "fa fa-arrows-h",
+        css: "fa-arrows-h",
         view: this.prefix + "range.view.html",
         options: this.prefix + "range.options.html"
       },
@@ -28,7 +28,15 @@ let Range = class extends Question {
   }
 
   configure(previus) {
+    
     super.configure()
+    
+    if(!previus) return;
+
+    this.state.options.title = previus.state.options.title; 
+    this.state.options.note = previus.state.options.note;
+    this.state.options.required = previus.state.options.required;
+    this.state.options.showResponsesStat = previus.state.options.showResponsesStat;
   }
 
   applyAnswer() {}
@@ -45,13 +53,36 @@ let Range = class extends Question {
 
   setValue(value) {
     this.scope.answer.value[0] = value;
-    this.scope.answer.valid = (angular.isDefined(this.scope.answer.value[0]))
+    this.validateAnswer()
+    // this.scope.answer.valid = (angular.isDefined(this.scope.answer.value[0]))
   }
 
   validateAnswer() {
-   this.scope.answer.valid = (angular.isDefined(this.scope.answer.value[0])) 
+                  
+    if(!this.state.options.required) {
+      this.scope.answer.validationResult = { 
+          valid: true,
+          message: "",
+          needSaveAnswer: true,
+          needSaveForm: true 
+        }
+    } else {
+      this.scope.answer.validationResult = {
+        valid: angular.isDefined(this.scope.answer.value[0]),
+        message: ( angular.isDefined(this.scope.answer.value[0]) ) 
+                    ? ""
+                    : this.scope.message("RANGE_VALIDATION", {
+                        question : this.scope.truncate(this.scope.config.state.options.title, 40)
+                      }),
+        needSaveAnswer: true,
+        needSaveForm: true 
+      }  
+    }
+  
+    this.scope.answer.valid =  this.scope.answer.validationResult.valid
   }
 
+  
   updateConfig() {}
 
   getResponseStat(responses) {

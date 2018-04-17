@@ -5,8 +5,7 @@ let m = angular.module('app.widgets.v2.form.submit', [])
 m.controller('FormSubmitController', ($scope, APIUser, APIProvider) => {
 
   $scope.submit = () => {
-    // console.log("SUBMIT")
-    (new APIUser()).invokeAll("formSubmit", {});
+    if(!$scope.globalConfig.designMode) (new APIUser()).invokeAll("formSubmit", {});
   }
 
   $scope.hidden = true;

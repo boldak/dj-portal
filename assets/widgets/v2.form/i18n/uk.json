@@ -1,30 +1,65 @@
 {
-  "RESULT": "Результат",
-  "DESCRIPTION": "Менеджер даних. Віджет 'Результати пошуку'",
-  "NOTE": "Примітка",
-  "LAST_UPDATE":"Оновлено:",
-  "SOURCE": "Джерело:",
-  "TOPICS":"Теми",
-  "Available_Datasets":"Доступні набори даних",
-  "DOWNLOAD" : "Завантажити",
-  "UpdatedAt" : "Останнє оновлення: ",
-  "Keywords" : "Ключові слова: ",
-   "NO_INFO_AVAILABLE": "Інформація відсутня",
-   "Data": "Дані:",
-   "items": "елементів",
-   "geo": "Геокод",
-   "time":"Час",
-   "metric":"Вимірювання",
-   "Periodicity":"Періодичність:",
-   "day":"день",
-   "month":"місяць",
-   "hour":"година",
-   "minute":"хвилина",
-   "second":"секунда",
-   "Units":"Од.вимірювання:",
-   "Metadata":"Метадані"
-  
-  
+   
+
+   "Form": "Форма",
+   "Locale":"Локалізація",
+
+   "General": "Загальні",
+   "Access": "Доступ",
+   "Metadata":"Метадані",
+   "Created at":"Створено",
+   "Updated at":"Оновлено",
+   "Import":"Імпортувати",
+   "Clone":"Клонувати",
+   "Page and Form mismatch":"Неспівпадіння сторінки та форми",
+   "Form metadata":"Метадані форми",
+   "Key":"ключ",
+   "Value":"значення",
+   "Metadata key":"Ключ метаданих",
+   "Metadata value":"Значення метаданих",
+
+   "Form Access":"Доступ до форми",
+   "Access mode":"Режим доступу",
+   "ManageInvitedRespondents": "Управляйте списком респондентів на вкладці \"Запрошені респонденти\"",
+    "For any respondents":"Для будь-кого",
+    "For logged users":"Для зареєстованих користувачів",
+    "For invited respondents":"Для запрошених респондентів",
+    "was opened":"був відкритий", 
+    "was closed":"був закритий",
+    "Invited Respondents": "Запрошені респонденти",
+    "Total": "Всього",
+    "Select All": "Вибрати все",
+    "Notify":"Повідомити",
+    "RespondentEmailAddress":"Електронна адреса респондента",
+    "Invalid email address":"Невірна електронна адреса",
+    "Respondent already invited":"Респондент вже запрошений",
+    "Invitation template editor":"Редактор шаблону повідомлення",
+    "Subject":"Тема",
+    "Message":"Повідомлення",
+    "Message Preview":"Попередній перегляд",
+    "Responses":"Відповіді",
+    "Export CSV":"Експортувати CSV файл",
+    "Current app url is":"Поточне посилання на застосунок: ",
+    "But form metadata is":"Але в метаданих форми зазначено: ",
+    "For clone form click" : "Якщо треба клонувати форму натисніть \"Клонувати\" вище, або ігноруйте це повідомлення",
+
+
+
+
+   "ACCESS_FOR_LOGGED_USERS" : "Доступно тільки зареєстрованим користувачам.",
+   "IF_YOU_NEED": "Якщо Вам необхідний доступ, входіть через Google.",
+   "LOGIN_WITH_GOOGLE" : "Вхід через Google",
+   "CANCEL": "Скасувати",
+
+   "ACCESS_IS_DENIED": "Доступ відсутній",
+   "ONLY_INVITED": "Доступно тільки запрошеним респондентам.",
+   "CLOSE": "Закрити",
+   "FORM_IS_CLOSED" : "Форма закрита. Спробуйте пізніше.",
+   
+   "RESPONSE_NOT_COMPLETED": "Відповіді неповні",
+   "CAN_SAVE": "Ви можете зберегти відповіді. Вони будуть відтворені під час наступного сеансу роботи.",
+   "CONTINUE": "Продовжити",
+   "SAVE_RESPONSES": "Зберегти відповіді"
 
   
 }  
