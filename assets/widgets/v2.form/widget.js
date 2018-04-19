@@ -693,17 +693,19 @@ let updateID = object => {
      
      let responseValidationList = 
         _.toPairs($scope.answer.data)
-         // .filter(item => item[1].validationResult)
+         .filter(item => item[1].validationResult)
          .map(item => {
           return item[1]
          })
-     
+
+     console.log("RESPONSE", $scope.answer.data)
     
      if(responseValidationList.length > 0){
         
         let formValid = {valid:true , messages:[]};
         
         responseValidationList.forEach(( item ) => {
+            console.log("VALIDATE", item)
             formValid.valid = formValid.valid && item.valid && item.validationResult.valid,
             formValid.messages.push((item.validationResult.message) ? `<li>${item.validationResult.message}</li>` : '')
         })
