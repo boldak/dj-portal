@@ -140,6 +140,142 @@ info.service('mdConfirm', ($mdDialog) => (options) => {
 });
 
 
+info.service('mdDialog', ($mdDialog) => (form) => {
+
+    return new Promise( ( resolve,reject ) => {
+
+        $mdDialog.show({
+            
+            controller: ($scope, $mdDialog) => {
+
+                console.log("dialog", form)
+
+                
+                form.cancel = form.cancel || "Cancel";
+                form.ok = form.ok || "Ok";
+
+
+                $scope.form = form;
+                $scope.form.cancelable = (angular.isDefined($scope.form.cancelable)) ? $scope.form.cancelable : true;
+                
+                for (let i in form.fields) {
+                    form.fields[i].id = Math.random().toString(36).substring(2);
+                    form.fields[i].editable = (angular.isDefined(form.fields[i].editable)) ? form.fields[i].editable : true;
+                    form.fields[i].required = (angular.isDefined(form.fields[i].required)) ? form.fields[i].required : true;
+
+                    form.fields[i].type = (form.fields[i].type) || "text";
+                    
+                    if(form.fields[i].value && angular.isFunction(form.fields[i].value)){
+                        form.fields[i].value = form.fields[i].value()
+                    }
+
+                    if (form.fields[i].type == "typeahead") {
+                        if (angular.isArray(form.fields[i].list)) {
+                            form.fields[i].getList = (filterValue) => {
+                                return form.fields[i].list.filter((item) =>
+                                    item.toLowerCase().includes(filterValue.toLowerCase())
+                                )
+                            }
+                        } else {
+                            form.fields[i].getList = form.fields[i].list
+                        }
+                    }
+
+                    if (form.fields[i].type == "select" || form.fields[i].type == "multiselect") {
+                        form.fields[i].options = form.fields[i].options.map(
+                            (item, index) => {
+                                return (angular.isDefined(item.title)) ? (angular.isDefined(item.value)) ? item : { "title": item.title, "value": item.title } : (angular.isDefined(item.value)) ? { "title": item.value, "value": item.value } : { "title": item, "value": item }
+                            })
+                    }
+
+                    if (form.fields[i].type == "checkgroup") {
+                        form.fields[i].value = form.fields[i].value.map(
+                            (item, index) => {
+                                return (angular.isDefined(item.title)) ? (angular.isDefined(item.value)) ? item : { "title": item.title, "value": false } : (angular.isDefined(item.value)) ? { "title": index, "value": item.value } : { "title": item, "value": false }
+                            })
+                    }
+
+                    if (form.fields[i].type == "html") {
+                    
+                        setTimeout(()=>{
+                            let container = angular.element(document.getElementById(form.fields[i].id)) 
+                            let content = angular.element('<div>'+form.fields[i].value+'</div>')[0];
+                            container.append(content)
+                        },0)
+                    
+                    }
+                }
+
+                $scope.getFieldByID = function(id) {
+                    for (let i in form.fields) {
+                        if (form.fields[i].id == id) return form.fields[i];
+                    }
+                }
+
+
+                $scope.form.dismissed = false;
+
+                $scope.setImportFile = function(file, node) {
+                    this.$apply(() => {
+                        $scope.getFieldByID(node.id).value = file;
+                    });
+                };
+
+                $scope.completed = ($scope.form.validate) ? $scope.form.validate :
+                    function(form) {
+                        var f = true;
+                        for (let i in $scope.form.fields) {
+                            if ($scope.form.fields[i].required && $scope.form.fields[i].type != "checkbox") {
+                                if (angular.isUndefined($scope.form.fields[i].value)) {
+                                    return false;
+                                }
+                                if ($scope.form.fields[i].value.length == 0) {
+                                    return false;
+                                }
+                            }
+                        }
+                        return true;
+                    }
+
+
+               
+                $scope.hide = function() {
+                  $mdDialog.hide();
+                };
+
+                $scope.cancel = function() {
+                  $mdDialog.cancel();
+                };
+
+                $scope.answer = function(answer) {
+                    console.log("answer", answer)
+                    if (answer){
+                        $mdDialog.hide($scope.form)      
+                    } else {
+                        $mdDialog.hide()      
+                    }
+                };
+            },
+
+            templateUrl: '/partials/md-dialog.html',
+            parent: angular.element(document.body),
+            clickOutsideToClose:true
+        })
+        .then ( answer => { 
+                    console.log("RESOLVE", answer)
+                    if(answer) { 
+                        resolve(answer) 
+                    } else { 
+                        reject() 
+                    }
+                }, 
+                
+                ()=>{ reject() }
+        )    
+    })
+})
+
+
 info.service('alert', function($modal, $log) {
     this.message = (msg) => {
         if (angular.isArray(msg)) {

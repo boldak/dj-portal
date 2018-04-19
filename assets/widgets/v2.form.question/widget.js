@@ -461,6 +461,15 @@ $scope.m = true;
 
   }
 
+  $scope.widget.updateDirect = (context) => {
+    if(context.data.config.questions[$scope.widget.ID]){
+            let newConf = context.data.config.questions[$scope.widget.ID];
+            $scope.selectQtype(newConf.type.value)
+            $scope.widget.config = $scope.widget.config || {};
+            angular.extend($scope.widget.config, newConf); 
+            updateWidget();
+          }  
+  }
   
   
   new APIProvider($scope)

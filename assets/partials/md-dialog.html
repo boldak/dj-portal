@@ -1,0 +1,45 @@
+<md-dialog> 
+    
+    <md-toolbar class="{{::form.class}}">
+      <div class="md-toolbar-tools">
+        <md-icon 
+            md-font-icon="{{::form.icon}}" 
+            style="font-family: FontAwesome;  margin-right: 0.25em; font-size:40px;" 
+        >
+        </md-icon>
+        <span>{{form.title}}</span>
+        <span flex></span>
+      </div>
+    </md-toolbar>
+
+    <md-dialog-content class="md-dialog-content">
+    
+        <span>{{form.note}}</span>
+    
+        <md-input-container ng-repeat="field in form.fields track by $index"
+                            class="md-block"
+        >
+            <label>{{field.title}}</label>
+            
+            <div ng-if="field.type == 'file'">
+                <input 
+                type="file"
+                id="{{field.id}}"
+                ng-disabled="!field.editable"   
+                onchange="angular.element(this).scope().setImportFile(this.files[0], this)"
+             >
+            </div>
+
+        </md-input-container>    
+    
+    </md-dialog-content>
+
+    <md-dialog-actions> 
+        <md-button ng-click="answer(false)" class="md-primary md-cancel-button"> 
+            {{form.cancel}} 
+        </md-button>
+        <md-button ng-click="answer(true)" class="md-primary md-confirm-button" md-autofocus> 
+            {{form.ok}} 
+        </md-button>  
+    </md-dialog-actions> 
+</md-dialog> 

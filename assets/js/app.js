@@ -1343,7 +1343,10 @@ app.directive('widget', function ($rootScope, $translate, $window, appUrls,
                   scope.widget.initPhase = false;
                 }
                 if(scope.widget.resolve){
-                  scope.$evalAsync(() => scope.widget.resolve(scope))
+                  scope.$evalAsync(() => { 
+                    // console.log("RESOLVE WIDGET INSERTION")
+                    scope.widget.resolve(scope) 
+                  })
                 }  
           },100);    
 

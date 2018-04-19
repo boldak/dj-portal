@@ -51,6 +51,7 @@ m.controller('FormController', function(
   mdConfirm,
   mdAlert,
   mdSplash,
+  mdDialog,
   logIn,
   widgetManager
   
@@ -224,13 +225,14 @@ let scopeFor = widgetInstanceName => instanceNameToScope.get(widgetInstanceName)
 
 let updateID = object => {
   return _.fromPairs(_.toPairs(object).map(item => {
-            item[1].$oldId = item[0];
+            item[1].oldId = item[0];
             return [randomID(),item[1]]
           }))
 } 
 
   $scope.openImportDialog = () => {
-    dialog({
+    // mdDialog({
+    dialog({  
         title:"Import form",
         fields:{
           file:{
@@ -242,13 +244,14 @@ let updateID = object => {
         }
     })
     .then(form => {
-    
+      // console.log("IMPORT ", form.fields.file)
       $scope.transport.loadLocalFile(
           form.fields.file.value,
           "utf-u"
       )
       .then(text => {
         let importedForm = JSON.parse(text);
+        // console.log("FORM", importedForm)
         importedForm.config.questions = updateID(
           _.fromPairs(
             _.toPairs(importedForm.config.questions)
@@ -267,11 +270,11 @@ let updateID = object => {
                   q[1].options.disables = _.fromPairs(
                     _.toPairs(q[1].options.disables)
                         .map( ds => {
-                          ds[0] = _.findKey(q[1].options.entities,{ $oldId:ds[0] })
+                          ds[0] = _.findKey(q[1].options.entities,{ oldId:ds[0] })
                           ds[1] = _.fromPairs(
                              _.toPairs(ds[1])
                              .map( d => {
-                                d[0] = _.findKey(q[1].options.properties, { $oldId:d[0] })
+                                d[0] = _.findKey(q[1].options.properties, { oldId:d[0] })
                                 return [d[0],d[1]]
                              })   
                           )
@@ -291,23 +294,49 @@ let updateID = object => {
         updatedForm.config.questions = angular.extend(updatedForm.config.questions, importedForm.config.questions)
 
 
-       
-        
-        let promises = _.toPairs(importedForm.config.questions)
-                        .map( w => {
-                           return widgetManager
+        $scope.widget.form = updatedForm;
+
+        _.toPairs(importedForm.config.questions)
+                        .forEach( w => {
+                           widgetManager
                             .addWidget(widgetManager.getParentHolder($scope.widget.instanceName),"v2.form.question")
                             .then( widgetScope => {
+                              // console.log(widgetScope)
                               widgetScope.widget.ID = w[0]
-                              return true;
+
+                              $timeout( () => {
+                                 // widgetScope.widget.updateDirect({data:$scope.widget.form})
+                                 (new APIUser($scope)).invokeAll("formMessage", {action:"update", data:$scope.widget.form});
+                              }, 100)
                             }) 
                         })
+
+       
         
-        $q.all(promises)
-          .then(() => {
-            $scope.widget.form = updatedForm;
-            (new APIUser($scope)).invokeAll("formMessage", {action:"update", data:$scope.widget.form});
-          })
+        // let promises = _.toPairs(importedForm.config.questions)
+        //                 .map( w => {
+        //                    return widgetManager
+        //                     .addWidget(widgetManager.getParentHolder($scope.widget.instanceName),"v2.form.question")
+        //                     .then( widgetScope => {
+        //                       widgetScope.widget.ID = w[0]
+        //                       return widgetScope;
+        //                     }) 
+        //                 })
+        
+        
+        // // saveForm();
+
+        // $q.all(promises)
+        //   .then( (res) => {
+        //     console.log("All Promises Resolved")
+        //     $timeout( () => {
+        //       // $scope.widget.form = updatedForm;
+        //       (new APIUser($scope)).invokeAll("formMessage", {action:"update", data:$scope.widget.form});
+        //       // $scope.metadataTools.prepaire();
+        //       // (new APIUser($scope)).invokeAll("formMessage", {action:"set-answer", data:$scope.answer});
+        //     }, 100)
+
+        //   })
 
       })
     })
@@ -325,12 +354,14 @@ let updateID = object => {
   }
 
   $scope.exportForm = () => {
-
-    let a = document.createElement('a');
-    a.setAttribute('href', 'data:text/plain;charset=utf-u,'+encodeURIComponent(JSON.stringify($scope.widget.form,null,'\t')));
-    a.setAttribute('download', 'form_'+$scope.widget.form.id+"_"+moment().format('YYYY_MM_DD_HH_mm')+'_config.json');
-    a.click()
-
+    $scope.transport
+      .loadForm($scope.widget.form.id)    
+      .then(res => {
+            let a = document.createElement('a');
+            a.setAttribute('href', 'data:text/plain;charset=utf-u,'+encodeURIComponent(JSON.stringify(res.data[0],null,'\t')));
+            a.setAttribute('download', 'form_'+$scope.widget.form.id+"_"+moment().format('YYYY_MM_DD_HH_mm')+'_config.json');
+            a.click()
+      })      
   }
 
   $scope.userNotification = () => {
