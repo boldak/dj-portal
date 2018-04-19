@@ -107,6 +107,27 @@ let dps = {
             dml.delete(from:"form", where:{{filter}})
     `,
 
+  exportFormConfig: `
+
+    // exportFormConfig
+    
+    // <?javascript
+    //     $scope.form = "5ad5eee39aad46a820a81eb3";
+    //     $scope.filename = "myform.json"
+    // ?>
+
+    <?javascript
+        $scope.foundedForm = item => item.id == $scope.form;
+        $scope.filename = $scope.form+"_"+_util.format.date(new Date(),"YYYY_MM_DD_HH_mm")+"_config.json";
+    ?>
+
+    dml.select(from:"form", where:{{foundedForm}})
+    set("config")
+    get("config[0]")
+    export({{filename}})
+
+  `,  
+
   updateAnswer: `
             // updateAnswer
             dml.insertOrUpdate(into:"answer", value:{{answer}})
@@ -652,6 +673,13 @@ let FormIO = class {
       state: { form: formId }
     })
 
+  }
+
+  exportForm(form){
+    return this.runDPS({
+      script: dps.exportFormConfig,
+      state: { form: form }
+    })    
   }
 
   loadAnswer(user, formId) {

@@ -786,8 +786,28 @@ app.service('widgetLoader', function ($q, $ocLazyLoad, widgetTypesPromise, appUr
 });
 
 app.service('widgetManager', function ($modal, $timeout, APIUser, APIProvider,
-                                       appUrls, app, randomWidgetName, instanceNameToScope) {
+                                       appUrls, app, randomWidgetName, instanceNameToScope,
+                                       widgetTypesPromise, $q) {
   angular.extend(this, {
+
+    getParentHolder(widgetID) {
+      
+      let c = app.pageConfig();
+      
+      let h = _.toPairs(c.holders)
+                .filter(item => {
+                  return item[1].widgets
+                          .filter( w => {
+                            return w.instanceName == widgetID
+                          }).length > 0
+                })
+
+      return ( h.length > 0 ) ? h[0][1] : undefined
+
+    },
+
+
+
     deleteIthWidgetFromHolder(holder, index) {
       const removedWidget = holder.widgets.splice(index, 1)[0];
       const user = new APIUser();
@@ -844,6 +864,22 @@ app.service('widgetManager', function ($modal, $timeout, APIUser, APIProvider,
         });
     },
 
+    addWidget(holder, type) {
+      return $q( ( resolve, reject ) => {
+          holder.widgets = holder.widgets || [];
+          holder.widgets.push({
+            type: type,
+            openConfigOnLoad: false,
+            instanceName: randomWidgetName(),
+            initPhase: true,
+            resolve: resolve,
+            reject: reject
+          });
+          app.markModified(true);
+      })
+    },
+
+
     addNewWidgetToHolder(holder) {
       $modal.open({
         templateUrl: appUrls.widgetModalAddNewHTML,
@@ -860,7 +896,7 @@ app.service('widgetManager', function ($modal, $timeout, APIUser, APIProvider,
       }).result
         .then(widgetType => {
 
-          const realWidget = {
+         const realWidget = {
             type: widgetType.type,
             openConfigOnLoad: true,
             instanceName: randomWidgetName(),
@@ -872,7 +908,9 @@ app.service('widgetManager', function ($modal, $timeout, APIUser, APIProvider,
           
           // console.log("PUSH REALWIDGET")
           
-          app.markModified(true);    
+          app.markModified(true);
+
+
         });
     },
 
@@ -905,7 +943,7 @@ app.controller('MetaInfoController', function ($scope, $rootScope, appName, app,
 app.controller('MainController', function ($scope, $location, $cookies, $window, $translate,
                                            alert, app, config, user, appUrls, globalConfig,
                                            fullReload, hotkeys,splash,appHotkeysInfo,
-                                           APIProvider, APIUser, fullReload, $stateParams) {
+                                           APIProvider, APIUser, $stateParams) {
   
   if(user.isOwner || user.isCollaborator){
     // console.log("Add hotkeys")
@@ -1303,6 +1341,9 @@ app.directive('widget', function ($rootScope, $translate, $window, appUrls,
                   // console.log("before create widget event", JSON.stringify(scope))
                   user.invokeAll(APIProvider.CREATE_WIDGET_SLOT, scope.widget);
                   scope.widget.initPhase = false;
+                }
+                if(scope.widget.resolve){
+                  scope.$evalAsync(() => scope.widget.resolve(scope))
                 }  
           },100);    
 

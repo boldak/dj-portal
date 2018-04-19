@@ -159,7 +159,12 @@ img.dialog.md-avatar {
 
                 </md-card-title>
                 <md-card-actions layout="row" layout-align="start center">
-                  <md-button>
+                  <md-button ng-click="exportForm()">
+                    <widget-translate>
+                      Export
+                    </widget-translate>  
+                  </md-button>
+                  <md-button ng-click="openImportDialog()">
                     <widget-translate>
                       Import
                     </widget-translate>  

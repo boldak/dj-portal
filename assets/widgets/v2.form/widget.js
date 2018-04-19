@@ -51,7 +51,8 @@ m.controller('FormController', function(
   mdConfirm,
   mdAlert,
   mdSplash,
-  logIn
+  logIn,
+  widgetManager
   
 ) {
 
@@ -221,60 +222,20 @@ $scope.widgetPanel.allowCloning = undefined;
 let scopeFor = widgetInstanceName => instanceNameToScope.get(widgetInstanceName);
 
 
+let updateID = object => {
+  return _.fromPairs(_.toPairs(object).map(item => {
+            item[1].$oldId = item[0];
+            return [randomID(),item[1]]
+          }))
+} 
+
   $scope.openImportDialog = () => {
-// --------------           NO DELETE this code !!! -----------------------------
-
-    // let w ={
-    //   "type": "v2.form.question",
-    //   "instanceName": "ugikzklbrq__________",
-    //   "initPhase": false,
-    //   "icon": "/widgets/v2.form.question/icon.png",
-    //   "disabled": false,
-    //   "ID": "h9rnwb1eb6d___",
-    //   "formWidget": "5uwtc89q6gm",
-    //   "config": {
-    //     "type": {
-    //       "value": "check",
-    //       "title": "Many of many"
-    //     },
-    //     "widget": {
-    //       "css": "fa fa-check-square",
-    //       "view": "./widgets/v2.form.question/partitions/check.view.html",
-    //       "options": "./widgets/v2.form.question/partitions/check.options.html"
-    //     },
-    //     "options": {
-    //       "required": false,
-    //       "addEnabled": true,
-    //       "showUserInfo": true,
-    //       "title": "Many of many",
-    //       "note": "Many of many",
-    //       "nominals": {
-    //         "sqla9ua6kzh": {
-    //           "title": "New item"
-    //         },
-    //         "cqxqyr2k4bu": {
-    //           "title": "New item"
-    //         }
-    //       }
-    //     },
-    //     "callback": {},
-    //     "id": "h9rnwb1eb6d___"
-    //   }
-    // }
-    //  parentHolder($scope.widget).widgets.push(w)
-
     dialog({
-        title:"Import form (OSA format)",
+        title:"Import form",
         fields:{
           file:{
             title:"File", 
             type:'file', 
-            editable:true, 
-            required:true
-          },
-          encoding:{
-            title:"script",
-            type:"text",
             editable:true, 
             required:true
           }
@@ -284,12 +245,75 @@ let scopeFor = widgetInstanceName => instanceNameToScope.get(widgetInstanceName)
     
       $scope.transport.loadLocalFile(
           form.fields.file.value,
-          form.fields.encoding.value
+          "utf-u"
       )
-      .then(text => {})
+      .then(text => {
+        let importedForm = JSON.parse(text);
+        importedForm.config.questions = updateID(
+          _.fromPairs(
+            _.toPairs(importedForm.config.questions)
+              .map( q => {
+                if(q[1].options.entities){
+                  q[1].options.entities = updateID(q[1].options.entities)
+                }
+                if(q[1].options.properties){
+                  q[1].options.properties = updateID(q[1].options.properties)
+                }
+                if(q[1].options.nominals){
+                  q[1].options.nominals = updateID(q[1].options.nominals)
+                }
+
+                if(q[1].options.disables){
+                  q[1].options.disables = _.fromPairs(
+                    _.toPairs(q[1].options.disables)
+                        .map( ds => {
+                          ds[0] = _.findKey(q[1].options.entities,{ $oldId:ds[0] })
+                          ds[1] = _.fromPairs(
+                             _.toPairs(ds[1])
+                             .map( d => {
+                                d[0] = _.findKey(q[1].options.properties, { $oldId:d[0] })
+                                return [d[0],d[1]]
+                             })   
+                          )
+                          return [ds[0],ds[1]]
+                        })
+                  )
+                }
+
+                return [q[0], q[1]]
+              })
+          )
+        )    
+
+
+        let updatedForm = angular.extend({}, $scope.widget.form)
+        updatedForm.config.questions = updatedForm.config.questions || {};
+        updatedForm.config.questions = angular.extend(updatedForm.config.questions, importedForm.config.questions)
+
+
+       
+        
+        let promises = _.toPairs(importedForm.config.questions)
+                        .map( w => {
+                           return widgetManager
+                            .addWidget(widgetManager.getParentHolder($scope.widget.instanceName),"v2.form.question")
+                            .then( widgetScope => {
+                              widgetScope.widget.ID = w[0]
+                              return true;
+                            }) 
+                        })
+        
+        $q.all(promises)
+          .then(() => {
+            $scope.widget.form = updatedForm;
+            (new APIUser($scope)).invokeAll("formMessage", {action:"update", data:$scope.widget.form});
+          })
+
+      })
     })
   }
 
+  
   $scope.exportResponses = () => {
     $scope.transport.exportResponses($scope.widget.form.id)
     .then(res => {
@@ -298,6 +322,15 @@ let scopeFor = widgetInstanceName => instanceNameToScope.get(widgetInstanceName)
         $window.location.href = $dps.getUrl()+$scope.exportResponseUrl  
       })
     })
+  }
+
+  $scope.exportForm = () => {
+
+    let a = document.createElement('a');
+    a.setAttribute('href', 'data:text/plain;charset=utf-u,'+encodeURIComponent(JSON.stringify($scope.widget.form,null,'\t')));
+    a.setAttribute('download', 'form_'+$scope.widget.form.id+"_"+moment().format('YYYY_MM_DD_HH_mm')+'_config.json');
+    a.click()
+
   }
 
   $scope.userNotification = () => {
