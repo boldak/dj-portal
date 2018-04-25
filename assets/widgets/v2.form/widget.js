@@ -839,6 +839,16 @@ let updateID = object => {
           $scope.$evalAsync(() => {
             $scope.blockMessages = false;  
             app.unmarkModified();
+            mdSplash({
+              class:"md-primary",
+              htmlContent:`
+                <h4>
+                  <i class="fa fa-check-circle"></i>
+                  ${$translate.instant('WIDGET.V2.FORM.YOUR_RESPONSE_IS_STORED')}
+                  
+                </h4>`,
+              delay:2500
+            })
           },100)
         })    
     }
