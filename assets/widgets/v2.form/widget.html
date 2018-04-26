@@ -115,7 +115,7 @@ img.dialog.md-avatar {
 
   <div ng-cloak ng-show="globalConfig.designMode">
     
-    <md-content>
+    <md-content ng-if="widget.form">
       <md-tabs md-dynamic-height md-border-bottom>
         
         <md-tab>
@@ -191,10 +191,10 @@ img.dialog.md-avatar {
                   </h3>
                   <p class="md-warn">
                     <widget-translate>Current app url is</widget-translate>
-                     <a src="{{pageLocation}}" target="_blank">{{pageLocation}}</a>
+                     <a href="{{pageLocation}}" target="_blank">{{pageLocation}}</a>
                     <br/>
                     <widget-translate>But form metadata is</widget-translate> 
-                    <a src="{{ ( widget.form.metadata.app_url.value ) ? widget.form.metadata.app_url.value : '#' }}">
+                    <a href="{{ ( widget.form.metadata.app_url.value ) ? widget.form.metadata.app_url.value : '#' }}">
                       {{ ( widget.form.metadata.app_url.value ) ? widget.form.metadata.app_url.value : 'empty' }}
                     </a>.  
                     <br/>
