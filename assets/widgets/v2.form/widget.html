@@ -194,7 +194,7 @@ img.dialog.md-avatar {
                      <a href="{{pageLocation}}" target="_blank">{{pageLocation}}</a>
                     <br/>
                     <widget-translate>But form metadata is</widget-translate> 
-                    <a href="{{ ( widget.form.metadata.app_url.value ) ? widget.form.metadata.app_url.value : '#' }}">
+                    <a href="{{ (( widget.form.metadata.app_url.value ) ? widget.form.metadata.app_url.value : '#') | trusted }}">
                       {{ ( widget.form.metadata.app_url.value ) ? widget.form.metadata.app_url.value : 'empty' }}
                     </a>.  
                     <br/>

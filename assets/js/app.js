@@ -321,7 +321,11 @@ app.factory('appHotkeysInfo', ['config', (config) => {
   }
 }]);
 
-
+app.filter('trusted', ['$sce', function ($sce) {
+    return function(url) {
+        return $sce.trustAsResourceUrl(url);
+    };
+}]);
 
 app.service('app', function ($http, $state, $stateParams, $log, config, $rootScope, $modal,
                              $translate, appUrls, appName, fullReload, eventWires, APIUser, 
