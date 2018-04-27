@@ -46,7 +46,8 @@
                 <md-button  ng-click="config.setValue(e.id, p.id, v.value)"
                             md-menu-align-target
                 >
-                  <md-icon  md-font-icon="fa-square" 
+                  <md-icon  ng-if="config.state.options.decoration.useColors"
+                            md-font-icon="fa-square" 
                             style=" font-family: FontAwesome;
                                     color:{{colorUtility.influenceBg(v.value)}};
                                     font-size: 24px;

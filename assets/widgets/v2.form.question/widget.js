@@ -227,22 +227,30 @@ $scope.percent = (v) => ((angular.isDefined(v)) ? v : 0)
 $scope.addPMAlternative = (collection, field) => {
   // console.log("ADD", field)
   
-  let alt = {
-      id:randomID(), 
-      title: $scope.textFields[(field || 'alternative')],
-      user:(globalConfig.designMode) ? undefined : user, 
-      _selected:true
-  };
+  field = field || 'alternative';
+  let value = $scope.textFields[field]
+  let addedAlts = value.split("\n").filter(alt => alt.length>0) 
+
+  addedAlts.forEach(altText => {
+    
+    let alt = {
+        id:randomID(), 
+        title: altText,
+        user:(globalConfig.designMode) ? undefined : user, 
+        _selected:true
+    };
 
 
-  $scope.listEditorTools.add(collection, alt)
+    $scope.listEditorTools.add(collection, alt)
+    
+    $scope.textFields[field] = undefined;
+
+    if(!globalConfig.designMode){ 
+      (new APIUser($scope)).invokeAll("questionMessage", {action:"add-alternative", data:$scope.widget.config})
+      $scope.config.setValue(alt.id, true);
+    }  
+  })
   
-  $scope.textFields[(field || 'alternative')] = undefined;
-
-  if(!globalConfig.designMode){ 
-    (new APIUser($scope)).invokeAll("questionMessage", {action:"add-alternative", data:$scope.widget.config})
-    $scope.config.setValue(alt.id, true);
-  }
 }
 
 

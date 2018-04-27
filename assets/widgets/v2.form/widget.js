@@ -371,8 +371,9 @@ let updateID = object => {
     
     $scope.widget.form.config.access.lastNotificatedAt = new Date();
     $scope.widget.form.config.access.users = 
-        $scope.widget.form.config.access.users.map( item => 
-          angular.extend(item,{notifiedAt:new Date()})
+        $scope.widget.form.config.access.users.map( item => {
+           return (item.selected) ? angular.extend(item,{notifiedAt:new Date()}) : item;
+          }
         )
       
     $scope.transport.sendMails().then(res => {})
@@ -538,6 +539,7 @@ let updateID = object => {
             return false;
         }
 
+        $scope.user = angular.extend($scope.user, _invited);
         (new APIUser($scope)).invokeAll("formMessage", {action:"login", data: (_invited || $scope.user)});
         return true;
     }
