@@ -239,8 +239,8 @@ $scope.addPMAlternative = (collection, field) => {
         user:(globalConfig.designMode) 
               ? undefined 
               : ($scope.accessMode == "invited") 
-                ? user
-                : $scope.respondent,
+                ? $scope.respondent
+                : user,
         _selected:true
     };
 
