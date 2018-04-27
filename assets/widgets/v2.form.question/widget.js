@@ -236,7 +236,11 @@ $scope.addPMAlternative = (collection, field) => {
     let alt = {
         id:randomID(), 
         title: altText,
-        user:(globalConfig.designMode) ? undefined : user, 
+        user:(globalConfig.designMode) 
+              ? undefined 
+              : ($scope.accessMode == "invited") 
+                ? user
+                : $scope.respondent,
         _selected:true
     };
 
@@ -505,6 +509,13 @@ $scope.m = true;
     
     .provide('formMessage', (e, context) => {
         // console.log("HANDLE MESSAGE FROM FORM", context)
+
+        if(context.action == "login"){
+          $scope.respondent = context.data;
+          $scope.accessMode = "invited";
+          $scope.hidden = false;
+          return
+        }
         
         if(context.action == "remove" && context.data.widget.instanceName == $scope.widget.formWidget){
             $scope.widget.ID = undefined;
