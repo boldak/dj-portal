@@ -1,0 +1,114 @@
+<style>
+    .editor {
+        width: 53em;
+        height: 38em;
+        margin: 0;
+        padding:0;
+        font-size: 1em;
+        line-height: 0.9;
+       
+    }
+
+    .highlighter {
+        line-height: 1;
+    }
+    .md-dialog-container {
+        z-index:2000;
+    }
+
+    md-dialog .md-dialog-content {
+        padding: 0;
+    }
+
+    .hidden {
+        display: none!important;
+        visibility: hidden!important;
+    }
+
+</style>
+
+<md-dialog style="overflow: hidden;"> 
+   <md-toolbar class="md-primary" layout="row">
+      <div class="md-toolbar-tools">
+         <!-- <md-button class="md-icon-button" ng-click="openSideNav()">
+            <md-icon md-font-icon="fa-bars" 
+                     style="font-family: FontAwesome;">
+            </md-icon>
+          </md-button> -->
+        {{title || 'Data Processing Script Editor'}}
+      </div>
+      <span flex></span>
+      <md-button ng-if="!snippedsIsShowed" ng-click="openSideNav()" style="font-size: 12px;">
+        Show Snippets
+      </md-button>
+      <md-button ng-if="snippedsIsShowed" ng-click="closeSideNav()" style="font-size: 12px;">
+        Hide Snippets
+      </md-button>
+    </md-toolbar>
+
+    <md-dialog-content class="md-dialog-content" style="overflow: hidden;">
+        
+        
+        <section layout="row" flex style="border-bottom: 1px solid #e7e7e7;">    
+            <md-sidenav
+                class="md-sidenav-left"
+                md-component-id="left"
+                style="position: relative;"
+                md-disable-backdrop 
+                md-whiteframe="4"
+            >
+
+              <!-- <md-toolbar class="md-accent" style=" min-height: 36px; max-height: 32px;">
+                <div class="md-toolbar-tools">Snippets</div>
+              </md-toolbar> -->
+              <md-content>
+                <script type="text/ng-template" id="nodes_renderer.html">
+                  
+                  <div ng-if="node.childs" 
+                    ng-click="toggle(this)" 
+                    style="font-size:14px;font-weight: bold; cursor: pointer; outline: none;"
+                  >
+                    {{node.title}}
+                    <md-icon  md-font-icon="{{(collapsed)?'fa-angle-right':'fa-angle-down'}}" 
+                            style="font-family: FontAwesome;">
+                    </md-icon>
+                  </div>
+
+                  <a ng-if="!node.childs" 
+                    ng-click="insertSnippet(node.code)" 
+                    style=" font-size: 12px; min-height: 16px; line-height: 16px;"
+                  >
+                    {{node.title}}
+                  </a>
+                  
+                  <ol ui-tree-nodes="" ng-model="node.childs" ng-class="{hidden: collapsed}">
+                    <li ng-repeat="node in node.childs" ui-tree-node data-nodrag collapsed="true" ng-include="'nodes_renderer.html'">
+                    </li>
+                  </ol>
+                </script>
+
+                <div ui-tree>
+                  <ol ui-tree-nodes="" ng-model="menu" id="tree-root">
+                    <li ng-repeat="node in menu" ui-tree-node data-nodrag  ng-include="'nodes_renderer.html'"></li>
+                  </ol>
+                </div>
+               
+              </md-content>
+
+            </md-sidenav>
+            
+            <div class="editor" ng-ace data="script" options="options"></div>
+        </section>
+        
+    </md-dialog-content>
+
+    <md-dialog-actions> 
+        <md-button ng-click="cancel()" class="md-primary md-cancel-button"> 
+            Cancel 
+        </md-button>
+        <md-button ng-click="answer()" class="md-primary md-confirm-button" md-autofocus> 
+            Ok 
+        </md-button>  
+    </md-dialog-actions>
+
+</md-dialog> 

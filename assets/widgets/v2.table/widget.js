@@ -63,7 +63,7 @@ m.controller('TableCtrl', function(
         $scope.pending = angular.isDefined($scope.widget.dataID);
         if ($scope.pending) {
             $dps.get("/api/data/process/" + $scope.widget.dataID)
-                .success((resp) => {
+                .then((resp) => {
                     $scope.pending = false;
                     $scope.table = resp.value;
                     $scope.decoration = $scope.widget.decoration;
@@ -87,7 +87,7 @@ m.controller('TableCtrl', function(
                     })
             } else {
                 $http.get("./widgets/v2.table/sample.json")
-                    .success((resp) => {
+                    .then((resp) => {
                         $scope.table = resp.value;
                         $scope.decoration = $scope.widget.decoration;
                         $scope.settings = { table: angular.copy($scope.table), decoration: angular.copy($scope.decoration) }

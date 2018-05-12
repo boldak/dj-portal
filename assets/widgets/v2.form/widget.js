@@ -538,8 +538,9 @@ let updateID = object => {
 
             return false;
         }
+        
+        $scope.invitedRespondent = _invited;
 
-        $scope.user = angular.extend($scope.user, _invited);
         (new APIUser($scope)).invokeAll("formMessage", {action:"login", data: (_invited || $scope.user)});
         return true;
     }

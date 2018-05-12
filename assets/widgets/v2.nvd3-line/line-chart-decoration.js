@@ -18,15 +18,19 @@ m.factory("LineChartDecoration",[
 	"parentHolder",
 	"LineChartAdapter",
 	"pageWidgets","i18n", "dialog", "$error", "dpsEditor",
+	"mdDpsEditor",
+
 	function(
 		$http,
 		$dps, 
 		$q, 
 		parentHolder, 
 		LineChartAdapter,
-		pageWidgets, i18n, dialog, $error, dpsEditor ){
+		pageWidgets, i18n, dialog, $error, dpsEditor, mdDpsEditor){
 		
 		let chartAdapter = LineChartAdapter;
+
+		console.log("CREATE DECORATOR ", mdDpsEditor)
 
 		return {
 			id: "LineChartDecoration",
@@ -117,6 +121,7 @@ m.factory("LineChartDecoration",[
 
 
 			loadOptions : function(){
+				console.log("OPTIONS",this.conf.optionsUrl)
 				return $http.get(this.conf.optionsUrl)
 			},
 
@@ -272,22 +277,22 @@ m.factory("LineChartDecoration",[
 		    loadData: function(){
 				let thos = this;
 
-				if(!this.wizard.context.postprocessedTable){
-					$dps
-			          .get("/api/data/process/"+this.conf.dataID)
-			          .success(function (resp) {
-			              thos.wizard.context.postprocessedTable = resp.value;
-			              thos.axisXList = thos.makeAxisXList(thos.wizard.context.postprocessedTable);
-			          	  thos.catList = thos.makeCatList(thos.wizard.context.postprocessedTable);
-			          	  thos.indexList = thos.makeIndexList(thos.wizard.context.postprocessedTable);
+				// if(!this.wizard.context.postprocessedTable){
+				// 	$dps
+			 //          .get("/api/data/process/"+this.conf.dataID)
+			 //          .success(function (resp) {
+			 //              thos.wizard.context.postprocessedTable = resp.value;
+			 //              thos.axisXList = thos.makeAxisXList(thos.wizard.context.postprocessedTable);
+			 //          	  thos.catList = thos.makeCatList(thos.wizard.context.postprocessedTable);
+			 //          	  thos.indexList = thos.makeIndexList(thos.wizard.context.postprocessedTable);
 			          	  
 
-			          })
-				}else{
-					 this.axisXList = this.makeAxisXList(this.wizard.context.postprocessedTable);
-					 this.catList = this.makeCatList(thos.wizard.context.postprocessedTable);
-					 this.indexList = this.makeIndexList(thos.wizard.context.postprocessedTable);
-			   }
+			 //          })
+				// }else{
+				// 	 this.axisXList = this.makeAxisXList(this.wizard.context.postprocessedTable);
+				// 	 this.catList = this.makeCatList(thos.wizard.context.postprocessedTable);
+				// 	 this.indexList = this.makeIndexList(thos.wizard.context.postprocessedTable);
+			 //   }
 
 				
 				this.optionsLoaded = //(this.optionsLoaded) ? this.optionsLoaded :
@@ -331,9 +336,11 @@ m.factory("LineChartDecoration",[
 
 			editScript: function() {
                 var thos = this;
-                dpsEditor(thos.conf.script)
+                // dpsEditor(thos.conf.script)
+                mdDpsEditor({script: thos.conf.script})
                     .then((script) => {
                         thos.conf.script = script;
+                        console.log(thos.conf.script)
                         thos.loadData();
                     })
             },

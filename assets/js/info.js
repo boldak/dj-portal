@@ -8,6 +8,7 @@ import 'angular-animate';
 import 'angular-cookies';
 import 'angular-material';
 import 'angular-sanitize';
+import dpsSnippets from './dps-snippets.js';
 
 
 const info = angular.module('app.info', [
@@ -262,7 +263,7 @@ info.service('mdDialog', ($mdDialog) => (form) => {
             clickOutsideToClose:true
         })
         .then ( answer => { 
-                    console.log("RESOLVE", answer)
+                    // console.log("RESOLVE", answer)
                     if(answer) { 
                         resolve(answer) 
                     } else { 
@@ -384,6 +385,81 @@ info.factory('dpsEditor', function($modal) {
         }).result;
     };
 });
+
+info.factory("mdDpsEditor", ($mdDialog, $mdSidenav) => (settings) => {
+    return new Promise((resolve,reject) => {
+        $mdDialog.show({
+            
+            controller: ($scope, $mdDialog) => {
+                console.log("MD_DPS_EDITOR", settings)
+
+
+                $scope.menu = dpsSnippets
+
+
+
+                
+                var __script;
+    
+                $scope.options = {
+                    mode        :'dps', 
+                    theme       :'tomorrow',
+                    onChange    : e => { __script = e[1].getSession().getValue() },
+                    onLoad      : editor => { $scope.editor = editor }
+                }
+
+                $scope.insertSnippet = code => {
+                    if (code) $scope.editor.session.replace($scope.editor.selection.getRange(), code)
+                }
+
+                $scope.getEditorScript = () => __script;
+                
+
+
+                $scope.script = settings.script;
+                $scope.title = settings.title;
+                $scope.snippedsIsShowed = false;
+                
+
+                $scope.hide = function() {
+                  $mdDialog.hide();
+                };
+
+                $scope.cancel = function() {
+                  $mdDialog.cancel();
+                };
+
+                $scope.answer = function() {
+                  $mdDialog.hide(__script);
+                };
+
+                $scope.closeSideNav = () => {
+                    $mdSidenav('left').close()
+                        .then(function () {$scope.snippedsIsShowed = false});
+                }
+
+                $scope.openSideNav = () => {
+                    $mdSidenav('left')
+                        .toggle()
+                        .then(function () {$scope.snippedsIsShowed = true});
+                }
+
+
+
+            },
+
+            templateUrl: '/partials/md-dps-editor.html',
+            parent: angular.element(document.body),
+            clickOutsideToClose:true,
+            multiple:true
+        })
+        .then (  
+            script  => { resolve(script) }, 
+            ()      => { reject()} 
+        )
+    })    
+})
+
 
 
 info.factory('jsonEditor', function($modal) {

@@ -105,11 +105,11 @@ m.factory("TableDecoration",[
 
 			loadData: function(){
 				let thos = this;
-				if(this.conf.dataID){
+				if( false ){//this.conf.dataID){
 
 					$dps
 			          .get("/api/data/process/"+this.conf.dataID)
-			          .success(function (resp) {
+			          .then(function (resp) {
 			              thos.wizard.context.postprocessedTable = resp.value;
 			              thos.table = resp.value;
 			              thos.conf.decoration.width = parentHolder(thos.wizard.conf).width;
@@ -134,7 +134,7 @@ m.factory("TableDecoration",[
 			    	}else{
 
 				    	$http.get("./widgets/v2.table/sample.json")
-				            .success((resp) => {
+				            .then((resp) => {
 				            	console.log(resp);  
 				              	thos.wizard.context.postprocessedTable = resp.value;
 				              	thos.table = resp.value;

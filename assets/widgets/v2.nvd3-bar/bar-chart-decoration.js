@@ -143,13 +143,13 @@ m.factory("BarChartDecoration", [
             loadData: function() {
                 let thos = this;
 
-                if (!this.wizard.context.postprocessedTable) {
-                    $dps
-                        .get("/api/data/process/" + this.conf.dataID)
-                        .success(function(resp) {
-                            thos.wizard.context.postprocessedTable = resp.value;
-                        })
-                }
+                // if (!this.wizard.context.postprocessedTable) {
+                //     $dps
+                //         .get("/api/data/process/" + this.conf.dataID)
+                //         .then(function(resp) {
+                //             thos.wizard.context.postprocessedTable = resp.value;
+                //         })
+                // }
 
 
                 this.optionsLoaded = //(this.optionsLoaded) ? this.optionsLoaded :
