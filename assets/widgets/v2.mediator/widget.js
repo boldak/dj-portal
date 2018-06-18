@@ -76,6 +76,7 @@ m.controller('MediatorController', function(
         globalConfig: () => globalConfig,
         user: () => user,
         app: () => app,
+        lookup: $lookup,
         logIn: logIn,
 
         _ : _,

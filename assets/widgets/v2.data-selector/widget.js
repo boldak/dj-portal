@@ -7,7 +7,15 @@ const m = angular.module('app.widgets.v2.data-selector', ["app.dps",
 ]);
 
 
-m.controller('DataSelectorCtrlV2', function ($scope, $http, $dps, DataSelectorWizard, APIProvider, EventEmitter, i18n) {
+m.controller('DataSelectorCtrlV2', function (
+  $scope, 
+  $http, 
+  $dps, 
+  DataSelectorWizard, 
+  APIProvider, 
+  EventEmitter, 
+  i18n,
+  $lookup) {
   
   $scope.emitter = new EventEmitter($scope);
 
@@ -42,7 +50,8 @@ m.controller('DataSelectorCtrlV2', function ($scope, $http, $dps, DataSelectorWi
             selectedObject.disabled = !selectedObject.disabled;
             this.inverseObjectSelection();
           } 
-          // console.log("Emit selectObject", this.objects);
+          console.log("Emit selectObject", this.objects);
+          console.log($lookup("UKR"));
           $scope.emitter.emit("selectObject",this.objects);  
         }
 
