@@ -51,7 +51,7 @@ m.controller('DataSelectorCtrlV2', function (
             this.inverseObjectSelection();
           } 
           console.log("Emit selectObject", this.objects);
-          console.log($lookup("UKR"));
+          // console.log($lookup("UKR"));
           $scope.emitter.emit("selectObject",this.objects);  
         }
 
