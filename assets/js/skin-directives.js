@@ -174,6 +174,8 @@ skin.directive('highlight', function() {
         link: function(scope, elm, attrs) {
            
             var render = function(scope){
+                if(angular.isUndefined(scope.settings)) return;
+                
                 var mode = ace.require("ace/mode/"+scope.settings.options.mode);
                 mode = (mode)? mode.Mode : mode;  
                 var theme = ace.require("ace/theme/"+scope.settings.options.theme);

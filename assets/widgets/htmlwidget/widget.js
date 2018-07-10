@@ -173,6 +173,7 @@ angular.module('app.widgets.htmlwidget', [])
             })
 
             .provide('updateWithData', (e, context) => {
+                console.log(e,context)
                 if (!context) return
 
                 if (context.widget) {

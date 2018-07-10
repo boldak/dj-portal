@@ -71,11 +71,12 @@ dps.service('$dps',
 					config.locale = config.locale || i18n.locale();
 
 					let fd = new FormData();
-					fd.append('file', file)
+					
 					fd.append('script', JSON.stringify(config.script));
 					fd.append('state', JSON.stringify(config.state));
 					fd.append('client', JSON.stringify(config.client));
 					fd.append('locale', JSON.stringify(config.locale));
+					fd.append('file', file)
 					
 					return $http.post(
 						dpsHost+url, 

@@ -152,7 +152,7 @@ m.factory("TimelineChartDecoration",[
 				          headers: {'Content-Type': undefined},
 				          transformRequest: angular.identity
 				        })
-				        .success(resp => {
+				        .then(resp => {
 				          	thos.data = resp.value;
 				          	thos.conf.dataID = resp.id;
 				          	thos.conf.serieDataId = resp.id;

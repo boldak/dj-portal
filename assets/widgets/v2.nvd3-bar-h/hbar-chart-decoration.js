@@ -132,7 +132,7 @@ m.factory("HBarChartDecoration",[
 				if(!this.wizard.context.postprocessedTable){
 					$dps
 			          .get("/api/data/process/"+this.conf.dataID)
-			          .success(function (resp) {
+			          .then(function (resp) {
 			              thos.wizard.context.postprocessedTable = resp.value;
 			          })
 				}
