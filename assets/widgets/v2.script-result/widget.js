@@ -103,8 +103,12 @@ m.controller('ScriptResultController',
         })
         .provide('setData', (e, context) => {
             if (!context) {
-                $scope.hidden = true;
-                return
+                // $scope.hidden = true;
+                // return
+                context = {
+                    key:"text",
+                    data:"EMPTY RESPONSE"
+                }
             }
             
             var mode = supportedMode[context.key];
