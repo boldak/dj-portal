@@ -18,6 +18,8 @@ m.factory("GeochartDecoration",[
 	"GeochartAdapter", 
 	"pageWidgets",
 	"i18n",
+	"mdDpsEditor",
+	"$error",
 	
 	function(
 		$http, 
@@ -26,7 +28,9 @@ m.factory("GeochartDecoration",[
 		parentHolder, 
 		GeochartAdapter,
 		pageWidgets,
-		i18n ){
+		i18n,
+		mdDpsEditor,
+		$error ){
 
 		return {
 			id: "GeochartDecoration",
@@ -174,7 +178,8 @@ m.factory("GeochartDecoration",[
 
 			loadSeries : function(){
 
-				return $dps
+				if(this.conf.dataID)
+					return $dps
 				          .post("/api/data/script",{
 				            "data"  : 	"source(table:'"+this.conf.dataID+"');"+
 				            			"geojson(dir:'"+this.conf.direction+"',"+
@@ -185,6 +190,21 @@ m.factory("GeochartDecoration",[
 				            			"save()",
 				            "locale": i18n.locale()
 				          })
+
+				if(this.conf.script)
+                    return $dps.post("/api/script",{
+                                "script": this.conf.script,
+                                "locale": i18n.locale()
+                            })
+                            .then((resp) => {
+                            	if (resp.data.type == "error") {
+                                $error(resp.data.data)
+                                return
+                            };
+                                return {data:resp}
+                            })	           
+
+                return $http.get("./widgets/v2.nvd3-line/sample.json")                     
 
 
 				// let r = $dps.post(this.conf.dataUrl,
@@ -279,6 +299,17 @@ m.factory("GeochartDecoration",[
 					// thos.apply()
 				});
 			},
+
+			editScript: function() {
+                var thos = this;
+                // dpsEditor(thos.conf.script)
+                mdDpsEditor({script: thos.conf.script})
+                    .then((script) => {
+                        thos.conf.script = script;
+                        console.log(thos.conf.script)
+                        thos.loadData();
+                    })
+            },
 
 			activate : function(wizard){
 				// this.dataset = wizard.context.dataset;

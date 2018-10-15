@@ -206,15 +206,10 @@ m.controller('ScriptSuiteController', function(
         $scope.saveScript(); 
         
         $scope.processed = true;
-       
         
-        $dps.post("/api/script", {
-                "script": $scope.widget.script[$scope.selected],
-                "locale": i18n.locale()
-            },
-            {timeout:$scope.canceler.promise})
-            .then(function(response) {
-                $scope.processed = false;
+
+        let handleResponse = response => {
+            $scope.processed = false;
                 response.data.key = response.data.type;
                 if (response.data.key == 'error') {
                     $error(response.data.data)
@@ -244,7 +239,14 @@ m.controller('ScriptSuiteController', function(
                     }
                     eventEmitter.emit('setData', $scope.response);
                 }
-            })
+        }
+        
+        $dps.post("/api/script", {
+                "script": $scope.widget.script[$scope.selected],
+                "locale": i18n.locale()
+            },
+            {timeout:$scope.canceler.promise})
+            .then(handleResponse)
     }
 
     

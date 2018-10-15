@@ -208,8 +208,18 @@ md-toolbar.status-bar div.md-toolbar-tools span {
   <div class="column medium-10 left" style="margin:0; padding:0 0.5em 0 0;">
     <div ng-if="selected">
       <div  class="row" style="margin:0; padding:0;font-size:small;">
-        <pre>{{selected}} <span ng-if="selected && notSaved" style="font-size:x-small">(not saved)</span> <span ng-if="processed" style="font-size:x-small">(processed...)</span><span ng-if="successed" style="font-size:x-small">(successed)</span><span ng-if="rejected" style="font-size:x-small">(rejected)</span></pre>
+        <div class="column medium-2 left">
+          <pre>{{selected}} <span ng-if="selected && notSaved" style="font-size:x-small">(not saved)</span> <span ng-if="processed" style="font-size:x-small">(processed...)</span><span ng-if="successed" style="font-size:x-small">(successed)</span><span ng-if="rejected" style="font-size:x-small">(rejected)</span>
+          </pre>
+        </div>
+        <div class="column">
+          <span>File: {{(selectedFile)?selectedFile:'no selected'}}</span>
+          <button class="toolbar right">Edit</button>
+        </div>  
+
       </div>
+
+      
       <div  class="row"
              style="padding: 0.1rem; border: 1px solid #aaa; margin:0; height:{{(widget.height || 32)+'em'}}; overflow:auto;">
         
