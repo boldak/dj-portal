@@ -361,9 +361,7 @@ define(["angular",
 
         function loadData(){
           // console.log("LOAD DATA",$scope.widget.serieDataId,$scope.widget.script,params.sampleURL)
-          if($scope.widget.serieDataId)
-            return $dps.get("/api/data/process/"+$scope.widget.serieDataId)
-          
+
           if($scope.widget.script)
             return $dps.post("/api/script",{
                 "script": $scope.widget.script,
@@ -375,8 +373,14 @@ define(["angular",
                             };
               return {data:{value:resp.data.data}}
             })
+            .catch((error) => {
+              console.log("ERROR :", error, $scope.widget.script)
+             }) 
+
+          return $http.get(params.sampleURL).then((resp) => {return {data:{value:resp.data.data.data}}})
+
           
-          return $http.get(params.sampleURL)
+          
         }
 
         $q.all([
@@ -387,7 +391,7 @@ define(["angular",
             }),
 
             loadData().then( (resp) =>{
-                // console.log("Load data")
+                console.log("Load data", resp)
                 $scope.loadedData = resp.data.value;
                 if(params.dictionary) {
                   $scope.dictionary =  $lookup.dictionary(params.dictionary(resp.data.value));
