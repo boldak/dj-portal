@@ -23,6 +23,11 @@ m.controller('Nvd3ChordChartCtrlV2', function ($scope, NVD3WidgetV2, ChordChartW
               return context.key == "deps"
           },
           serieAdapter: {
+            getSeries: (data) => {
+              console.log("HORD READ", data)
+              return data
+            },
+            
             getSeriesSelection: function(data){
               return []
             },

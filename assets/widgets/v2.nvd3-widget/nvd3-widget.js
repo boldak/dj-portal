@@ -377,6 +377,10 @@ define(["angular",
               console.log("ERROR :", error, $scope.widget.script)
              }) 
 
+           if($scope.widget.serieDataId)
+            return $dps.get("/api/data/process/"+$scope.widget.serieDataId) //.then((resp => resp.data))
+           
+
           return $http.get(params.sampleURL).then((resp) => {return {data:{value:resp.data.data.data}}})
 
           

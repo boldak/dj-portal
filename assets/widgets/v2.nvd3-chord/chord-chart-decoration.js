@@ -100,15 +100,9 @@ m.factory("ChordChartDecoration",[
 			},
 
 			loadSeries : function(){
-				if(this.conf.dataID)
-					return $dps
-					          .post("/api/data/script",{
-					            "data"  : "source(table:'"+this.conf.dataID+"');deps();save()",
-					            "locale": i18n.locale()
-					          })
-
 
 				if(this.conf.script)
+					console.log("LOAD data via script")
                     return $dps.post("/api/script",{
                                 "script": this.conf.script,
                                 "locale": i18n.locale()
@@ -120,7 +114,17 @@ m.factory("ChordChartDecoration",[
                             };
                                 return {data:resp}
                             })
-                            	    	          
+                            	    	    
+
+				if(this.conf.dataID)
+					return $dps
+					          .post("/api/data/script",{
+					            "data"  : "source(table:'"+this.conf.dataID+"');deps();save()",
+					            "locale": i18n.locale()
+					          })
+
+
+				      
 				return $http.get("./widgets/v2.nvd3-chord/sample.json")          
 
 			}, 
@@ -128,13 +132,13 @@ m.factory("ChordChartDecoration",[
 			loadData: function(){
 				let thos = this;
 
-				if(!this.wizard.context.postprocessedTable){
-					$dps
-			          .get("/api/data/process/"+this.conf.dataID)
-			          .success(function (resp) {
-			              thos.wizard.context.postprocessedTable = resp.value;
-			          })
-				}
+				// if(!this.wizard.context.postprocessedTable){
+				// 	$dps
+			 //          .get("/api/data/process/"+this.conf.dataID)
+			 //          .success(function (resp) {
+			 //              thos.wizard.context.postprocessedTable = resp.value;
+			 //          })
+				// }
 
 				
 				this.optionsLoaded = //(this.optionsLoaded) ? this.optionsLoaded :
@@ -170,6 +174,7 @@ m.factory("ChordChartDecoration",[
 
 				this.dataLoaded = //(this.dataLoaded) ? this.dataLoaded :
 				 	this.loadSeries().then( (resp) => {
+				 		console.log("HORD", resp)
 				 		thos.data = resp.data.data.data;
 		                thos.conf.serieDataId = resp.data.data.data_id;
 		            });

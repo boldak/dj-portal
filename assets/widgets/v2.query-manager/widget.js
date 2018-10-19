@@ -182,8 +182,9 @@ m.controller("PreparationDialogController", function (
             "data"  : $scope.script.map(item => item.shortName).join(";")+";save()",
             "locale": i18n.locale()
           })
-          .success(function (resp) {
+          .then(function (resp) {
               console.log(resp)
+              resp = resp.data;
               Queries.add(
                 angular.copy({
                   queryResultId: resp.data.data_id, 
@@ -1084,7 +1085,8 @@ m.controller("PreparationDialogController", function (
             "data"  : script.map(item => item.shortName).join(";"),//+";save()",
             "locale": i18n.locale()
           })
-          .success(function (resp) {
+          .then(function (resp) {
+            resp = resp.data
             console.log(resp)
               $scope.resultTable = resp.data;
               // $scope.data_id = resp.data.data_id;
@@ -1141,7 +1143,8 @@ m.controller("JoinDialogController", function(
 
     $dps
         .get("/api/data/process/"+$scope.t1_data_id)
-        .success(function (resp) {
+        .then(function (resp) {
+            resp = resp.data
             $scope.t1 = resp.value;
             $scope.t1_data_id = resp.id;
             $scope.t1_meta = ($scope.t1.body.length>0) 
@@ -1194,7 +1197,8 @@ m.controller("JoinDialogController", function(
 
       $dps
         .get("/api/data/process/"+q.context.queryResultId)
-        .success(function (resp) {
+        .then(function (resp) {
+            resp = resp.data
             $scope.t2 = resp.value;
             $scope.t2_data_id = resp.id;
             $scope.t2_meta = ($scope.t2.body.length>0) 
@@ -1287,7 +1291,7 @@ m.controller("JoinDialogController", function(
       //         "response_type": "data"
       //       }    
       //     )
-          .success(function (resp) {
+          .then(function (resp) {
               $scope.resultTable = resp.data.data;
               $scope.loaded = false;
               $scope.data_id = resp.data.data_id;
@@ -1445,7 +1449,8 @@ m.controller('QueryManagerController', function (
        
        $dps
         .get("/api/data/process/"+query.context.queryResultId)
-        .success(function (resp) {
+        .then(function (resp) {
+          resp = resp.data
             $scope.preview = resp.value;
 
         })

@@ -61,6 +61,7 @@ m.factory("ChordChartWizard",["$http",
 	            wizard.parentScope.widget.dataID = wizard.conf.dataID;
 	           
 			    wizard.parentScope.updateChart();
+			    console.log(wizard.parentScope)
 			    
 			    wizard.conf = {};
 	            wizard.context = {};

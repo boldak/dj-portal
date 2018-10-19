@@ -60,23 +60,15 @@ m.controller('TableCtrl', function(
     }
 
     $scope.update = function() {
-        $scope.pending = angular.isDefined($scope.widget.dataID);
-        if ($scope.pending) {
-            $dps.get("/api/data/process/" + $scope.widget.dataID)
-                .success((resp) => {
-                    $scope.pending = false;
-                    $scope.table = resp.value;
-                    $scope.decoration = $scope.widget.decoration;
-                    $scope.settings = { table: angular.copy($scope.table), decoration: angular.copy($scope.decoration) }
-                })
-        } else {
-            if ($scope.widget.script) {
+
+        if ($scope.widget.script) {
                 $dps
                     .post("/api/script", {
                         "script": $scope.widget.script,
                         "locale": i18n.locale()
                     })
                     .then((resp) => {
+                        console.log("TABLE", resp)
                         if (resp.data.type == "error") {
                             $error(resp.data.data)
                             return
@@ -85,15 +77,28 @@ m.controller('TableCtrl', function(
                         $scope.decoration = $scope.widget.decoration;
                         $scope.settings = { table: angular.copy($scope.table), decoration: angular.copy($scope.decoration) }
                     })
-            } else {
-                $http.get("./widgets/v2.table/sample.json")
-                    .success((resp) => {
-                        $scope.table = resp.value;
-                        $scope.decoration = $scope.widget.decoration;
-                        $scope.settings = { table: angular.copy($scope.table), decoration: angular.copy($scope.decoration) }
-                    })
+                return
             }
+
+
+        $scope.pending = angular.isDefined($scope.widget.dataID);
+        if ($scope.pending) {
+            $dps.get("/api/data/process/" + $scope.widget.dataID)
+                .then((resp) => {
+                    $scope.pending = false;
+                    $scope.table = resp.value;
+                    $scope.decoration = $scope.widget.decoration;
+                    $scope.settings = { table: angular.copy($scope.table), decoration: angular.copy($scope.decoration) }
+                })
         }
+                
+        $http.get("./widgets/v2.table/sample.json")
+            .then((resp) => {
+                $scope.table = resp.value;
+                $scope.decoration = $scope.widget.decoration;
+                $scope.settings = { table: angular.copy($scope.table), decoration: angular.copy($scope.decoration) }
+            })
+            
     }
 
     new APIProvider($scope)

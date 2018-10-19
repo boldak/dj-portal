@@ -56,6 +56,7 @@ m.controller('Nvd3LineChartCtrlV2', function ($scope, NVD3WidgetV2, LineChartWiz
               return result;
             }
             
+            
           }
         }
   );
