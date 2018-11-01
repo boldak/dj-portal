@@ -58,8 +58,7 @@ m.factory("GeochartWizard",["$http",
 	            wizard.parentScope.widget.serieDataId = wizard.conf.serieDataId;
 	            wizard.parentScope.widget.queryID = wizard.conf.queryID;
 	            wizard.parentScope.widget.dataID = wizard.conf.dataID;
-
-
+	             wizard.parentScope.widget.script = wizard.conf.script;
 	            wizard.parentScope.widget.direction =  wizard.conf.direction;
             	wizard.parentScope.widget.dataIndex =  wizard.conf.dataIndex;
     			wizard.parentScope.widget.bins =  wizard.conf.bins;

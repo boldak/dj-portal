@@ -1,16 +1,22 @@
 import angular from 'angular';
 import 'widgets/v2.nvd3-widget/nvd3-widget';
-import "widgets/wizard/wizard";
+import "widgets/md-wizard/wizard";
 import "widgets/v2.steps/edit-widget-id";
 import "widgets/v2.nvd3-line/line-chart-decoration";
 import "widgets/v2.nvd3-line/adapter";
+import 'angular-animate';
+import 'angular-cookies';
+import 'angular-material';
+import 'angular-sanitize';
 
 const m = angular.module('app.widgets.v2.line-chart-wizard', [
   'app.widgets.v2.nvd3-widget',
-  "app.widgets.wizard",
+  "app.widgets.md-wizard",
   "app.widgets.v2.steps.edit-widget-id",
   "app.widgets.v2.steps.line-chart-decoration",
-  "app.widgets.v2.line-chart-adapter"]);
+  "app.widgets.v2.line-chart-adapter",'ngMaterial', 
+            'ngMessages',
+            'ngSanitize']);
 
 
 m._wizard = undefined;
@@ -18,11 +24,12 @@ m._wizard = undefined;
 m.factory("LineChartWizard",["$http",
 							"$modal", 
 							"NVD3WidgetV2", 
-                            "Wizard",
+                            "MDWizard",
                             "EditWidgetID",
                             "LineChartDecoration",
                             "parentHolder",
                             "LineChartAdapter",
+                            "$mdDialog",
     function (	$http,
     			$modal, 
 				NVD3WidgetV2, 
@@ -30,11 +37,12 @@ m.factory("LineChartWizard",["$http",
                 EditWidgetID,
                 LineChartDecoration,
                 parentHolder,
-                LineChartAdapter 
+                LineChartAdapter,
+                $mdDialog 
                 ) {
     	if (!m._wizard){
 	    	m._wizard = 
-	    	 new Wizard($modal)
+	    	 new Wizard($mdDialog)
 	          .setTitle("Line Chart Settings Wizard")
 	          .push(EditWidgetID)
 	          .push(LineChartDecoration)

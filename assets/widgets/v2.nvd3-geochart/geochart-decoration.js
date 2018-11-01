@@ -49,7 +49,7 @@ m.factory("GeochartDecoration",[
 		            dataIndex : (wizard.conf.dataIndex) ? wizard.conf.dataIndex : [0],
 	            	bins : (this.wizard.conf.bins) ? wizard.conf.bins : 2,
 	            	scope : (this.wizard.conf.scope) ? wizard.conf.scope : "none",
-
+	            	script : wizard.conf.script,
 	    			decoration : wizard.conf.decoration,
 	    			dataID : wizard.conf.dataID,
 	    			queryID : wizard.conf.queryID,
@@ -86,6 +86,7 @@ m.factory("GeochartDecoration",[
     			wizard.conf.bins =  this.conf.bins;
     			wizard.conf.scope =  this.conf.scope;
     			wizard.conf.emitters  = this.conf.emitters;
+    			wizard.conf.script  = this.conf.script;
 
 	    		this.settings = {options:angular.copy(this.options), data:[]};
 	    		this.conf = {};
@@ -178,6 +179,8 @@ m.factory("GeochartDecoration",[
 
 			loadSeries : function(){
 
+				console.log("Load series", this)
+
 				if(this.conf.dataID)
 					return $dps
 				          .post("/api/data/script",{
@@ -204,7 +207,7 @@ m.factory("GeochartDecoration",[
                                 return {data:resp}
                             })	           
 
-                return $http.get("./widgets/v2.nvd3-line/sample.json")                     
+                return $http.get("./widgets/v2.nvd3-geochart/sample.json").then(resp => {return {data:resp}})                     
 
 
 				// let r = $dps.post(this.conf.dataUrl,
@@ -230,16 +233,16 @@ m.factory("GeochartDecoration",[
 				let thos = this;
 				this.complete = false;
 
-				if(!this.wizard.context.postprocessedTable){
-					$dps
-			          .get("/api/data/process/"+this.conf.dataID)
-			          .then(function (resp) {
-			              thos.wizard.context.postprocessedTable = resp.value;
-			              thos.indexList = thos.makeSerieList(thos.wizard.context.postprocessedTable);
-			          })
-				}else{
-					 this.indexList = this.makeSerieList(this.wizard.context.postprocessedTable);
-				}
+				// if(!this.wizard.context.postprocessedTable){
+				// 	$dps
+			 //          .get("/api/data/process/"+this.conf.dataID)
+			 //          .then(function (resp) {
+			 //              thos.wizard.context.postprocessedTable = resp.value;
+			 //              thos.indexList = thos.makeSerieList(thos.wizard.context.postprocessedTable);
+			 //          })
+				// }else{
+				// 	 this.indexList = this.makeSerieList(this.wizard.context.postprocessedTable);
+				// }
 
 				
 				this.optionsLoaded = //(this.optionsLoaded) ? this.optionsLoaded :
@@ -285,8 +288,13 @@ m.factory("GeochartDecoration",[
 
 				this.dataLoaded = //(this.dataLoaded) ? this.dataLoaded :
 				 	this.loadSeries().then( (resp) => {
+				 		console.log("Load geo series", resp)
 				 		thos.data = resp.data.data.data;
-		                thos.conf.serieDataId = resp.data.data.data_id;
+		     			//            thos.conf.serieDataId = resp.data.data.data_id;
+
+
+		     			// thos.data = resp.data;
+		                // thos.conf.serieDataId = resp.data.data.data_id;
 		            });
 
 				$q.all([this.optionsLoaded, this.dataLoaded]).then(() => {
@@ -313,9 +321,9 @@ m.factory("GeochartDecoration",[
 
 			activate : function(wizard){
 				// this.dataset = wizard.context.dataset;
-				if (this.conf.dataID){
+				// if (this.conf.dataID){
 					this.loadData();
-				}
+				// }
 			},
 
 			apply: function(){

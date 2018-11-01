@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Vuetify Blog Starter</title>
+  <link href='https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Material+Icons' rel="stylesheet">
+  <link href="../../components/vuetify/dist/vuetify.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="../../components/foundation-icon-fonts/foundation-icons.css">
+  <link rel="stylesheet" href="../../components/components-font-awesome\css\font-awesome.min.css">
+</head>
+<body>
+ <div id="app">
+  <v-app light footer>
+    <v-container>
+      <v-layout row wrap align-center>
+        <v-flex xs12 md4>
+          <div class="text-xs-center">
+            <v-avatar size="125px">
+              <img
+                class="img-circle elevation-7 mb-1"
+                src="../img/lists/1.jpg"
+              >
+            </v-avatar>
+            <h4>John <span style="font-weight:bold">Carter</span></h4>
+            <h5 class="text-xs-center">Lorem ipsum dolor sit amet</h5>
+            <v-layout justify-space-between>
+              <v-btn flat no-ripple color="warning">Home</v-btn>
+              <v-btn flat color="blue darken-4">About</v-btn>
+              <v-btn flat color="blue darken-4">Github</v-btn>
+              <v-btn flat color="blue darken-4">Other</v-btn>
+            </v-layout>
+          </div>
+        </v-flex>
+        <v-flex xs12 md5 offset-md2>
+
+          <div>
+            <v-card class="my-3" hover>
+              <v-container fill-height fluid>
+                  <v-layout fill-height>
+                    <v-flex xs12 align-end flexbox>
+                      <span class="headline">Table</span>
+                    </v-flex>
+                  </v-layout>
+                </v-container>
+              <v-card-text>
+                <HelloWorld msg="Welcome to Your Vue.js App"/>
+              </v-card-text>
+              <v-card-actions>
+                <v-btn flat icon color="red">
+                  <v-icon medium>fa-reddit</v-icon>
+                </v-btn>
+                <v-btn flat icon color="light-blue">
+                  <v-icon medium>fa-twitter</v-icon>
+                </v-btn>
+                <v-btn flat icon color="blue darken-4">
+                  <v-icon medium>fa-facebook</v-icon>
+                </v-btn>
+                <v-spacer></v-spacer>
+                <v-btn flat color="blue">Read More</v-btn>
+              </v-card-actions>
+            </v-card>
+          </div>
+
+          <div v-for="post in posts" :key="post.title">
+            <v-card class="my-3" hover>
+              <v-img
+                class="white--text"
+                height="190px"
+                :src="post.imgUrl"
+              >
+                <v-container fill-height fluid>
+                  <v-layout fill-height>
+                    <v-flex xs12 align-end flexbox>
+                      <span class="headline">{{ post.title }}</span>
+                    </v-flex>
+                  </v-layout>
+                </v-container>
+              </v-img>
+              <v-card-text>
+                {{ post.content }}
+              </v-card-text>
+              <v-card-actions>
+                <v-btn flat icon color="red">
+                  <v-icon medium>fa-reddit</v-icon>
+                </v-btn>
+                <v-btn flat icon color="light-blue">
+                  <v-icon medium>fa-twitter</v-icon>
+                </v-btn>
+                <v-btn flat icon color="blue darken-4">
+                  <v-icon medium>fa-facebook</v-icon>
+                </v-btn>
+                <v-spacer></v-spacer>
+                <v-btn flat color="blue">Read More</v-btn>
+              </v-card-actions>
+            </v-card>
+          </div>
+        </v-flex>
+      </v-layout>
+    </v-container>
+    <v-footer color="secondary">
+      <v-layout row wrap align-center>
+        <v-flex xs12>
+          <div class="white--text ml-3">
+            Made with
+            <v-icon class="red--text">favorite</v-icon>
+            by <a class="white--text" href="https://vuetifyjs.com" target="_blank">Vuetify</a>
+            and <a class="white--text" href="mailto:costa.huang@outlook.com">Costa Huang</a>
+          </div>
+        </v-flex>
+      </v-layout>
+    </v-footer>
+  </v-app>
+ </div>
+
+
+<script src="../../js/es6-polyfill.js"></script>
+
+<script src="../../components/es6-module-loader/dist/es6-module-loader.src.js"></script>
+<script src="/components/system.js/dist/system.src.js"></script>
+<script>
+  window.define = System.amdDefine.bind(System);
+  window.require = window.requirejs = System.amdRequire.bind(System);
+</script>
+ <script src="../../components/vue/dist/vue.js"></script>
+ <script src="../../components/vuetify/dist/vuetify.js"></script>
+ <script src="./main.js"></script>
+ <!-- <script src="https://use.fontawesome.com/73c8e2621d.js"></script> -->
+ 
+ <!-- <script>
+   import HelloWorld from './components/HelloWorld.vue'
+   new Vue({
+    el: '#app',
+    components: {
+      HelloWorld
+    },
+    data () {
+      return {
+        title: 'Your Logo',
+        posts: [
+          {
+            title: 'Fusce ullamcorper tellus sed maximus',
+            content: 'Fusce ullamcorper tellus sed maximus rutrum. Donec imperdiet ultrices maximus. Donec non tellus non neque pellentesque fermentum. Aenean in pellentesque urna. Mauris aliquet elit rutrum lorem fermentum, id lobortis arcu facilisis. Mauris ut justo magna. Vivamus euismod fringilla. ',
+            imgUrl: '../img/cards/drop.jpg'
+          },
+          {
+            title: 'Donec vitae suscipit lectus, a luctus diam.',
+            content: 'Donec vitae suscipit lectus, a luctus diam. Proin vitae felis gravida, lobortis massa sit amet, efficitur erat. Morbi vel ultrices nisi. Aenean arcu sapien, rutrum nec mollis id, condimentum quis orci. Praesent a rhoncus orci. Praesent turpis turpis, imperdiet id eleifend consequat. ',
+            imgUrl: '../img/cards/docks.jpg'
+          },
+          {
+            title: 'Vestibulum condimentum quam eu est convallis',
+            content: ' at sagittis sapien vulputate. Vivamus laoreet lacus id magna rutrum dapibus. Donec vel pellentesque arcu. Maecenas mollis odio tempus felis elementum commodo. Quisque gravida, est quis tincidunt bibendum, nibh elit dapibus mauris.',
+            imgUrl: '../img/cards/plane.jpg'
+          }
+        ]
+      }
+    }
+  })
+ </script> -->
+</body>
+</html>

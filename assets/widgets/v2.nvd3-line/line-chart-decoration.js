@@ -3,13 +3,20 @@ import 'widgets/v2.nvd3-widget/nvd3-widget';
 import "widgets/v2.nvd3-line/adapter";
 import "wizard-directives";
 import 'ng-ace';
+import "widgets/v2.steps/palettes";
+import 'angular-animate';
+import 'angular-cookies';
+import 'angular-material';
+import 'angular-sanitize';
 
 
 var m = angular.module("app.widgets.v2.steps.line-chart-decoration",[
 	'app.widgets.v2.nvd3-widget',
     "app.widgets.v2.line-chart-adapter", 
     "wizard-directives",
-    "app.dps", "ng.ace"]);
+    "app.dps", "ng.ace",'ngMaterial', 
+            'ngMessages',
+            'ngSanitize']);
 
 m.factory("LineChartDecoration",[
 	"$http",
@@ -19,6 +26,7 @@ m.factory("LineChartDecoration",[
 	"LineChartAdapter",
 	"pageWidgets","i18n", "dialog", "$error", "dpsEditor",
 	"mdDpsEditor",
+	"Palettes",
 
 	function(
 		$http,
@@ -26,7 +34,7 @@ m.factory("LineChartDecoration",[
 		$q, 
 		parentHolder, 
 		LineChartAdapter,
-		pageWidgets, i18n, dialog, $error, dpsEditor, mdDpsEditor){
+		pageWidgets, i18n, dialog, $error, dpsEditor, mdDpsEditor, Palettes){
 		
 		let chartAdapter = LineChartAdapter;
 
@@ -41,9 +49,13 @@ m.factory("LineChartDecoration",[
 	        
 	    	html : "./widgets/v2.nvd3-line/line-chart-decoration.html",
 
+	    	palettes: Palettes,
+
+	    	
+
 	    	onStartWizard: function(wizard){
-	    		// console.log("DECORATION START Wizard CONF", wizard.conf);
-	    		// console.log("DECORATION START axisX", wizard.conf.axisX);
+	    		console.log("DECORATION START Wizard CONF", wizard.conf);
+	    		console.log("DECORATION START axisX", wizard.conf.axisX);
 	    		this.inputQuery = undefined;
 
 	    		
@@ -63,6 +75,7 @@ m.factory("LineChartDecoration",[
 	    			emitters: wizard.conf.emitters
 	    		}	
 
+	    		// this.conf.decoration.paletteIndex = this.conf.decoration.paletteIndex || 0; 
 	    		this.queries = [{$id:'eventSource', $title:'setData(updateWithData) event'}];
 
 	    		pageWidgets()
@@ -74,6 +87,7 @@ m.factory("LineChartDecoration",[
 	    			let thos = this;
 	    			this.inputQuery = this.queries.filter((item) => item.$id == this.conf.queryID)[0].$title;
 	    		}		
+	    		this.apply()
 
 	    	},
 
@@ -105,6 +119,7 @@ m.factory("LineChartDecoration",[
 				if ( this.conf.decoration.color ){
 					this.conf.decoration.color = this.conf.decoration.color.reverse(); 
 				}	
+				this.updateOptions()
 			},
 
 			selectInputData: function(){
@@ -302,7 +317,10 @@ m.factory("LineChartDecoration",[
 			            	thos.conf.decoration = chartAdapter.getDecoration(thos.options);
 			            }
 		            
-			           thos.conf.decoration.setColor = (palette) => {thos.conf.decoration.color = angular.copy(palette) }
+			           thos.conf.decoration.setColor = () => {
+			           		thos.conf.decoration.color = angular.copy(thos.palettes[thos.conf.decoration.paletteIndex]) 
+			           	}
+
 			           thos.options.chart.x = (d) => d.x;
 		               thos.options.chart.y = (d) => d.y;
 		                
@@ -346,9 +364,18 @@ m.factory("LineChartDecoration",[
             },
 
 			activate : function(wizard){
+				console.log("activate")
 				// if (this.conf.dataID){
 					this.loadData();
 				// }
+			},
+
+			updateOptions: function(){
+				let thos = this;
+					thos.conf.decoration.width = parentHolder(thos.wizard.conf).width;
+					chartAdapter.applyDecoration(thos.options,thos.conf.decoration);
+					thos.settings = {options:angular.copy(thos.options), data:angular.copy(thos.data)};
+				console.log("UPDATE OPTIONS", this.settings)
 			},
 
 			apply: function(){

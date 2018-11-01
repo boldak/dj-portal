@@ -24,7 +24,7 @@ m.controller('Nvd3GeochartCtrlV2', function (
           wizard: GeochartWizard,
           decorationAdapter: GeochartAdapter,
           optionsURL: "/widgets/v2.nvd3-geochart/options.json",
-          sampleURL: "/widgets/v2.nvd3-line/sample.json",
+          sampleURL: "/widgets/v2.nvd3-geochart/sample.json",
           acceptData : function(context){
               return context.key == "geochart"
           },

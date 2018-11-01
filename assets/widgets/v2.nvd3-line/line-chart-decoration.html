@@ -1,4 +1,248 @@
-<div class="row" style="font-size:smaller; padding:0 1rem 0 1rem; margin:0;">
+<section layout="row" flex style="border-bottom: 1px solid #e7e7e7;">    
+        <md-sidenav
+                class="md-sidenav-left"
+                md-component-id="left"
+                style="position: relative;"
+                md-disable-backdrop 
+                md-whiteframe="4"
+                md-is-locked-open="true"
+        >
+        	<md-content>
+
+        		<div class="row wizard setting">
+					<button class="button radius right toolbar apply tiny" ng-click="step.editScript()">Edit script</button>
+				</div>
+
+				<div class="row wizard setting">
+					<button class="button radius right toolbar apply" ng-click="step.apply()">Apply Decoration</button>
+				</div>
+				
+				<h3> Chart titles</h3>
+				<div class="row wizard setting">
+						<label class="wizard left section">
+							Title
+					    </label>
+					    <input class="wizard" type="text" ng-model="step.conf.decoration.title" ng-change="step.updateOptions()">
+					    
+					    <label class="wizard left section">
+							Subtitle
+					    </label>
+					    <input class="wizard" type="text" ng-model="step.conf.decoration.subtitle" ng-change="step.updateOptions()">
+					    
+					    <label class="wizard left section">
+							Caption
+					    </label>
+					    <input class="wizard" type="text" ng-model="step.conf.decoration.caption" ng-change="step.updateOptions()">
+				</div>
+			<h3>X Axis</h3>
+				
+						<div class="row wizard setting">
+						<div class="row wizard setting">    
+							<label class="wizard left section">
+								Title
+						    </label>
+						    <input class="wizard" type="text" ng-model="step.conf.decoration.xAxisName" ng-change="step.updateOptions()">
+						</div>
+						<div class="row wizard setting">
+							<label class="wizard left section">
+								Stagger Labels
+							</label>
+						 	<div class="switch tiny right">
+					          <input type="checkbox"
+					                 id="staggerLabelsCheckbox"
+					                 ng-model="step.conf.decoration.staggerLabels"
+					                 ng-change="step.updateOptions()"
+					           >
+					          <label for="staggerLabelsCheckbox"></label>
+					        </div>
+					    </div>
+					    <div class="row wizard setting">    
+							<label class="wizard left section">
+								Reduce Labels
+							</label>
+						 	<div class="switch tiny right">
+					          <input type="checkbox"
+					                 id="reduceXTicksCheckbox"
+					                 ng-model="step.conf.decoration.reduceXTicks"
+					                 ng-change="step.updateOptions()"
+					           >
+					          <label for="reduceXTicksCheckbox"></label>
+					        </div>
+				        </div>
+				        <div class="row wizard setting">
+							<label class="wizard left section">
+								Label Rotation
+							</label>	
+							<input type="number" ng-model="step.conf.decoration.xAxisAngle" class="wizard" ng-change="step.updateOptions()">
+						</div>
+					</div>
+				<h3>Y Axis</h3>
+				<div class="row wizard setting">
+					<label class="wizard left section">
+						Title
+				    </label>
+				    <input type="text" class="wizard" ng-model="step.conf.decoration.yAxisName" ng-change="step.updateOptions()">
+				</div>
+
+				<h3>Interpolation</h3>
+				<div class="row wizard setting">
+					<label class="wizard left">
+						Mode:
+			        </label>
+			        <select ng-model="step.conf.decoration.interpolation" class="wizard" ng-change="step.updateOptions()">
+			          <option>linear</option>
+			          <option>step</option>
+			          <option>step-before</option>
+			          <option>step-after</option>
+			          <option>basis</option>
+			          <option>bundle</option>
+			          <option>cardinal</option>
+			          <option>monotone</option>
+			        </select>
+			      
+			    </div>
+
+			    <h3>"Point Options</h3>
+				
+				<div class="row wizard setting">
+					<label class="wizard left">
+						Show Point
+					</label>
+				 	<div class="switch tiny right" style="margin:0;">
+			          <input type="checkbox"
+			                 id="showPointsCheckbox"
+			                 ng-model="step.conf.decoration.showPoints"
+			                 ng-change="step.updateOptions()"
+			           >
+			          <label for="showPointsCheckbox"></label>
+			        </div>
+				</div>
+				<div class="row wizard setting">
+					<label class="wizard left">
+						Show Label
+					</label>
+				 	<div class="switch tiny right" style="margin:0;">
+			          <input type="checkbox"
+			                 id="showLabelCheckbox"
+			                 ng-model="step.conf.decoration.showLabels"
+			                 ng-change="step.updateOptions()"
+			           >
+			          <label for="showLabelCheckbox"></label>
+			        </div>
+				</div>	
+
+				<h3>Fill Area</h3>
+				<div class="row wizard setting">
+					<label class="wizard left">
+						Enable
+					</label>
+				 	<div class="switch tiny right">
+			          <input type="checkbox"
+			                 id="fillAreaCheckbox"
+			                 ng-model="step.conf.decoration.isArea"
+			                 ng-change="step.updateOptions()"
+			           >
+			          <label for="fillAreaCheckbox"></label>
+			        </div>
+				</div>
+
+
+				<h3>Chart Height</h3>
+			    <div class="row wizard setting">
+					<input type="number" ng-model="step.conf.decoration.height" class="wizard" ng-change="step.updateOptions()">
+	        	</div>
+
+	        	<h3>Palette</h3>	
+
+					<div class="row wizard setting">
+						
+						<a class="second dropdown tiny left"
+							ng-if="step.conf.decoration.color" 
+							dropdown-toggle="#dropdown-example-3" 
+							style="margin: 0 0 0 0.3rem;
+							padding: 0.3rem 2.5rem 0.3rem 0.5rem;"
+						>
+		              		<div 	class="button tiny left"
+		              				ng-repeat="color in  step.conf.decoration.color"
+		                   			style="background-color: {{color}};width:10px;display: inline-block; margin:0;padding:0 0.2rem 0 0.2rem;border:1px solid #afafaf;">
+		                		&nbsp;
+		              		</div>
+		            	</a>
+		            	<a class="second dropdown tiny left"
+							ng-if="!step.conf.decoration.color" 
+							dropdown-toggle="#dropdown-example-3" 
+							style="margin: 0 0 0 0.3rem;
+							padding: 0.3rem 2.5rem 0.3rem 0.5rem;"
+						>
+		              		Select Palette
+		            	</a>
+
+		            	
+
+		            	<fast-palette-peacker 
+		            		dest="step.conf.decoration" 
+		            		setter="step.conf.decoration.setColor" 
+		            		watch-depth="reference">
+		            	</fast-palette-peacker>
+
+
+						<label class="wizard left" style="clear:left">
+							Reverse
+						</label>
+						
+					 	<div class="switch tiny right">
+				          <input type="checkbox"
+				                 id="reversePaletteCheckbox"
+				                 ng-model="step.conf.decoration.reversePalette"
+				                 ng-change = "step.reversePalette()"
+				           >
+				          <label for="reversePaletteCheckbox"></label>
+				        </div>
+		 				
+		 				
+
+		        	</div>
+
+		        	<h3>Behaviour</h3>
+		        	<div class="row wizard setting">
+	
+						<label class="wizard left">
+							Emit selection events
+						</label>
+						
+					 	<div class="switch tiny right">
+				          <input type="checkbox"
+				                 id="emitEventsCheckbox"
+				                 ng-model="step.conf.decoration.enableEmitEvents"
+				           >
+				          <label for="emitEventsCheckbox"></label>
+				        </div>
+		 				
+				    </div>
+					<div class="row wizard setting">
+						<label class="wizard left">
+							Emitters
+					    </label>
+					    <input class="wizard" type="text" ng-model="step.conf.emitters">
+					</div>
+
+
+
+
+
+        	</md-content>
+        </md-sidenav>
+        <div 
+			class="border" 
+			style="width:{{step.conf.decoration.width}}px;background:#ffffff;"
+		>
+			<div nvd3 settings="step.settings"></div>
+		</div>
+</section>
+
+
+<!-- <div class="row" style="font-size:smaller; padding:0 1rem 0 1rem; margin:0;">
+
 	<div class="column medium-3 left">
 		
 		<h5>Input Data</h5>	
@@ -226,7 +470,65 @@
 						<input type="number" ng-model="step.conf.decoration.height" class="wizard">
 		        	</div>
 		        </accordion-group>
-		        
+
+
+ -->
+
+		        <!-- <accordion-group heading="MD Palette">
+		        	<div layout="row">
+                      <md-input-container style="width:200px;">
+                        <label>
+                          Palette
+                        </label>
+
+                        <div class="row">
+                        	{{step.conf.decoration.paletteIndex}}
+                        </div>	
+                        
+                        <md-select  ng-model="step.conf.decoration.paletteIndex"
+                                    ng-change="step.conf.decoration.setColor()"
+                        >
+                          <md-option  ng-repeat="p in step.palettes track by $index"
+                                      style="height: 24px;" >
+                                      ng-value="$index"> 
+                               {{$index}} {{p.join(",")}}       
+                            
+                                <md-icon  ng-repeat="c in p"
+                                          md-font-icon="fa-pause"
+                                          style="
+                                            font-family: FontAwesome;
+                                            font-size: 0px;
+                                            background: #d7191c;
+                                            min-width: 14px;
+                                            min-height: 10px;
+                                            height: 10px;
+                                            outline: 1px solid #e7e7e7;
+                                            background:{{c}};
+                                          "
+                                ></md-icon>
+
+                          </md-option>
+                        </md-select>
+                      </md-input-container>
+
+                      <md-button  class="md-primary md-raised" 
+                                  ng-click="reversePallete()"
+                                  ng-disable="config.state.options.colors.pallete.length == 0"
+                                  style=" height: 1.5em;
+                                          margin-top: 1em;"
+                      >
+                        Reverse
+                      </md-button>  
+                    </div>
+                </accordion-group>     -->
+
+
+
+
+
+
+
+		<!--         
 		        <accordion-group heading="Palette">	
 
 					<div class="row wizard setting">
@@ -302,10 +604,46 @@
 					</div>
 				</accordion-group>	    
 		        </accordion>
+		        <md-content>
+			        <md-input-container style="width:200px;">
+	                        <label>
+	                          Palette
+	                        </label>
+
+	                        <md-select  ng-model="step.conf.decoration.paletteIndex"
+	                                    ng-change="step.conf.decoration.setColor()"
+	                        >
+	                          <md-option  ng-repeat="p in step.palettes track by $index"
+	                                      style="height: 24px;" 
+	                                      ng-value="$index">
+	                               
+	                            
+	                                <md-icon  ng-repeat="c in p"
+	                                          md-font-icon="fa-pause"
+	                                          style="
+	                                            font-family: FontAwesome;
+	                                            font-size: 0px;
+	                                            background: #d7191c;
+	                                            min-width: 14px;
+	                                            min-height: 10px;
+	                                            height: 10px;
+	                                            outline: 1px solid #e7e7e7;
+	                                            background:{{c}};
+	                                          "
+	                                ></md-icon>
+
+	                          </md-option>
+	                        </md-select>
+	                      </md-input-container>
+   
+
+	                      
+	                </md-content>        
 		    </div>    	
 	</div>
 
-	<div class="column medium-9 left">
+ -->	
+<!--  <div class="column medium-9 left">
 		<h5 class="section-title">
 			<img src="./widgets/v2.query-manager/preparation.png" style="width: 32px;margin: 0 0.3em;"/>
 			{{step.inputQuery}}
@@ -332,4 +670,4 @@
 		</div>
 	</div>
 </div>
-
+ -->

@@ -213,8 +213,8 @@ md-toolbar.status-bar div.md-toolbar-tools span {
           </pre>
         </div>
         <div class="column">
-          <span>File: {{(selectedFile)?selectedFile:'no selected'}}</span>
-          <button class="toolbar right">Edit</button>
+          <span>File: {{(widget.file[selected]) ? widget.file[selected].name : 'no selected'}}</span>
+          <button class="button small right" ng-click="selectFile()">Edit</button>
         </div>  
 
       </div>

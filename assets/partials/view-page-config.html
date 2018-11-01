@@ -2,6 +2,13 @@
   <h5 color="#ddd">
   	Page Layout
   </h5>
+  <div class="row">
+  	<pre>
+  		{{config | json}}
+  	</pre>	
+  </div>	
+
+
   <div class="row" ng-repeat="holder in config.holders track by $index">
   	<h5>{{holders[$index]}}</h5>
   	<div ng-repeat = "widget in holder.widgets" 

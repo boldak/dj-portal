@@ -76,6 +76,33 @@ m.controller('ScriptSuiteController', function(
         app.markModified();
     }
 
+
+    
+
+    $scope.selectFile = () => {
+        // let currentScript = $scope.tabs[$scope.currentScriptIndex];
+            
+        dialog({
+            title: `Append Data File`,
+            fields: {
+                file: {
+                    title: 'Data file:',
+                    type: 'file',
+                    value: $scope.widget.file[$scope.selected],
+                    editable: true,
+                    required: true
+                }
+            }
+
+        }).then((form) => {
+            console.log(form)
+            // // var p = progress("Upload dataset ");
+            // // const fd = new FormData();
+            // let currentScript = $scope.tabs[$scope.currentScriptIndex];
+            $scope.widget.file[$scope.selected] = form.fields.file.value;
+        })
+    }
+
     $scope.doDeleteScript = () => {
         $scope.collapsed = true;
         // $scope.processed = false;
@@ -241,18 +268,46 @@ m.controller('ScriptSuiteController', function(
                 }
         }
         
-        $dps.post("/api/script", {
-                "script": $scope.widget.script[$scope.selected],
-                "locale": i18n.locale()
-            },
-            {timeout:$scope.canceler.promise})
-            .then(handleResponse)
+
+        let p;
+            
+            if ($scope.widget.file[$scope.selected]){
+                p =  $dps.postWithFile(
+                        "/api/script", 
+                        $scope.widget.file[$scope.selected],
+                        {
+                          "script": $scope.widget.script[$scope.selected],
+                          "locale": i18n.locale()  
+                        } 
+                    )
+            } else {
+                p = $dps.post(
+                        "/api/script", 
+                        {
+                          "script": $scope.widget.script[$scope.selected],
+                          "locale": i18n.locale()  
+                        } 
+                    )
+
+            }
+            
+            p.then(handleResponse)
+
+
+        // $dps.post("/api/script", {
+        //         "script": $scope.widget.script[$scope.selected],
+        //         "locale": i18n.locale()
+        //     },
+        //     {timeout:$scope.canceler.promise})
+        //     .then(handleResponse)
     }
 
     
     new APIProvider($scope)
         .config(() => {
             $scope.widget.script = $scope.widget.script || {}
+            $scope.widget.file = $scope.widget.file || {}
+            
             $scope.collapsed = ($scope.keys($scope.widget.script).length > 0)
             
             if($scope.keys($scope.widget.script).length > 0 && $scope.globalConfig.designMode){

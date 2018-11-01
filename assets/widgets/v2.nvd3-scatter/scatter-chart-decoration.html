@@ -114,7 +114,7 @@
 					</accordion-group>
 				
 
-				<accordion-group heading = "Y Axis"  ng-if="step.wizard.context.postprocessedTable">	
+				<accordion-group heading = "Y Axis">	
 					<div class="row wizard setting">
 						<div class="row wizard setting">
 							<label class="wizard left section">
@@ -122,7 +122,7 @@
 						    </label>
 						    <input type="text" class="wizard" ng-model="step.conf.decoration.yAxisName">
 						</div>
-						<div class="row wizard setting">
+						<!-- <div class="row wizard setting">
 							<label class="wizard left section">
 								Include Series				    
 							</label>
@@ -137,9 +137,9 @@
 							<button class="button radius left toolbar" ng-click="step.clearIndexesSelection()">
 								Clear
 							</button>
-						</div> 	
+						</div> 	 -->
 					    
-					    <div class="row wizard setting">	
+					    <!-- <div class="row wizard setting">	
 						    <div class="row wizard setting" ng-repeat="item in step.indexList track by $index">
 								<label class="wizard left">
 									{{item.label}}
@@ -153,7 +153,7 @@
 						          <label for="{{'ind'+$index}}"></label>
 						        </div>
 					        </div>
-					    </div>    
+					    </div>     -->
 					</div>
 				</accordion-group>
 				
