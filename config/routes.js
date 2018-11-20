@@ -33,6 +33,18 @@ module.exports.routes = {
   'get /app/:appName': 'AppViewController.getView',
   'get /app/:appName/*': 'AppViewController.getView',
 
+  '/app/:appName/modules': {
+       target: '/modules',
+       skipAssets: true
+    },
+     '/app/:appName/modules/*': {
+        target: '/modules',
+        skipAssets: true
+     },
+
+  // '/app/*/modules/*' : '/modules',
+  // '/app/*/djvue/*' : '/djvue',
+
   //Help
   'get /help/widget/:widgetType/:lang': 'HelpController.getHelp',
   'get /help/widget/:widgetType/img/:imgName': 'HelpController.getImage',

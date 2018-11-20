@@ -1,0 +1,35 @@
+{
+	"options": {
+	    "legend": {},
+	    "tooltip": {},
+
+	    "xAxis": [
+	        {"type": "category", "gridIndex": 0},
+	        {"type": "category", "gridIndex": 1}
+	    ],
+
+	    "yAxis": [
+	        {"gridIndex": 0},
+	        {"gridIndex": 1}
+	    ],
+
+	    "grid": [
+	        {"bottom": "55%"},
+	        {"top": "55%"}
+	    ],
+
+	    "color": ["#a6cee3", "#1f78b4", "#b2df8a", "#33a02c", "#fb9a99", "#e31a1c", "#fdbf6f", "#ff7f00", "#cab2d6", "#6a3d9a", "#ffff99", "#b15928"],
+
+	    "series": [
+	        
+	        {"type": "bar", "seriesLayoutBy": "row"},
+	        {"type": "bar", "seriesLayoutBy": "row"},
+	        {"type": "bar", "seriesLayoutBy": "row"},
+	        
+	        {"type": "bar", "xAxisIndex": 1, "yAxisIndex": 1},
+	        {"type": "bar", "xAxisIndex": 1, "yAxisIndex": 1},
+	        {"type": "bar", "xAxisIndex": 1, "yAxisIndex": 1},
+	        {"type": "bar", "xAxisIndex": 1, "yAxisIndex": 1}
+	    ]
+	} 
+}
