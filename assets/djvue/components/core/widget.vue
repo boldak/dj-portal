@@ -4,12 +4,12 @@
                                    
                   <v-tooltip top>
                     <v-avatar class="handle" size="32" tile slot="activator">
-                        <v-icon large>{{localConfig.icon}}</v-icon>
+                        <v-icon large>{{config.icon}}</v-icon>
                     </v-avatar>
-                     <span>{{localConfig.type}}</span>
+                     <span>{{config.type}}</span>
                   </v-tooltip>
 
-                  <v-toolbar-title class="body-2 white--text">{{localConfig.id}} "{{localConfig.name}}"</v-toolbar-title>
+                  <v-toolbar-title class="body-2 white--text">{{config.id}} "{{config.name}}"</v-toolbar-title>
                 
                   <v-spacer></v-spacer>
                  
@@ -47,10 +47,16 @@
                
               </v-toolbar>
 
-              <v-divider v-if="!isProductionMode"></v-divider>
-
-              <v-card-text pa-0 style="padding:0;" v-show="!collapsed">
-                <component v-bind:is="localConfig.type" ref="instance" :config="localConfig"></component>
+             <!--  <v-divider v-if="!isProductionMode"></v-divider>
+                <h4>this.config</h4>
+                <pre>{{JSON.stringify(config,null,"\t")}}</pre>
+                <h4>global config</h4>
+                <pre>{{JSON.stringify(globalConfig,null,"\t")}}</pre>
+                <pre>{{(!collapsed && !isProductionMode) || (config.options.widget.visible && isProductionMode)}}</pre>
+                
+              <v-divider v-if="!isProductionMode"></v-divider> -->
+              <v-card-text pa-0 style="padding:0;" v-show="options.widget.visible">
+                <component v-bind:is="config.type" ref="instance" :config="config" @init="onInitChild"></component>
               </v-card-text>
 
              </v-card>
@@ -61,6 +67,7 @@
  import components from "djvue/components/widgets/index.js"
  import djvueMixin from "djvue/mixins/core/djvue.mixin.js"
  import widgetMixin from "djvue/mixins/core/widget.mixin.js";
+ 
 
  export default  {
 
@@ -68,7 +75,7 @@
 
     name:"dj-widget",
     
-    props:["type"],
+    props:["type","holder"],
     
     components,
     
@@ -78,11 +85,17 @@
       }
     },
 
+    computed:{
+      globalConfig(){
+        // console.log(JSON.stringify(this.app.currentPage.holders[this.holder], null, "\t"))
+        return _.find(this.app.currentPage.holders[this.holder].widgets,(item) => item.id == this.config.id)
+      }
+    },
+
     methods:
       {
         
         configure(){
-          console.log("click reconfigure")
           this.$eventHub.emit("widget-reconfigure", this)
         },        
 

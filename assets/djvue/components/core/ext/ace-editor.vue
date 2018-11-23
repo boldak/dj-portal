@@ -31,6 +31,7 @@
     data: function () {
       return {
         editor: null,
+        session:null
       };
     },
 
@@ -46,7 +47,7 @@
       var lang = vm.lang;
       var theme = vm.theme;
       var editor = vm.editor = ace.edit(vm.$el);
-      var session = editor.getSession();
+      var session = vm.session = editor.getSession();
       editor.$blockScrolling = Infinity;
       session.setMode('ace/mode/' + lang);
       editor.setTheme('ace/theme/' + theme);
@@ -58,19 +59,20 @@
     },
 
     watch: {
-      // content: function (newContent) {
-      //   const vm = this;
-      //   if (vm.sync) {
-      //     vm.editor.setValue(newContent, 1);
-      //   }
-      // },
+      
+      content: function (newContent) {
+        const vm = this;
+        if (vm.sync && ( newContent !== vm.session.getValue() )) {
+          vm.editor.setValue(newContent, 1);
+        }
+      },
 
       theme: function (newTheme) {
         const vm = this;
         vm.editor.setTheme('ace/theme/' + newTheme);
       }
     }
-  };
+  }
 
 </script>
 

@@ -69,19 +69,129 @@
       var defaultApp = "<%= app.defaultApp %>";
       var appId ="<%= app.id %>";
       var appName = "<%= app.name %>";
-      var initialConfig = <%- JSON.stringify(publicAppConfig) %>;
+      // var initialConfig = <%- JSON.stringify(publicAppConfig) %>;
+      // console.log(initialConfig)
 
 
       var _pages = [
+
         {
-          layout:"layout-1-2"
+          "title": "Home",
+          layout:"layout-1-2",
+          "holders": {
+            "Top": {
+              "widgets": [
+                  {
+                    type:"mediator-widget", 
+                    name:"noname",
+                    icon:"mdi-language-javascript",
+                    options: {
+                      widget:{
+                        visible: true
+                      }
+                    },
+                    data:{
+                      script:`
+                      // console.log(
+                      let w = 
+                      this.$djvue.selectWidgets(
+                          this.$root, 
+                          item => item.config && item.config.id == "1"
+                      )[0]
+                      w.updateState({data:"//////////"})
+                      w.setOption('widget.visible', false)
+                      // )
+                      // .template = "/////"
+                      `
+                    },
+                    id:"Mediator"  
+                  },
+                  {
+                    "type": "html-widget",
+                    "name": "noname",
+                    "icon": "mdi-language-html5",
+                    "options": { widget:{
+                        visible: true
+                      }
+                    },
+                    "data": {
+                      "source": "embedded",
+                      "embedded": "Top"
+                    },
+                    "id": "1"
+                  }
+               ]
+            },
+            "Column 1": {
+              "widgets": [
+                  {
+                    "type": "html-widget",
+                    "name": "noname",
+                    "icon": "mdi-language-html5",
+                    "dataSelectEmitters" : ["Mediator", "3"],
+                    "options": {widget:{
+                        visible: true
+                      }
+                    },
+                    "data": {
+                      "source": "embedded",
+                      "embedded": "Column 1"
+                    },
+                    "id": "2"
+                  }
+               ]
+            },
+            "Column 2": {
+              "widgets": [
+                  {
+                    "type": "html-widget",
+                    "name": "noname",
+                    "icon": "mdi-language-html5",
+                    "dataSelectEmitters" : "Mediator",
+                    "options": {widget:{
+                        visible: true
+                      }
+                    },
+                    "data": {
+                      "source": "embedded",
+                      "embedded": "Column 2"
+                    },
+                    "id": "3"
+                  }
+               ]
+            }
+          }        
+
         },
+
         {
-          name:"1",
-          title:"Another Page",
-          layout:"layout-1"
+          "id": "1",
+          "title": "Next page",
+          layout:"layout-1",
+          "holders": {
+            "Holder": {
+              "widgets": [
+                  {
+                    "type": "html-widget",
+                    "name": "noname",
+                    "icon": "mdi-language-html5",
+                    "options": {widget:{
+                        visible: true
+                      }
+                    },
+                    "data": {
+                      "source": "embedded",
+                      "embedded": "Another page Holder"
+                    },
+                    "id": "4"
+                  }
+               ]
+            }
+          }  
         }
       ]
+
+      var initialConfig = _pages
 
   </script>
 

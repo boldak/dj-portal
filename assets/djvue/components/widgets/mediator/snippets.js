@@ -6,10 +6,7 @@ export default {
         // id:Vue.prototype.$djvue.randomName(),
         name:"noname",
         icon:"mdi-language-html5",
-        options: { widget:{
-            visible: true
-          }
-        },
+        options: {},
         data:{
           source:"embedded",
           embedded:`<h2 color="#eee"><center>not configured<center></h2><p>Use options dialog for configure this widget</p>`
@@ -22,10 +19,7 @@ export default {
         // id:Vue.prototype.$djvue.randomName(),
         name:"noname",
         icon:"mdi-language-html5",
-        options: { widget:{
-            visible: true
-          }
-        },
+        options: {},
         data:{
           source:"embedded",
           embedded:`<h1>DJApp {{app.name}}.Page title</h1>`
@@ -38,10 +32,7 @@ export default {
         // id:Vue.prototype.$djvue.randomName(),
         name:"noname",
         icon:"mdi-language-html5",
-        options: { widget:{
-            visible: true
-          }
-        },
+        options: {},
         data:{
           source:"embedded",
           embedded:`<p>
@@ -60,10 +51,7 @@ export default {
         // id:Vue.prototype.$djvue.randomName(),
         name:"noname",
         icon:"mdi-language-html5",
-        options: { widget:{
-            visible: true
-          }
-        },
+        options: {},
         data:{
           source:"embedded",
           embedded:`<div style="height:50px; background-color:#eee"></div>`

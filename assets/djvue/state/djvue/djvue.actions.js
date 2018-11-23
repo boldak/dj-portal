@@ -28,6 +28,26 @@ export default {
 
   setNeedSave(context, value){
     context.commit('SET_NEED_SAVE', value)
+  },
+
+  setCurrentPage(context, value){
+    context.commit('SET_CURRENT_PAGE', value)
+  },
+
+  setHolderContent(context, data){
+    return new Promise(resolve => {
+      let pages = context.state.app.pages;
+      let page = _.find(pages, p => p.id == data.page.id)
+      let holder = page.holders[data.holder.name]
+      holder.widgets = JSON.parse(JSON.stringify(data.widgets))
+      context.commit('SET_PAGES', pages)
+      resolve()
+    })
+     
   }
+
+
+
+
 
 }

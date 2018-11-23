@@ -16,12 +16,6 @@
             ></v-text-field>
           </v-flex>
 
-          <v-switch
-            label="Visible in Production Mode"
-            v-model="config.options.widget.visible"
-            color="primary"
-          ></v-switch>
-
      </v-layout>      
 </template>	
 

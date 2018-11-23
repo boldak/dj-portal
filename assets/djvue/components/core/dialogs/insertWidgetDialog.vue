@@ -39,15 +39,18 @@ export default {
 	props:["config"],
 
   created(){
-    this.setWidgetConfig = widgetConfig => {
+    this.setWidgetConfig = (widgetConfig, force) => {
       this.widgetConfig = widgetConfig
+      if (force) this.resolve();
     }
 
     this.$eventHub.on("widget-config-dlg-select", this.setWidgetConfig)
+    // this.$eventHub.on("widget-config-dlg-select-force", this.setWidgetConfig)
   },
 
   destroyed(){
     this.$eventHub.off("widget-config-dlg-select", this.setWidgetConfig)
+    // this.$eventHub.off("widget-config-dlg-select-force", this.setWidgetConfig)
   },
 
 	
@@ -65,13 +68,15 @@ export default {
                 items:["html-widget", "html-widget:title", "html-widget:banner","html-widget:paragraph"]
               },
               { name: "Data management",
-                editor:"widget-types-panel"
+                editor:"widget-types-panel",
+                items:["html-widget", "html-widget:title", "html-widget:banner","html-widget:paragraph"]
               },
               { name: "Interactive reports",
                 editor:"widget-types-panel"
               },
               { name: "Page Management",
-                editor:"widget-types-panel"
+                editor:"widget-types-panel",
+                items:["mediator-widget"]
               }
             ]
           }

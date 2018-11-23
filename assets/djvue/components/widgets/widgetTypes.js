@@ -1,8 +1,10 @@
 import htmlWidget from "./html/html.vue"
+import mediatorWidget from "./mediator/mediator.vue"
 
 
 export default {
-	'html-widget' : htmlWidget
+	'html-widget' : htmlWidget,
+	"mediator-widget" : mediatorWidget
 }	
 
 

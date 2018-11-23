@@ -25,6 +25,16 @@ export default {
 
   SET_NEED_SAVE (state, value) {
     state.app.needSave = value
+  },
+
+  SET_CURRENT_PAGE (state, value) {
+    state.app.currentPage = value
+  },
+
+  SET_PAGES (state, value) {
+    state.app.pages = value
   }
+
+
 
 }

@@ -26,8 +26,10 @@ export default {
 		},
 
 		getPage(name){
-			let p = _.find(this.app.pages, item => item.name == name)
-			p = p || {
+			let p = _.find(this.app.pages, item => item.id == name)
+			p = p 
+			|| _.find(this.app.pages, item => !item.id)
+			|| {
 				name:"error",
 				title:"Page not found",
 				layout:"layout-1"
@@ -35,7 +37,7 @@ export default {
 			return p;
 		},
 		...Vuex.mapActions(
-			["setMode","setNeedSave"]
+			["setMode","setNeedSave","setCurrentPage","setHolderContent"]
 		)
 	},
 

@@ -1,8 +1,9 @@
 
 export default {
   app: {
-    config: initialConfig,
+    // config: initialConfig,
     mode: 'production',
+    currentPage:null,
     needSave: false,
     id: appId,
     name: appName,

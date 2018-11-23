@@ -2,14 +2,7 @@
   
   <div class="app">
     <v-app>
-      <pre>
-      {{$route.path}}
-      {{$route.params}}
-    </pre>  
-      
-      
-
-          <v-navigation-drawer
+     <v-navigation-drawer
       v-model="drawer"
       :mini-variant="mini"
       absolute
@@ -111,7 +104,9 @@
           </v-avatar>
         </v-btn>
       </v-toolbar>
-      
+
+      <v-divider></v-divider>
+        <router-link v-for="page in app.pages" :to="`/${page.id || ''}`">{{page.title}}</router-link>
       <v-divider></v-divider>
 
       <router-view></router-view>
@@ -139,7 +134,6 @@ import mixin from "djvue/mixins/core/djvue.mixin.js"
 import availableWidgets from "djvue/components/widgets/index.js"
 import ConfigDialogLayout from "djvue/components/core/ext//configDialogLayout.vue"
 
-console.log(availableWidgets)
 
 Vue.use(cookie)
 Vue.use( portal, {baseURL:"../../../"})
@@ -225,6 +219,7 @@ let toTree = (object) =>
       }
     },
 
+    
     created() {
 
       this.$router.addRoutes([
@@ -232,8 +227,8 @@ let toTree = (object) =>
         {path:"/:page", component:page}
       ])
 
-
-      this.$eventHub.on("ud-event", (context) => {console.log("handle user defined event", context)})
+      // this.$router.push('1')
+      // this.$eventHub.on("ud-event", (context) => {console.log("handle user defined event", context)})
 
     }
   }

@@ -14,8 +14,7 @@
             <v-card 
               flat 
               slot-scope="{active, toggle}"
-              @click.native="() => { toggle(); getInitialConfig(item) }"
-
+              @click.native="() => { toggle(); getInitialConfig($event,item) }"
             >       
               <v-flex text-xs-center 
                   >
@@ -39,15 +38,23 @@
 <script>
 
 import widgetTypes from "djvue/components/widgets/widgetTypes.js"
+import mixin from "djvue/mixins/core/dblclick.mixin.js"
 
 export default {
 	name:"widget-types-panel",
 	props:["selected"],
+  mixins:[mixin],
+  
   methods:{
-    getInitialConfig(item){
-      this.$eventHub.emit("widget-config-dlg-select", this.widgetTypes[item.type].getInitialConfig(item.template));
+    getInitialConfig (event, item) {
+      this.onClickHandler(
+        event,
+        () => {this.$eventHub.emit("widget-config-dlg-select", this.widgetTypes[item.type].getInitialConfig(item.template))},
+        () => {this.$eventHub.emit("widget-config-dlg-select", this.widgetTypes[item.type].getInitialConfig(item.template), true)}
+      )
     }
   },
+
   data:()=>(
     {
       widgetTypes,
@@ -56,7 +63,6 @@ export default {
   ),
   
   created(){
-
     this.items = this.selected.items.map((item => {
          let a = item.split(":")
          return {

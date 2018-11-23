@@ -50,15 +50,17 @@ export var http = {
     }
 }
 
-var findChild =  (component, filter) => {
-				let res = _.find(component.$children, filter)
-				if (!res) {
-					component.$children.forEach(child => {
-						if ( child.$children && !res){
-							res = findChild(child, filter)	
+var findChild =  (component, filter, res) => {
+                
+                res = res || []
+                 if (component.$children) {
+				    res = res.concat(component.$children.filter(filter))
+                    component.$children.forEach(child => {
+							res = res.concat(findChild(child, filter))	
 						}
-					})
+					)
 				}
+
 				return res
 }
 
@@ -70,6 +72,10 @@ var toTree = (object) =>
                             children: (!_.isObject(object[key])) ? undefined : toTree(object[key]) 
                         }
                     })
+
+
+
+
 
 export var djvue = {
 	install(Vue, options){
@@ -88,7 +94,9 @@ export var djvue = {
             toTree,
 
             extend:( object, extention) => {
-                return {...object,...JSON.parse(JSON.stringify(extention))}
+                
+                return _.extend (object,JSON.parse(JSON.stringify(extention)))
+                // return {...object,...JSON.parse(JSON.stringify(extention))}
             },
 
             createConfigDialog(components){
@@ -102,6 +110,10 @@ export var djvue = {
                 options.title = options.title || options.type;
 
                 Vue.prototype.$dialog.showAndWait(warningDialog, {options:options})
+            },
+
+            selectWidgets(root, filter){
+                return findChild(root, filter).filter(item => item.widgetWrapper)
             }
 		}
 		
