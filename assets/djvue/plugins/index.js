@@ -6,7 +6,7 @@ import warningDialog from "djvue/components/core/dialogs/warning.vue"
  Vue.prototype.$dialog.component("warningDialog", warningDialog)
 
 
-export var cookie = {
+export var cookiePlugin = {
 
         install: function (Vue) {
             Vue.prototype.$cookie = this;
@@ -38,17 +38,51 @@ export var cookie = {
     }
 
 
-export var portal = {
+export var portalPlugin = {
 	install(Vue, options = {baseURL:"/"}) {
 		Vue.prototype.$portal = axios.create(options)
 	}
 }
 
-export var http = {
+export var httpPlugin = {
     install(Vue, options) {
         Vue.prototype.$http = axios.create(options)
     }
 }
+
+export var dpsPlugin = {
+    install(Vue, options) {
+        let transport = axios.create(options);
+        let url = "api/script"
+        let client = options.client;
+
+        // client = {user: user, app: appName} from main page or from options
+        // url from main page or from options
+
+        Vue.prototype.$dps = {
+            run: ({script,state,file}) => {
+                if(!file){
+                    return transport.post(
+                        url,
+                        {
+                            client,
+                            script,
+                            state: { storage: state }
+                        }
+                    ).then( response => {
+                        return {
+                          type: response.data.type,
+                          data: response.data.data
+                        }
+                      })
+                }
+            },
+            call: this.run
+        }
+    }
+}
+
+
 
 var findChild =  (component, filter, res) => {
                 
@@ -77,7 +111,7 @@ var toTree = (object) =>
 
 
 
-export var djvue = {
+export var djvuePlugin = {
 	install(Vue, options){
         
         Vue.createConfigDialog = (components) => dialogFactory(components)
@@ -122,7 +156,7 @@ export var djvue = {
 
 var eventHub={}
 
-export var eventhub = {
+export var eventhubPlugin = {
 	install(Vue, options){
 		 eventHub = new Vue();
 		 

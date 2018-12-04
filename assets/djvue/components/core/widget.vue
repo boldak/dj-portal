@@ -1,6 +1,6 @@
 <template>
             <v-card  v-bind:class="{widget:!isProductionMode}" ma-1 flat style="background:transparent;">
-              <v-toolbar dark card height="36px" color="blue-grey" v-if="!isProductionMode">
+              <v-toolbar dark card height="36px" :color="(!hasError)?'blue-grey':'error'" v-if="!isProductionMode">
                                    
                   <v-tooltip top>
                     <v-avatar class="handle" size="32" tile slot="activator">
@@ -81,7 +81,8 @@
     
     data: () => {
       return {
-        collapsed:false
+        collapsed:false,
+        hasError:false
       }
     },
 

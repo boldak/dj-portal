@@ -1,6 +1,6 @@
 <template>
 	
-	<v-container pa-2 class="holder" v-bind:class="{producttion:isProductionMode, accepted:isAcceptWidget}">
+	<div pa-2 mt-2 class="holder" v-bind:class="{producttion:isProductionMode, accepted:isAcceptWidget}">
 	  <div class="holder-title">
 	   <h4 v-if="!isProductionMode"> Widget Holder: {{name}}</h4>
 	  </div> 
@@ -31,13 +31,14 @@
 		</v-btn>	
 	 </v-layout>	
 	 	
-	</v-container>
+	</div>
 	
 </template>
 
 
 
 <script>
+
 	import draggable from "modules/vue-draggable/vuedraggableES6.js";
 	import djvueMixin from "djvue/mixins/core/djvue.mixin.js"
 	import listenerMixin from "djvue/mixins/core/listener.mixin.js"
@@ -73,7 +74,7 @@
       }
     },
 
-    props:["name"],
+    props:["name","type"],
     
     computed:{
     	
@@ -92,10 +93,13 @@
 	    },
 
 	    widgets: {
-	    	get() { return this.app.currentPage.holders[this.name].widgets},
+	    	get() { 
+	    		if(this.type=="skin") return this.app.skin.holders[this.name].widgets
+	    		return this.app.currentPage.holders[this.name].widgets
+	       },
 	    	set( newValue ){
 	    		this.setHolderContent({
-		    		page: this.app.currentPage,
+		    		page: (this.type=="skin")? null : this.app.currentPage,
 		    		holder:this,
 		    		widgets:newValue
 		    	})
@@ -110,7 +114,12 @@
     methods:{
 
     	onBeforeInit(){
-    		this._waitList = this.app.currentPage.holders[this.name].widgets.map(item => item.id)
+    		if(this.type == "skin"){
+    			this._waitList = this.app.skin.holders[this.name].widgets.map(item => item.id)	
+    		} else {
+    			this._waitList = this.app.currentPage.holders[this.name].widgets.map(item => item.id)	
+    		}
+    		
     	},
 
     	onChildsInitiated(){
@@ -267,6 +276,7 @@
 
 	.container.holder.pa-2.producttion {
     /* display: none; */
+    margin-top:1em !important;
     border: none !important;
 	}
 

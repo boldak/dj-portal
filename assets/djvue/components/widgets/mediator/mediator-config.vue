@@ -1,7 +1,7 @@
 <template>
     <config-dialog 
       :icon="config.icon"
-      :title="`html-widget: ${config.id} ${config.name}`"
+      :title="`mediator-widget: ${config.id} ${config.name}`"
       :resolve="resolve"
       :reject="reject"
       :config="config"
@@ -13,16 +13,16 @@
 
 
 <script>
-import components from "./parts/index.js";
+import component from "./name-editor.vue";
 import mixin from "djvue/mixins/core/configDialog.mixin.js"
 
 
 
 export default {
 	
-  name: "HtmlConfig",
+  name: "MediatorConfig",
   
-  components:{ "config-dialog": Vue.createConfigDialog(components)},
+  components:{ "config-dialog": Vue.createConfigDialog({"name-editor": component})},
 
   mixins:[mixin],
   
@@ -36,21 +36,8 @@ export default {
             name: "Configuration",
             children: [
               {
-                name: 'Name',
+                name: 'Widget',
                 editor:"name-editor"
-              },
-              {
-                name: "Data",
-                editor:"html-editor"
-              },
-              {
-                name: "Options",
-                children:[
-                  {name:"xAxis"},
-                  {name:"yAxis"},
-                  {name:"colors"}
-
-                ]
               }
             ]
           }

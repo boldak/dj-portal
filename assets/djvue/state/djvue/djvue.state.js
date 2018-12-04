@@ -7,8 +7,10 @@ export default {
     needSave: false,
     id: appId,
     name: appName,
+    icon: icon,
     author: author,
     user: user,
-    pages: _pages
+    pages: _pages,
+    skin: skin
   }
 }

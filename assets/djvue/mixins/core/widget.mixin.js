@@ -10,6 +10,7 @@ export default {
 
 	data:()=>({
 		widgetWrapper:true,
+		data:{},
 		options:{
 			widget:{
 				visible: true
@@ -53,12 +54,9 @@ export default {
 	    _updateConfig () {
 	    		
 	      		// this.doRemoveSubscriptions();
-	      		
-	      		// this.localConfig = this.config;
-
 	      		// this.doInitSubscriptions();
 
-	      		let dataLoaded = new Promise( (resolve,reject) => {
+	      		new Promise( (resolve,reject) => {
 				
 				if(!this.config.data){
 					reject("no data")
@@ -68,9 +66,11 @@ export default {
 					this.$http
 						.get(this.config.data.url)
 						.then(res => {
+							this.hasError = false;
 							resolve(res.data)
 						})
 						.catch((error) => {
+							this.hasError = true;
 							this.$djvue.warning({
 					            type:"error",
 					            title:"Cannot load data",
@@ -83,62 +83,44 @@ export default {
 				}
 				
 				if(this.config.data.source == "dps"){
-					resolve("dps")
+					console.log("DPS", JSON.stringify(this.config.data.script))
+					this.$dps.run({
+						script:this.config.data.script
+					}).then (response => {
+						this.hasError = false;
+						resolve(response.data)
+					})
+					// resolve("dps")
 					return
 				}
 				
 				if(this.config.data.source == "embedded") {
+					this.hasError = false;
 					resolve(this.config.data.embedded)
 					return
 				}
 
 				// reject("no data source")
+			}).then( data => {
+					this.update({data, options:this.config.options})				
 			})
 
-			let optionsLoaded = new Promise( (resolve,reject) => {
-
-				if(!this.config.options){
-					reject("no options source")
-				}
-
-				if(this.config.options.url){
-					this.$http
-						.get(this.config.options.url)
-						.then(res => {
-							this.config.options = res.data.options
-							resolve(this.config.options)
-						})
-					return	
-				}
-				
-				if(this.config.options.script){
-					console.log("Run dps")
-					this.config.options = "DPS"
-					resolve(this.config.options)
-					return
-				}
-				
-				if(this.config.options) {
-					// setTimeout(()=> {resolve(this.config.options)},2000)
-
-					resolve(this.config.options)
-
-					return
-				}
-
-				// reject("no options source")
-					
-			})
-
-			Promise.all([dataLoaded, optionsLoaded]).then(res => {
-				this.updateState({data:res[0], options:res[1]})
-			})	
 		},
 
-		updateState (state) {
-			this.options = _.extend(this.options, state.options);
-			console.log(JSON.stringify(this.options, null, "\t"));
-			if(this.$refs.instance && this.$refs.instance.onUpdateState) this.$refs.instance.onUpdateState(state)
+		update (state) {
+
+			if(!state) state = {
+				data:this.data, 
+				options:this.options
+			};
+			
+			if(!state.data) state.data = Object.assign({},this.data);
+			if(!state.options) state.options = Object.assign({},this.options);
+
+			this.data = state.data;
+			this.options = state.options;
+			
+			if(this.$refs.instance && this.$refs.instance.onUpdate) this.$refs.instance.onUpdate(state)
 		},
 
 		setOption(path,value){
@@ -200,6 +182,7 @@ export default {
     },
 
 	created(){
+		this.config.data.script = this.config.data.script || ""
 		this._initSubscriptions()
 		this._updateConfig()
 	},

@@ -33,6 +33,10 @@ export default {
 
   SET_PAGES (state, value) {
     state.app.pages = value
+  },
+
+  SET_SKIN (state, value) {
+    state.app.skin = value
   }
 
 

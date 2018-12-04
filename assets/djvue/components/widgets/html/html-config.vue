@@ -36,7 +36,7 @@ export default {
             name: "Configuration",
             children: [
               {
-                name: 'Name',
+                name: 'Widget',
                 editor:"name-editor"
               },
               {

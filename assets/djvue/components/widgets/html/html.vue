@@ -9,7 +9,7 @@
   import djvueMixin from "djvue/mixins/core/djvue.mixin.js";
   import listenerMixin from "djvue/mixins/core/listener.mixin.js";
   import HtmlConfig from "./html-config.vue"
-  import snippets from "./snippets.js"
+  // import snippets from "./snippets.js"
 
 
   Vue.prototype.$dialog.component('HtmlConfig', HtmlConfig)
@@ -34,19 +34,11 @@
 
     icon: "mdi-language-html5",
 
-    getInitialConfig( snippet ){
-        snippet = snippet || "default"
-        let res = snippets[snippet] || snippets["default"]
-        res.id = Vue.prototype.$djvue.randomName()
-        return res
-    },
-    
     mixins:[djvueMixin, listenerMixin],
 
     methods:{
 
-      onUpdateState ({data, options}) {
-        console.log("onUpdateState", data, JSON.stringify(options))
+      onUpdate ({data, options}) {
         this.template = data;
       },
 
@@ -59,11 +51,9 @@
       },
 
       onDataSelect (emitter, data) {
-        console.log("onDataSelect", this.config.id, data)
-        setTimeout(()=> {
-          this.template = data
-        },1000)
-        this.emit("data-select", this, data+" redirected")
+        // console.log(JSON.stringify(data))
+        this.template = data.selection.filter(item => item.selected).map(item => item.entity).join(", ")
+        // this.emit("data-select", this, data+" redirected")
       }
 
     },

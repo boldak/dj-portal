@@ -6,11 +6,11 @@
 	        <dj-holder name="Top" @init="onInitChild"></dj-holder>
 	      </v-flex>
 	      
-	      <v-flex xs6 pa-1>
+	      <v-flex xs6 pa-1 mt-2>
 	        <dj-holder name="Column 1" @init="onInitChild"></dj-holder>
 	      </v-flex>
 	      
-	      <v-flex xs6 pa-1>
+	      <v-flex xs6 pa-1 mt-2>
 	        <dj-holder name="Column 2" @init="onInitChild"></dj-holder>
 	      </v-flex>
 	      

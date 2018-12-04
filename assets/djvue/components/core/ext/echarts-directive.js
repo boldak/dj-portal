@@ -1,7 +1,6 @@
 
 export default {
     bind: (el) => {
-   
         el.resizeEventHandler = () => el.echartsInstance.resize();
 
         if ( window.attachEvent ) {
@@ -30,3 +29,4 @@ export default {
         el.echartsInstance.dispose();
     }
 }
+

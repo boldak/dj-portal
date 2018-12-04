@@ -29,7 +29,9 @@
   import djvueMixin from "djvue/mixins/core/djvue.mixin.js";
   import listenerMixin from "djvue/mixins/core/listener.mixin.js";
   import editor from 'djvue/components/core/ext/ace-editor.vue';
+  import MediatorConfig from "./mediator-config.vue"
   
+  Vue.prototype.$dialog.component('MediatorConfig', MediatorConfig)
   
  export default  {
     
@@ -39,49 +41,60 @@
 
     components:{editor},
 
-    getInitialConfig( snippet ){
-
-        let res = {
-            type:"mediator-widget", 
-            name:"noname",
-            icon:"mdi-language-javascript",
-            options: { widget:{
-                visible:true
-              }
-            },
-            data:{
-              script:`// type script here
-                alert("Djvue app run in "+this.app.mode+" mode")
-              `
-            }
-        }
-        return res
-    },
-    
     mixins:[djvueMixin, listenerMixin],
 
-
     methods:{
+
+      onReconfigure (widgetConfig) {
+       return this.$dialog.showAndWait(MediatorConfig, {config:widgetConfig})
+      },
 
       onUpdateSource (value) {
           this.config.data.script = value
       },
 
       onPageStart () {
-        console.log("Mediator on page start")
-        this._runScript();
+       this._runScript();
       },
 
       _runScript () {
 
+        this.api = {
+          selectWidgets: (filter) => {
+            filter = filter || (item => true);
+            if(!_.isFunction(filter)){
+              let identifiers = (_.isArray(filter)) ? filter : [filter];
+              filter = (item) => _.find(identifiers, i => item.config.id == i)  
+            }
+
+            let res = this.$djvue.selectWidgets( this.$root, item => item.config && filter(item)); 
+            
+            return (res.length == 0) 
+                      ? undefined
+                      : (res.length == 1)
+                        ? res[0]
+                        : res
+          },
+          on:this.on,
+          off: this.off,
+          emit: (event,data) => {this.emit(event,this,data)}
+        }
+
         try {
+
           eval(
             `
-            (function() {
-                  ${this.config.data.script}
-                }).apply(this)
+            (function() { 
+              let selectWidgets = this.api.selectWidgets;
+              let on = this.api.on;
+              let off = this.api.off;
+              let emit = this.api.emit;
+              ${this.config.data.script} }
+            )
+
             `
-          )      
+          ).apply(this)  
+
         } catch(e) {
           this.$djvue.warning({
                     type:"error",

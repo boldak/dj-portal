@@ -20,11 +20,7 @@
         >         	
          </v-text-field>
 
-        <v-text-field
-      		  v-show="mode == 'dps'"	
-              v-model="config.data.url"
-              label="dps"
-        >         	
+         	
          </v-text-field> 
 		
 		<editor 	v-show="mode == 'embedded'"
@@ -32,6 +28,15 @@
 	                lang="html" 
 	                :sync="true"
 	                @change="onUpdateSource"
+	                style="border:1px solid #999"
+	    > 
+	    </editor>
+
+	    <editor 	v-show="mode == 'dps'"
+	                :content="config.data.script" 
+	                lang="dps" 
+	                :sync="true"
+	                @change="onUpdateScript"
 	                style="border:1px solid #999"
 	    > 
 	    </editor>
@@ -54,6 +59,9 @@
 		methods:{
 			onUpdateSource(value){
 	        this.config.data.embedded = value
+	      },
+	      onUpdateScript(value){
+	        this.config.data.script = value
 	      }
 		},
 

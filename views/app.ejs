@@ -62,6 +62,8 @@
 
 
   <script src="modules/lodash/dist/lodash.js"></script>
+  <script src="modules/moment/min/moment.min.js"></script>
+  
   <script src="modules/vue/dist/vue.js"></script>
   <script>
       var user = <%- JSON.stringify(userInfo) %>;
@@ -69,9 +71,17 @@
       var defaultApp = "<%= app.defaultApp %>";
       var appId ="<%= app.id %>";
       var appName = "<%= app.name %>";
-      // var initialConfig = <%- JSON.stringify(publicAppConfig) %>;
-      // console.log(initialConfig)
+      var dpsURL = "http://127.0.0.1:8098/"
+      var initialConfig = <%- JSON.stringify(publicAppConfig) %>;
+      console.log(initialConfig)
+      var icon = initialConfig.icon
 
+      var skin = {
+        holders:{
+          AppHeader:{widgets:[]},
+          AppFooter:{widgets:[]}
+        }
+      }
 
       var _pages = [
 
@@ -93,16 +103,9 @@
                     data:{
                       script:`
                       // console.log(
-                      let w = 
-                      this.$djvue.selectWidgets(
-                          this.$root, 
-                          item => item.config && item.config.id == "1"
-                      )[0]
-                      w.updateState({data:"//////////"})
-                      w.setOption('widget.visible', false)
-                      // )
-                      // .template = "/////"
-                      `
+                      let w = selectWidgets("1")
+                      w.update({data:"//////////"})
+                     `
                     },
                     id:"Mediator"  
                   },
@@ -125,6 +128,39 @@
             "Column 1": {
               "widgets": [
                   {
+      
+                      type:"data-selector-widget", 
+                      name:"noname",
+                      icon:"mdi-format-list-checks",
+                     
+                      options: { widget:{
+                          visible: true
+                        },
+                        mapper:"product"
+                      },
+                     
+                      data:{
+                            source:"embedded",
+                            embedded:{
+                                dataset: {
+                                    // Here the declared `dimensions` is mainly for providing the order of
+                                    // the dimensions, which enables ECharts to apply the default mapping
+                                    // from dimensions to axes.
+                                    // Alternatively, we can declare `series.encode` to specify the mapping,
+                                    // which will be introduced later.
+                                    dimensions: ['product', '2015', '2016', '2017'],
+                                    source: [
+                                        {product: 'Matcha Latte', '2015': 43.3, '2016': 85.8, '2017': 93.7},
+                                        {product: 'Milk Tea', '2015': 83.1, '2016': 73.4, '2017': 55.1},
+                                        {product: 'Cheese Cocoa', '2015': 86.4, '2016': 65.2, '2017': 82.5},
+                                        {product: 'Walnut Brownie', '2015': 72.4, '2016': 53.9, '2017': 39.1}
+                                    ]
+                                }
+                            }
+                        },
+                      id:"DataSelector"  
+                  },
+                  {
                     "type": "html-widget",
                     "name": "noname",
                     "icon": "mdi-language-html5",
@@ -144,10 +180,45 @@
             "Column 2": {
               "widgets": [
                   {
+                    id:"Table",
+                    type:"data-table-widget", 
+                    name:"noname",
+                    icon:"mdi-grid",
+                    dataSelectEmitters : ["DataSelector"],
+                    options: { 
+                      
+                      widget:{
+                        visible: true
+                      }
+
+              
+
+                    },
+
+
+                    data:{
+                      source:"embedded",
+                      embedded:{
+
+                                dataset: {
+                                    dimensions: ['product', '2015', '2016', '2017'],
+                                    source: [
+                                        {product: 'Matcha Latte', '2015': 43.3, '2016': 85.8, '2017': 93.7},
+                                        {product: 'Milk Tea', '2015': 83.1, '2016': 73.4, '2017': 55.1},
+                                        {product: 'Cheese Cocoa', '2015': 86.4, '2016': 65.2, '2017': 82.5},
+                                        {product: 'Walnut Brownie', '2015': 72.4, '2016': 53.9, '2017': 39.1}
+                                    ]
+                                }
+                       
+                      }
+                    }
+                  },
+
+                  {
                     "type": "html-widget",
                     "name": "noname",
                     "icon": "mdi-language-html5",
-                    "dataSelectEmitters" : "Mediator",
+                    "dataSelectEmitters" : ["DataSelector"],
                     "options": {widget:{
                         visible: true
                       }
@@ -209,6 +280,7 @@
 
 
    <script src="modules/echarts/dist/echarts.min.js"></script>
+   <script src="modules/echarts-gl/echarts-gl.min.js"></script>
 
  
 
